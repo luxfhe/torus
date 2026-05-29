@@ -1,0 +1,11 @@
+add_compile_options(-fexceptions -fsized-deallocation)
+
+add_subdirectory(FHELinalg)
+add_subdirectory(FHE)
+add_subdirectory(TFHE)
+add_subdirectory(Concrete)
+add_subdirectory(RT)
+add_subdirectory(SDFG)
+add_subdirectory(Tracing)
+add_subdirectory(TypeInference)
+add_subdirectory(Optimizer)

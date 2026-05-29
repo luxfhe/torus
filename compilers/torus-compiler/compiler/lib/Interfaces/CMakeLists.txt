@@ -1,0 +1,10 @@
+add_mlir_library(
+  ConcretelangInterfaces
+  BatchableInterface.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/toruslang/Interfaces
+  DEPENDS
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR)

@@ -1,0 +1,18 @@
+set(LLVM_TARGET_DEFINITIONS TFHEAttrs.td)
+mlir_tablegen(TFHEAttrs.h.inc -gen-attrdef-decls -attrdefs-dialect=TFHE)
+mlir_tablegen(TFHEAttrs.cpp.inc -gen-attrdef-defs -attrdefs-dialect=TFHE)
+
+set(LLVM_TARGET_DEFINITIONS TFHEOps.td)
+mlir_tablegen(TFHEOps.h.inc -gen-op-decls)
+mlir_tablegen(TFHEOps.cpp.inc -gen-op-defs)
+mlir_tablegen(TFHEOpsTypes.h.inc -gen-typedef-decls -typedefs-dialect=TFHE)
+mlir_tablegen(TFHEOpsTypes.cpp.inc -gen-typedef-defs -typedefs-dialect=TFHE)
+mlir_tablegen(TFHEOpsDialect.h.inc -gen-dialect-decls -dialect=TFHE)
+mlir_tablegen(TFHEOpsDialect.cpp.inc -gen-dialect-defs -dialect=TFHE)
+add_public_tablegen_target(MLIRTFHEOpsIncGen)
+add_dependencies(mlir-headers MLIRTFHEOpsIncGen)
+
+add_toruslang_doc(TFHEOps TFHEDialect toruslang/ -gen-dialect-doc -dialect=TFHE)
+add_toruslang_doc(TFHEOps TFHEOps toruslang/ -gen-op-doc)
+add_toruslang_doc(TFHEOps TFHEAttrs toruslang/ -gen-attrdef-doc)
+add_toruslang_doc(TFHETypes TFHETypes toruslang/ -gen-typedef-doc)

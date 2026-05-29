@@ -1,0 +1,657 @@
+// Part of the Concrete Compiler Project, under the BSD3 License with Zama
+// Exceptions. See
+// https://github.com/luxfhe/torus/blob/main/LICENSE.txt
+// for license information.
+
+#include "llvm/Support/TargetSelect.h"
+
+#include "torus-optimizer.hpp"
+#include "toruslang/Support/CompilationFeedback.h"
+#include "toruslang/Support/V0Parameters.h"
+#include "mlir/Conversion/BufferizationToMemRef/BufferizationToMemRef.h"
+#include "mlir/Conversion/Passes.h"
+#include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+#include "mlir/Dialect/Func/Transforms/Passes.h"
+#include "mlir/Transforms/Passes.h"
+#include "llvm/Support/Error.h"
+#include <optional>
+
+#include "mlir/Dialect/Affine/Passes.h"
+#include "mlir/Dialect/Arith/Transforms/Passes.h"
+#include "mlir/Dialect/Bufferization/Transforms/OneShotAnalysis.h"
+#include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+#include "mlir/Dialect/Linalg/Passes.h"
+#include "mlir/Dialect/SCF/Transforms/Passes.h"
+#include "mlir/Dialect/Tensor/Transforms/Passes.h"
+#include "mlir/ExecutionEngine/OptUtils.h"
+#include "mlir/Pass/PassManager.h"
+#include "mlir/Pass/PassOptions.h"
+#include "mlir/Support/LogicalResult.h"
+#include "mlir/Target/LLVMIR/Dialect/LLVMIR/LLVMToLLVMIRTranslation.h"
+#include "mlir/Target/LLVMIR/Dialect/OpenMP/OpenMPToLLVMIRTranslation.h"
+#include "mlir/Target/LLVMIR/Export.h"
+#include "mlir/Transforms/Passes.h"
+
+#include "toruslang/Conversion/Passes.h"
+#include "toruslang/Conversion/TFHEKeyNormalization/Pass.h"
+#include "toruslang/Dialect/Concrete/Analysis/MemoryUsage.h"
+#include "toruslang/Dialect/Concrete/Transforms/Passes.h"
+#include "toruslang/Dialect/FHE/Analysis/ConcreteOptimizer.h"
+#include "toruslang/Dialect/FHE/Analysis/MANP.h"
+#include "toruslang/Dialect/FHE/IR/FHEOps.h"
+#include "toruslang/Dialect/FHE/Transforms/BigInt/BigInt.h"
+#include "toruslang/Dialect/FHE/Transforms/Boolean/Boolean.h"
+#include "toruslang/Dialect/FHE/Transforms/DynamicTLU/DynamicTLU.h"
+#include "toruslang/Dialect/FHE/Transforms/EncryptedMulToDoubleTLU/EncryptedMulToDoubleTLU.h"
+#include "toruslang/Dialect/FHE/Transforms/Max/Max.h"
+#include "toruslang/Dialect/FHE/Transforms/Optimizer/Optimizer.h"
+#include "toruslang/Dialect/FHELinalg/Transforms/Tiling.h"
+#include "toruslang/Dialect/RT/Analysis/Autopar.h"
+#include "toruslang/Dialect/RT/Transforms/Passes.h"
+#include "toruslang/Dialect/SDFG/Transforms/Passes.h"
+#include "toruslang/Dialect/TFHE/Analysis/ExtractStatistics.h"
+#include "toruslang/Dialect/TFHE/Transforms/Transforms.h"
+#include "toruslang/Support/CompilerEngine.h"
+#include "toruslang/Support/Error.h"
+#include "toruslang/Support/Pipeline.h"
+#include "toruslang/Support/logging.h"
+#include "toruslang/Support/math.h"
+#include "toruslang/Transforms/Passes.h"
+
+namespace mlir {
+namespace toruslang {
+namespace pipeline {
+
+static void pipelinePrinting(llvm::StringRef name, mlir::PassManager &pm,
+                             mlir::MLIRContext &ctx) {
+  if (mlir::toruslang::isVerbose()) {
+    mlir::toruslang::log_verbose()
+        << "##################################################\n"
+        << "### " << name << " pipeline\n";
+    auto isModule = [](mlir::Pass *, mlir::Operation *op) {
+      return mlir::isa<mlir::ModuleOp>(op);
+    };
+    ctx.disableMultithreading(true);
+    pm.enableIRPrinting(isModule, isModule);
+    pm.enableStatistics();
+    pm.enableTiming();
+    pm.enableVerifier();
+  }
+}
+
+static void
+addPotentiallyNestedPass(mlir::PassManager &pm, std::unique_ptr<Pass> pass,
+                         std::function<bool(mlir::Pass *)> enablePass) {
+  if (!enablePass(pass.get())) {
+    return;
+  }
+  if (!pass->getOpName() || *pass->getOpName() == "builtin.module") {
+    pm.addPass(std::move(pass));
+  } else {
+    mlir::OpPassManager &p = pm.nest(*pass->getOpName());
+    p.addPass(std::move(pass));
+  }
+}
+
+llvm::Expected<std::optional<optimizer::Description>>
+getFHEContextFromFHE(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                     optimizer::Config config,
+                     std::function<bool(mlir::Pass *)> enablePass) {
+  std::optional<size_t> oMax2norm;
+  std::optional<size_t> oMaxWidth;
+
+  mlir::PassManager pm(&context);
+
+  pipelinePrinting("ComputeFHEConstraintOnFHE", pm, context);
+  addPotentiallyNestedPass(pm, mlir::createCanonicalizerPass(), enablePass);
+  addPotentiallyNestedPass(pm, mlir::toruslang::createMANPPass(),
+                           enablePass);
+  addPotentiallyNestedPass(
+      pm,
+      mlir::toruslang::createMaxMANPPass(
+          [&](const uint64_t manp, unsigned width) {
+            if (!oMax2norm.has_value() || oMax2norm.value() < manp)
+              oMax2norm.emplace(manp);
+
+            if (!oMaxWidth.has_value() || oMaxWidth.value() < width)
+              oMaxWidth.emplace(width);
+          }),
+      enablePass);
+  if (pm.run(module.getOperation()).failed()) {
+    return llvm::make_error<llvm::StringError>(
+        "Failed to determine the maximum Arithmetic Noise Padding and maximum"
+        " required precision",
+        llvm::inconvertibleErrorCode());
+  }
+  std::optional<mlir::toruslang::V0FHEConstraint> constraint = std::nullopt;
+
+  if (oMax2norm.has_value() && oMaxWidth.has_value()) {
+    constraint = std::optional<mlir::toruslang::V0FHEConstraint>(
+        {/*.norm2 = */ ceilLog2(oMax2norm.value()),
+         /*.p = */ oMaxWidth.value()});
+  }
+  auto dag = concrete_optimizer::dag::empty();
+  addPotentiallyNestedPass(pm, optimizer::createDagPass(config, *dag),
+                           enablePass);
+  if (pm.run(module.getOperation()).failed()) {
+    return StreamStringError() << "Failed to create torus-optimizer dag\n";
+  }
+  optimizer::applyCompositionRules(config, *dag);
+
+  std::optional<optimizer::Description> description;
+
+  if (!constraint) {
+    description = std::nullopt;
+  } else {
+    description = {*constraint, std::move(dag)};
+  }
+  return std::move(description);
+}
+
+uint64_t removeChangePartitionOps(mlir::ModuleOp module) {
+  // Remove change_partition ops as they are only needed
+  uint64_t count = 0;
+  module.walk([&](mlir::Operation *producer) {
+    mlir::IRRewriter rewriter(producer->getContext());
+    if (mlir::dyn_cast_or_null<FHE::ChangePartitionEintOp>(producer)) {
+      count++;
+      rewriter.startRootUpdate(module);
+      rewriter.replaceOp(producer, producer->getOperand(0));
+      rewriter.finalizeRootUpdate(module);
+    }
+  });
+  return count;
+}
+
+mlir::LogicalResult materializeOptimizerPartitionFrontiers(
+    mlir::MLIRContext &context, mlir::ModuleOp &module,
+    std::optional<V0FHEContext> &fheContext,
+    std::function<bool(mlir::Pass *)> enablePass) {
+
+  if (!fheContext.has_value())
+    return mlir::success();
+
+  optimizer::CircuitSolution *circuitSolution =
+      std::get_if<optimizer::CircuitSolution>(&fheContext->solution);
+
+  if (!circuitSolution)
+    return mlir::success();
+
+  mlir::PassManager pm(&context);
+  pipelinePrinting("MaterializeOptimizerPartitionFrontiers", pm, context);
+
+  addPotentiallyNestedPass(
+      pm,
+      mlir::toruslang::createOptimizerPartitionFrontierMaterializationPass(
+          *circuitSolution),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult autopar(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                            std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("AutoPar", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createBuildDataflowTaskGraphPass(), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createLowerDataflowTasksPass(), enablePass);
+  addPotentiallyNestedPass(pm, mlir::toruslang::createHoistAwaitFuturePass(),
+                           enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+tileMarkedLinalg(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                 std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TileMarkedLinalg", pm, context);
+  addPotentiallyNestedPass(pm, mlir::toruslang::createLinalgTilingPass(),
+                           enablePass);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createLinalgFillToLinalgGenericPass(),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+markFHELinalgForTiling(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                       llvm::ArrayRef<int64_t> tileSizes,
+                       std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("MarkFHELinalgForTiling", pm, context);
+  addPotentiallyNestedPass(pm, createFHELinalgTilingMarkerPass(tileSizes),
+                           enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+transformHighLevelFHEOps(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                         std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("transformHighLevelFHEOps", pm, context);
+
+  addPotentiallyNestedPass(pm, createEncryptedMulToDoubleTLUPass(), enablePass);
+  addPotentiallyNestedPass(pm, createFHEMaxTransformPass(), enablePass);
+  addPotentiallyNestedPass(pm, createDynamicTLUPass(), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+lowerFHELinalgToLinalg(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                       std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("FHELinalgToLinalg", pm, context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertFHETensorOpsToLinalg(), enablePass);
+  addPotentiallyNestedPass(pm, mlir::createLinalgGeneralizationPass(),
+                           enablePass);
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+lowerLinalgToLoops(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                   std::function<bool(mlir::Pass *)> enablePass,
+                   bool parallelizeLoops) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("LinalgToLoops", pm, context);
+
+  addPotentiallyNestedPass(
+      pm,
+      mlir::toruslang::createLinalgGenericOpWithTensorsToLoopsPass(
+          parallelizeLoops),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+transformFHEBoolean(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                    std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createFHEBooleanTransformPass(), enablePass);
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+transformFHEBigInt(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                   std::function<bool(mlir::Pass *)> enablePass,
+                   unsigned int chunkSize, unsigned int chunkWidth) {
+  mlir::PassManager pm(&context);
+  addPotentiallyNestedPass(
+      pm,
+      mlir::toruslang::createFHEBigIntTransformPass(chunkSize, chunkWidth),
+      enablePass);
+  // We want to fully unroll for loops introduced by the BigInt transform since
+  // MANP doesn't support loops. This is a workaround that make the IR much
+  // bigger than it should be
+  addPotentiallyNestedPass(pm, mlir::createLoopUnrollPass(-1, false, true),
+                           enablePass);
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+lowerFHEToTFHE(mlir::MLIRContext &context, mlir::ModuleOp &module,
+               std::optional<V0FHEContext> &fheContext,
+               std::function<bool(mlir::Pass *)> enablePass) {
+  if (!fheContext)
+    return mlir::success();
+
+  mlir::PassManager pm(&context);
+  auto solution = fheContext.value().solution;
+  auto optCrt = getCrtDecompositionFromSolution(solution);
+  if (optCrt) {
+    pipelinePrinting("FHEToTFHECrt", pm, context);
+    auto mods = mlir::SmallVector<int64_t>(optCrt->begin(), optCrt->end());
+    addPotentiallyNestedPass(
+        pm,
+        mlir::toruslang::createConvertFHEToTFHECrtPass(
+            mlir::toruslang::CrtLoweringParameters(mods)),
+        enablePass);
+  } else {
+    pipelinePrinting("FHEToTFHEScalar", pm, context);
+    size_t polySize = getPolynomialSizeFromSolution(solution);
+    addPotentiallyNestedPass(
+        pm,
+        mlir::toruslang::createConvertFHEToTFHEScalarPass(
+            mlir::toruslang::ScalarLoweringParameters(polySize)),
+        enablePass);
+  }
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+parametrizeTFHE(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                std::optional<V0FHEContext> &fheContext,
+                std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("ParametrizeTFHE", pm, context);
+
+  if (!fheContext) {
+    // For tests, which invoke the pipeline without determining FHE
+    // parameters
+    addPotentiallyNestedPass(
+        pm,
+        mlir::toruslang::createTFHECircuitSolutionParametrizationPass(
+            std::nullopt),
+        enablePass);
+  } else if (auto monoSolution =
+                 std::get_if<V0Parameter>(&fheContext->solution);
+             monoSolution != nullptr) {
+    addPotentiallyNestedPass(
+        pm,
+        mlir::toruslang::createConvertTFHEGlobalParametrizationPass(
+            *monoSolution),
+        enablePass);
+  } else if (auto circuitSolution =
+                 std::get_if<optimizer::CircuitSolution>(&fheContext->solution);
+             circuitSolution != nullptr) {
+    addPotentiallyNestedPass(
+        pm,
+        mlir::toruslang::createTFHECircuitSolutionParametrizationPass(
+            *circuitSolution),
+        enablePass);
+  }
+
+  addPotentiallyNestedPass(pm, mlir::createCanonicalizerPass(), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult batchTFHE(mlir::MLIRContext &context,
+                              mlir::ModuleOp &module,
+                              std::function<bool(mlir::Pass *)> enablePass,
+                              int64_t maxBatchSize) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("BatchTFHE", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createCollapseParallelLoops(), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createBatchingPass(maxBatchSize), enablePass);
+  addPotentiallyNestedPass(pm, mlir::createCanonicalizerPass(), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+normalizeTFHEKeys(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                  std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TFHEKeyNormalization", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createTFHEKeyNormalizationPass(), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+extractTFHEStatistics(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                      std::function<bool(mlir::Pass *)> enablePass,
+                      ProgramCompilationFeedback &feedback) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TFHEStatistics", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createStatisticExtractionPass(feedback),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+lowerTFHEToConcrete(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                    std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TFHEToConcrete", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertTFHEToConcretePass(), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+computeMemoryUsage(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                   std::function<bool(mlir::Pass *)> enablePass,
+                   ProgramCompilationFeedback &feedback) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("Computing Memory Usage", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createMemoryUsagePass(feedback), enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult optimizeTFHE(mlir::MLIRContext &context,
+                                 mlir::ModuleOp &module,
+                                 std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TFHEOptimization", pm, context);
+  addPotentiallyNestedPass(pm, mlir::toruslang::createTFHEOptimizationPass(),
+                           enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+transformTFHEOperations(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                        std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("TFHEOperationTransformations", pm, context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createTFHEOperationTransformationsPass(),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult simulateTFHE(mlir::MLIRContext &context,
+                                 mlir::ModuleOp &module,
+                                 std::optional<V0FHEContext> &fheContext,
+                                 bool enableOverflowDetection,
+                                 std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+
+  // we want to disable overflow detection if CRT is used (overflow would be
+  // expected)
+  if (fheContext && enableOverflowDetection) {
+    auto solution = fheContext.value().solution;
+    auto optCrt = getCrtDecompositionFromSolution(solution);
+    if (optCrt) {
+      enableOverflowDetection = false;
+      log_verbose() << "WARNING: overflow detection disabled since using CRT";
+    }
+  }
+
+  pipelinePrinting("TFHESimulation", pm, context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createSimulateTFHEPass(enableOverflowDetection),
+      enablePass);
+
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult extractSDFGOps(mlir::MLIRContext &context,
+                                   mlir::ModuleOp &module,
+                                   std::function<bool(mlir::Pass *)> enablePass,
+                                   bool unroll) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("extract SDFG ops from Concrete", pm, context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createExtractSDFGOpsPass(unroll), enablePass);
+  LogicalResult res = pm.run(module.getOperation());
+
+  return res;
+}
+
+mlir::LogicalResult
+addRuntimeContext(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                  std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("Adding Runtime Context", pm, context);
+  addPotentiallyNestedPass(pm, mlir::toruslang::createAddRuntimeContext(),
+                           enablePass);
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult
+lowerSDFGToStd(mlir::MLIRContext &context, mlir::ModuleOp &module,
+               std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("SDFGToStd", pm, context);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertSDFGToStreamEmulatorPass(),
+      enablePass);
+  return pm.run(module.getOperation());
+}
+
+mlir::LogicalResult lowerToStd(mlir::MLIRContext &context,
+                               mlir::ModuleOp &module,
+                               std::function<bool(mlir::Pass *)> enablePass,
+                               bool parallelizeLoops) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("Lowering to Std", pm, context);
+
+  // Replace non-bufferizable ops (e;g., `tensor.empty` ->
+  // `bufferization.alloc_tensor`)
+  addPotentiallyNestedPass(
+      pm, mlir::bufferization::createEmptyTensorToAllocTensorPass(),
+      enablePass);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createSCFForallToSCFForPass(), enablePass);
+
+  // Bufferize
+  mlir::bufferization::OneShotBufferizationOptions bufferizationOptions;
+  bufferizationOptions.allowReturnAllocs = true;
+  bufferizationOptions.printConflicts = true;
+  bufferizationOptions.unknownTypeConverterFn =
+      [](Value value, Attribute memorySpace,
+         const mlir::bufferization::BufferizationOptions &options) {
+        return mlir::bufferization::getMemRefTypeWithStaticIdentityLayout(
+            value.getType().cast<TensorType>(), memorySpace);
+      };
+  bufferizationOptions.bufferizeFunctionBoundaries = true;
+  bufferizationOptions.createDeallocs = false;
+
+  std::unique_ptr<mlir::Pass> comprBuffPass =
+      mlir::bufferization::createOneShotBufferizePass(bufferizationOptions);
+
+  addPotentiallyNestedPass(pm, std::move(comprBuffPass), enablePass);
+
+  // The bufferization may create `linalg.map` operations; Add another
+  // conversion pass from linalg to loops
+  addPotentiallyNestedPass(pm, mlir::createConvertLinalgToLoopsPass(),
+                           enablePass);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createBufferizeDataflowTaskOpsPass(), enablePass);
+
+  if (parallelizeLoops) {
+    addPotentiallyNestedPass(
+        pm, mlir::toruslang::createCollapseParallelLoops(), enablePass);
+    addPotentiallyNestedPass(pm, mlir::toruslang::createForLoopToParallel(),
+                             enablePass);
+  }
+
+  if (parallelizeLoops)
+    addPotentiallyNestedPass(pm, mlir::createConvertSCFToOpenMPPass(),
+                             enablePass);
+  // Lower affine
+  addPotentiallyNestedPass(pm, mlir::createLowerAffinePass(), enablePass);
+
+  // Finalize the lowering of RT/DFR which includes:
+  //   - adding type and typesize information for dependences
+  //   - issue _dfr_start and _dfr_stop calls to start/stop the runtime
+  //   - remove deallocation calls for buffers managed through refcounting
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createFinalizeTaskCreationPass(), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::bufferization::createBufferDeallocationPass(), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createStartStopPass(parallelizeLoops),
+      enablePass);
+  addPotentiallyNestedPass(pm, mlir::createCanonicalizerPass(), enablePass);
+  addPotentiallyNestedPass(pm, mlir::createBufferizationToMemRefPass(),
+                           enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createFixupBufferDeallocationPass(), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createSDFGBufferOwnershipPass(), enablePass);
+
+  return pm.run(module);
+}
+
+mlir::LogicalResult lowerToCAPI(mlir::MLIRContext &context,
+                                mlir::ModuleOp &module,
+                                std::function<bool(mlir::Pass *)> enablePass,
+                                bool gpu) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("Lowering to CAPI", pm, context);
+
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertConcreteToCAPIPass(gpu), enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertTracingToCAPIPass(), enablePass);
+
+  return pm.run(module);
+}
+
+mlir::LogicalResult
+lowerStdToLLVMDialect(mlir::MLIRContext &context, mlir::ModuleOp &module,
+                      std::function<bool(mlir::Pass *)> enablePass) {
+  mlir::PassManager pm(&context);
+  pipelinePrinting("StdToLLVM", pm, context);
+
+  // Convert to MLIR LLVM Dialect
+  addPotentiallyNestedPass(pm, mlir::arith::createArithExpandOpsPass(),
+                           enablePass);
+  addPotentiallyNestedPass(
+      pm, mlir::toruslang::createConvertMLIRLowerableDialectsToLLVMPass(),
+      enablePass);
+  addPotentiallyNestedPass(pm, mlir::createReconcileUnrealizedCastsPass(),
+                           enablePass);
+
+  return pm.run(module);
+}
+
+std::unique_ptr<llvm::Module>
+lowerLLVMDialectToLLVMIR(mlir::MLIRContext &context,
+                         llvm::LLVMContext &llvmContext,
+                         mlir::ModuleOp &module) {
+  llvm::InitializeNativeTarget();
+  llvm::InitializeNativeTargetAsmPrinter();
+  mlir::registerLLVMDialectTranslation(*module->getContext());
+  mlir::registerOpenMPDialectTranslation(*module->getContext());
+
+  return mlir::translateModuleToLLVMIR(module, llvmContext);
+}
+
+mlir::LogicalResult optimizeLLVMModule(llvm::LLVMContext &llvmContext,
+                                       llvm::Module &module) {
+  // -O3 is done LLVMEmitFile.cpp
+  auto optLevel = llvm::CodeGenOpt::None;
+  std::function<llvm::Error(llvm::Module *)> optPipeline =
+      mlir::makeOptimizingTransformer(optLevel, 0, nullptr);
+
+  if (optPipeline(&module))
+    return mlir::failure();
+  else
+    return mlir::success();
+}
+
+} // namespace pipeline
+} // namespace toruslang
+} // namespace mlir

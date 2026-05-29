@@ -1,0 +1,12 @@
+set(LLVM_TARGET_DEFINITIONS TypeInferenceOps.td)
+mlir_tablegen(TypeInferenceOps.h.inc -gen-op-decls)
+mlir_tablegen(TypeInferenceOps.cpp.inc -gen-op-defs)
+mlir_tablegen(TypeInferenceOpsTypes.h.inc -gen-typedef-decls -typedefs-dialect=TypeInference)
+mlir_tablegen(TypeInferenceOpsTypes.cpp.inc -gen-typedef-defs -typedefs-dialect=TypeInference)
+mlir_tablegen(TypeInferenceOpsDialect.h.inc -gen-dialect-decls -dialect=TypeInference)
+mlir_tablegen(TypeInferenceOpsDialect.cpp.inc -gen-dialect-defs -dialect=TypeInference)
+add_public_tablegen_target(MLIRTypeInferenceOpsIncGen)
+add_dependencies(mlir-headers MLIRTypeInferenceOpsIncGen)
+
+add_toruslang_doc(TypeInferenceOps TypeInferenceDialect toruslang/ -gen-dialect-doc -dialect=TypeInference)
+add_toruslang_doc(TypeInferenceOps TypeInferenceOps toruslang/ -gen-op-doc)

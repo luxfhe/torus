@@ -1,0 +1,26 @@
+target-version = "py39"
+line-length = 100
+select = [
+    "F", "E", "W", "C90", "I", "UP", "N", "YTT", "S", "BLE", "FBT", "B", "C4",
+    "T10", "EM", "ICN", "Q", "RET", "SIM", "TID", "ARG", "DTZ", "ERA", "PD", "PGH",
+    "PLC", "PLE", "PLR", "PLW", "RUF"
+]
+ignore = [
+    "A", "D", "FBT", "T20", "ANN", "N806", "ARG001", "S101", "BLE001", "RUF100", "ERA001", "SIM105",
+    "RET504", "TID252", "PD011", "I001", "UP015", "C901", "A001", "SIM118", "PGH003", "PLW2901",
+    "PLR0915", "C416", "PLR0911", "PLR0912", "PLR0913", "RUF005", "PLR2004", "S110", "PLC1901",
+    "E731", "RET507", "SIM102", "N805",
+]
+
+[per-file-ignores]
+"**/__init__.py" = ["F401"]
+"concrete/fhe/compilation/configuration.py" = ["ARG002"]
+"torus/fhe/mlir/processors/all.py" = ["F401"]
+"torus/fhe/mlir/processors/assign_bit_widths.py" = ["ARG002", "RUF012"]
+"torus/fhe/mlir/converter.py" = ["ARG002", "B011", "F403", "F405"]
+"concrete/**" = ["RUF010"]
+"examples/**" = ["PLR2004", "RUF010"]
+"tests/**" = ["PLR2004", "PLW0603", "SIM300", "S311", "RUF010"]
+"tests/execution/test_tfhers.py" = ["S605"]
+"benchmarks/**" = ["S311", "B023"]
+"scripts/**" = ["DTZ005"]

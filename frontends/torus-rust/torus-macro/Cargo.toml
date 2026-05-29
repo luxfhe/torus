@@ -1,0 +1,25 @@
+[package]
+name = "torus-macro"
+version = "0.0.0"
+edition = "2021"
+readme = "../../../../../../../README.md"
+keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
+homepage = "https://luxfhe.com/"
+documentation = "https://docs.luxfhe.com/torus"
+repository = "https://github.com/luxfhe/torus"
+license = "BSD-3-Clause-Clear"
+description = "Concrete is an open-source FHE Compiler that simplifies the use of fully homomorphic encryption (FHE)."
+build = "build.rs"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "2.0"
+quote = "1.0"
+proc-macro2 = "1.0"
+zip = "2.2.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+itertools = "0.14.0"
+concrete = {  version = "=0.0.0", path = "../concrete", features = ["compiler"]}

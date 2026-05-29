@@ -1,0 +1,19 @@
+[package]
+# see https://doc.rust-lang.org/cargo/reference/manifest.html
+name = "torus-cpu-noise-model"
+version = "0.1.0"
+authors = [""]
+edition = "2021"
+
+[dependencies]
+torus-security-curves = { path = "../../../tools/parameter-curves/torus-security-curves-rust" }
+
+
+[dev-dependencies]
+approx = "0.5"
+
+[build-dependencies]
+cbindgen = "0.24"
+
+[lib]
+crate-type = ["lib", "staticlib"]

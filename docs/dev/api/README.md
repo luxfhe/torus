@@ -1,0 +1,382 @@
+<!-- markdownlint-disable -->
+
+# API Overview
+
+## Modules
+
+- [`torus.compiler`](./torus.compiler.md): Compiler submodule.
+- [`torus.compiler.compilation_context`](./torus.compiler.compilation_context.md): CompilationContext.
+- [`torus.compiler.compilation_feedback`](./torus.compiler.compilation_feedback.md): Compilation feedback.
+- [`torus.compiler.tfhers_int`](./torus.compiler.tfhers_int.md): Import and export TFHErs integers into Torus.
+- [`torus.compiler.utils`](./torus.compiler.utils.md): Common utils for the compiler submodule.
+- [`torus.fhe`](./torus.fhe.md): Torus.
+- [`torus.fhe.compilation`](./torus.fhe.compilation.md): Glue the compilation process together.
+- [`torus.fhe.compilation.artifacts`](./torus.fhe.compilation.artifacts.md): Declaration of `DebugArtifacts` class.
+- [`torus.fhe.compilation.circuit`](./torus.fhe.compilation.circuit.md): Declaration of `Circuit` class.
+- [`torus.fhe.compilation.client`](./torus.fhe.compilation.client.md): Declaration of `Client` class.
+- [`torus.fhe.compilation.compiler`](./torus.fhe.compilation.compiler.md): Declaration of `Compiler` class.
+- [`torus.fhe.compilation.composition`](./torus.fhe.compilation.composition.md): Declaration of classes related to composition.
+- [`torus.fhe.compilation.configuration`](./torus.fhe.compilation.configuration.md): Declaration of `Configuration` class.
+- [`torus.fhe.compilation.decorators`](./torus.fhe.compilation.decorators.md): Declaration of `circuit` and `compiler` decorators.
+- [`torus.fhe.compilation.evaluation_keys`](./torus.fhe.compilation.evaluation_keys.md): Declaration of `EvaluationKeys`.
+- [`torus.fhe.compilation.keys`](./torus.fhe.compilation.keys.md): Declaration of `Keys` class.
+- [`torus.fhe.compilation.module`](./torus.fhe.compilation.module.md): Declaration of `FheModule` classes.
+- [`torus.fhe.compilation.module_compiler`](./torus.fhe.compilation.module_compiler.md): Declaration of `MultiCompiler` class.
+- [`torus.fhe.compilation.server`](./torus.fhe.compilation.server.md): Declaration of `Server` class.
+- [`torus.fhe.compilation.specs`](./torus.fhe.compilation.specs.md): Declaration of `ClientSpecs` class.
+- [`torus.fhe.compilation.status`](./torus.fhe.compilation.status.md): Declaration of `EncryptionStatus` class.
+- [`torus.fhe.compilation.utils`](./torus.fhe.compilation.utils.md): Declaration of various functions and constants related to compilation.
+- [`torus.fhe.compilation.value`](./torus.fhe.compilation.value.md): Declaration of `Value` class.
+- [`torus.fhe.compilation.wiring`](./torus.fhe.compilation.wiring.md): Declaration of wiring related class.
+- [`torus.fhe.dtypes`](./torus.fhe.dtypes.md): Define available data types and their semantics.
+- [`torus.fhe.dtypes.base`](./torus.fhe.dtypes.base.md): Declaration of `BaseDataType` abstract class.
+- [`torus.fhe.dtypes.float`](./torus.fhe.dtypes.float.md): Declaration of `Float` class.
+- [`torus.fhe.dtypes.integer`](./torus.fhe.dtypes.integer.md): Declaration of `Integer` class.
+- [`torus.fhe.dtypes.utils`](./torus.fhe.dtypes.utils.md): Declaration of various functions and constants related to data types.
+- [`torus.fhe.extensions`](./torus.fhe.extensions.md): Provide additional features that are not present in numpy.
+- [`torus.fhe.extensions.array`](./torus.fhe.extensions.array.md): Declaration of `array` function, to simplify creation of encrypted arrays.
+- [`torus.fhe.extensions.bits`](./torus.fhe.extensions.bits.md): Bit extraction extensions.
+- [`torus.fhe.extensions.constant`](./torus.fhe.extensions.constant.md): Declaration of `constant` functions, to allow server side trivial encryption.
+- [`torus.fhe.extensions.convolution`](./torus.fhe.extensions.convolution.md): Tracing and evaluation of convolution.
+- [`torus.fhe.extensions.hint`](./torus.fhe.extensions.hint.md): Declaration of hinting extensions, to provide more information to Torus.
+- [`torus.fhe.extensions.identity`](./torus.fhe.extensions.identity.md): Declaration of `identity` extension.
+- [`torus.fhe.extensions.maxpool`](./torus.fhe.extensions.maxpool.md): Tracing and evaluation of maxpool.
+- [`torus.fhe.extensions.multivariate`](./torus.fhe.extensions.multivariate.md): Declaration of `multivariate` extension.
+- [`torus.fhe.extensions.ones`](./torus.fhe.extensions.ones.md): Declaration of `ones` and `one` functions, to simplify creation of encrypted ones.
+- [`torus.fhe.extensions.relu`](./torus.fhe.extensions.relu.md): Declaration of `relu` extension.
+- [`torus.fhe.extensions.round_bit_pattern`](./torus.fhe.extensions.round_bit_pattern.md): Declaration of `round_bit_pattern` function, to provide an interface for rounded table lookups.
+- [`torus.fhe.extensions.table`](./torus.fhe.extensions.table.md): Declaration of `LookupTable` class.
+- [`torus.fhe.extensions.tag`](./torus.fhe.extensions.tag.md): Declaration of `tag` context manager, to allow tagging certain nodes.
+- [`torus.fhe.extensions.truncate_bit_pattern`](./torus.fhe.extensions.truncate_bit_pattern.md): Declaration of `truncate_bit_pattern` extension.
+- [`torus.fhe.extensions.univariate`](./torus.fhe.extensions.univariate.md): Declaration of `univariate` function.
+- [`torus.fhe.extensions.zeros`](./torus.fhe.extensions.zeros.md): Declaration of `zeros` and `zero` functions, to simplify creation of encrypted zeros.
+- [`torus.fhe.internal`](./torus.fhe.internal.md).
+- [`torus.fhe.internal.utils`](./torus.fhe.internal.utils.md): Declaration of various functions and constants related to the entire project.
+- [`torus.fhe.mlir`](./torus.fhe.mlir.md): Provide `computation graph` to `mlir` functionality.
+- [`torus.fhe.mlir.context`](./torus.fhe.mlir.context.md): Declaration of `Context` class.
+- [`torus.fhe.mlir.conversion`](./torus.fhe.mlir.conversion.md): Declaration of `ConversionType` and `Conversion` classes.
+- [`torus.fhe.mlir.converter`](./torus.fhe.mlir.converter.md): Declaration of `Converter` class.
+- [`torus.fhe.mlir.processors`](./torus.fhe.mlir.processors.md): All graph processors.
+- [`torus.fhe.mlir.processors.assign_bit_widths`](./torus.fhe.mlir.processors.assign_bit_widths.md): Declaration of `AssignBitWidths` graph processor.
+- [`torus.fhe.mlir.processors.assign_node_ids`](./torus.fhe.mlir.processors.assign_node_ids.md): Declaration of `AssignNodeIds` graph processor.
+- [`torus.fhe.mlir.processors.check_integer_only`](./torus.fhe.mlir.processors.check_integer_only.md): Declaration of `CheckIntegerOnly` graph processor.
+- [`torus.fhe.mlir.processors.process_rounding`](./torus.fhe.mlir.processors.process_rounding.md): Declaration of `ProcessRounding` graph processor.
+- [`torus.fhe.mlir.utils`](./torus.fhe.mlir.utils.md): Declaration of various functions and constants related to MLIR conversion.
+- [`torus.fhe.representation`](./torus.fhe.representation.md): Define structures used to represent computation.
+- [`torus.fhe.representation.evaluator`](./torus.fhe.representation.evaluator.md): Declaration of various `Evaluator` classes, to make graphs picklable.
+- [`torus.fhe.representation.graph`](./torus.fhe.representation.graph.md): Declaration of `Graph` class.
+- [`torus.fhe.representation.node`](./torus.fhe.representation.node.md): Declaration of `Node` class.
+- [`torus.fhe.representation.operation`](./torus.fhe.representation.operation.md): Declaration of `Operation` enum.
+- [`torus.fhe.representation.utils`](./torus.fhe.representation.utils.md): Declaration of various functions and constants related to representation of computation.
+- [`torus.fhe.tfhers`](./torus.fhe.tfhers.md): tfhers module to represent, and compute on tfhers integer values.
+- [`torus.fhe.tfhers.bridge`](./torus.fhe.tfhers.bridge.md): Declaration of `tfhers.Bridge` class.
+- [`torus.fhe.tfhers.dtypes`](./torus.fhe.tfhers.dtypes.md): Declaration of `TFHERSIntegerType` class.
+- [`torus.fhe.tfhers.specs`](./torus.fhe.tfhers.specs.md): TFHE-rs client specs.
+- [`torus.fhe.tfhers.tracing`](./torus.fhe.tfhers.tracing.md): Tracing of tfhers operations.
+- [`torus.fhe.tfhers.values`](./torus.fhe.tfhers.values.md): Declaration of `TFHERSInteger` which wraps values as being of tfhers types.
+- [`torus.fhe.tracing`](./torus.fhe.tracing.md): Provide `function` to `computation graph` functionality.
+- [`torus.fhe.tracing.tracer`](./torus.fhe.tracing.tracer.md): Declaration of `Tracer` class.
+- [`torus.fhe.tracing.typing`](./torus.fhe.tracing.typing.md): Declaration of type annotation.
+- [`torus.fhe.values`](./torus.fhe.values.md): Define the available values and their semantics.
+- [`torus.fhe.values.scalar`](./torus.fhe.values.scalar.md): Declaration of `ClearScalar` and `EncryptedScalar` wrappers.
+- [`torus.fhe.values.tensor`](./torus.fhe.values.tensor.md): Declaration of `ClearTensor` and `EncryptedTensor` wrappers.
+- [`torus.fhe.values.value_description`](./torus.fhe.values.value_description.md): Declaration of `ValueDescription` class.
+- [`torus.fhe.version`](./torus.fhe.version.md): Version of the project, which is updated automatically by the CI right before releasing.
+- [`torus.lang`](./torus.lang.md): Toruslang python module
+- [`torus.lang.dialects`](./torus.lang.dialects.md)
+- [`torus.lang.dialects.fhe`](./torus.lang.dialects.fhe.md): FHE dialect module
+- [`torus.lang.dialects.fhelinalg`](./torus.lang.dialects.fhelinalg.md): FHELinalg dialect module
+- [`torus.lang.dialects.tracing`](./torus.lang.dialects.tracing.md): Tracing dialect module
+
+## Classes
+
+- [`compiler.KeysetRestrictionHandler`](./torus.compiler.md): Handler to serialize and deserialize keyset restrictions
+- [`compiler.RangeRestrictionHandler`](./torus.compiler.md): Handler to serialize and deserialize range restrictions
+- [`compilation_context.CompilationContext`](./torus.compiler.compilation_context.md): Compilation context.
+- [`compilation_feedback.MoreCircuitCompilationFeedback`](./torus.compiler.compilation_feedback.md): Helper class for compilation feedback.
+- [`tfhers_int.TfhersExporter`](./torus.compiler.tfhers_int.md): A helper class to import and export TFHErs big integers.
+- [`artifacts.DebugArtifacts`](./torus.fhe.compilation.artifacts.md): DebugArtifacts class, to export information about the compilation process for single function.
+- [`artifacts.DebugManager`](./torus.fhe.compilation.artifacts.md): A debug manager, allowing streamlined debugging.
+- [`artifacts.FunctionDebugArtifacts`](./torus.fhe.compilation.artifacts.md): An object containing debug artifacts for a certain function in an fhe module.
+- [`artifacts.ModuleDebugArtifacts`](./torus.fhe.compilation.artifacts.md): An object containing debug artifacts for an fhe module.
+- [`circuit.Circuit`](./torus.fhe.compilation.circuit.md): Circuit class, to combine computation graph, mlir, client and server into a single object.
+- [`client.Client`](./torus.fhe.compilation.client.md): Client class, which can be used to manage keys, encrypt arguments and decrypt results.
+- [`compiler.Compiler`](./torus.fhe.compilation.compiler.md): Compiler class, to glue the compilation pipeline.
+- [`composition.CompositionClause`](./torus.fhe.compilation.composition.md): A raw composition clause.
+- [`composition.CompositionPolicy`](./torus.fhe.compilation.composition.md): A protocol for composition policies.
+- [`composition.CompositionRule`](./torus.fhe.compilation.composition.md): A raw composition rule.
+- [`configuration.ApproximateRoundingConfig`](./torus.fhe.compilation.configuration.md): Controls the behavior of approximate rounding.
+- [`configuration.BitwiseStrategy`](./torus.fhe.compilation.configuration.md): BitwiseStrategy, to specify implementation preference for bitwise operations.
+- [`configuration.ComparisonStrategy`](./torus.fhe.compilation.configuration.md): ComparisonStrategy, to specify implementation preference for comparisons.
+- [`configuration.Configuration`](./torus.fhe.compilation.configuration.md): Configuration class, to allow the compilation process to be customized.
+- [`configuration.Exactness`](./torus.fhe.compilation.configuration.md).
+- [`configuration.MinMaxStrategy`](./torus.fhe.compilation.configuration.md): MinMaxStrategy, to specify implementation preference for minimum and maximum operations.
+- [`configuration.MultiParameterStrategy`](./torus.fhe.compilation.configuration.md): MultiParamStrategy, to set optimization strategy for multi-parameter.
+- [`configuration.MultivariateStrategy`](./torus.fhe.compilation.configuration.md): MultivariateStrategy, to specify implementation preference for multivariate operations.
+- [`configuration.ParameterSelectionStrategy`](./torus.fhe.compilation.configuration.md): ParameterSelectionStrategy, to set optimization strategy.
+- [`configuration.SecurityLevel`](./torus.fhe.compilation.configuration.md): Security level used to optimize the circuit parameters.
+- [`decorators.Compilable`](./torus.fhe.compilation.decorators.md): Compilable class, to wrap a function and provide methods to trace and compile it.
+- [`evaluation_keys.EvaluationKeys`](./torus.fhe.compilation.evaluation_keys.md): EvaluationKeys required for execution.
+- [`keys.Keys`](./torus.fhe.compilation.keys.md): Keys class, to manage generate/reuse keys.
+- [`module.ExecutionRt`](./torus.fhe.compilation.module.md): Runtime object class for execution.
+- [`module.FheFunction`](./torus.fhe.compilation.module.md): Fhe function class, allowing to run or simulate one function of an fhe module.
+- [`module.FheModule`](./torus.fhe.compilation.module.md): Fhe module class, to combine computation graphs, mlir, runtime objects into a single object.
+- [`module.SimulationRt`](./torus.fhe.compilation.module.md): Runtime object class for simulation.
+- [`module_compiler.FunctionDef`](./torus.fhe.compilation.module_compiler.md): An object representing the definition of a function as used in an fhe module.
+- [`module_compiler.ModuleCompiler`](./torus.fhe.compilation.module_compiler.md): Compiler class for multiple functions, to glue the compilation pipeline.
+- [`server.Server`](./torus.fhe.compilation.server.md): Server class, which can be used to perform homomorphic computation.
+- [`specs.ClientSpecs`](./torus.fhe.compilation.specs.md): ClientSpecs class, to create Client objects.
+- [`status.EncryptionStatus`](./torus.fhe.compilation.status.md): EncryptionStatus enum, to represent encryption status of parameters.
+- [`utils.Lazy`](./torus.fhe.compilation.utils.md): A lazyly initialized value.
+- [`value.Value`](./torus.fhe.compilation.value.md): A public value object that can be sent between client and server.
+- [`wiring.AllComposable`](./torus.fhe.compilation.wiring.md): Composition policy that allows to forward any output of the module to any of its input.
+- [`wiring.AllInputs`](./torus.fhe.compilation.wiring.md): All the encrypted inputs of a given function of a module.
+- [`wiring.AllOutputs`](./torus.fhe.compilation.wiring.md): All the encrypted outputs of a given function of a module.
+- [`wiring.Input`](./torus.fhe.compilation.wiring.md): The input of a given function of a module.
+- [`wiring.NotComposable`](./torus.fhe.compilation.wiring.md): Composition policy that does not allow the forwarding of any output to any input.
+- [`wiring.Output`](./torus.fhe.compilation.wiring.md): The output of a given function of a module.
+- [`wiring.TracedOutput`](./torus.fhe.compilation.wiring.md): A wrapper type used to trace wiring.
+- [`wiring.Wire`](./torus.fhe.compilation.wiring.md): A forwarding rule between an output and an input.
+- [`wiring.WireInput`](./torus.fhe.compilation.wiring.md): A protocol for wire inputs.
+- [`wiring.WireOutput`](./torus.fhe.compilation.wiring.md): A protocol for wire outputs.
+- [`wiring.WireTracingContextManager`](./torus.fhe.compilation.wiring.md): A context manager returned by the `wire_pipeline` method.
+- [`wiring.Wired`](./torus.fhe.compilation.wiring.md): Composition policy which allows the forwarding of certain outputs to certain inputs.
+- [`base.BaseDataType`](./torus.fhe.dtypes.base.md): BaseDataType abstract class, to form a basis for data types.
+- [`float.Float`](./torus.fhe.dtypes.float.md): Float class, to represent floating point numbers.
+- [`integer.Integer`](./torus.fhe.dtypes.integer.md): Integer class, to represent integers.
+- [`bits.Bits`](./torus.fhe.extensions.bits.md): Bits class, to provide indexing into the bits of integers.
+- [`round_bit_pattern.Adjusting`](./torus.fhe.extensions.round_bit_pattern.md): Adjusting class, to be used as early stop signal during adjustment.
+- [`round_bit_pattern.AutoRounder`](./torus.fhe.extensions.round_bit_pattern.md): AutoRounder class, to optimize for number of msbs to keep during round bit pattern operation.
+- [`table.LookupTable`](./torus.fhe.extensions.table.md): LookupTable class, to provide a way to do direct table lookups.
+- [`truncate_bit_pattern.Adjusting`](./torus.fhe.extensions.truncate_bit_pattern.md): Adjusting class, to be used as early stop signal during adjustment.
+- [`truncate_bit_pattern.AutoTruncator`](./torus.fhe.extensions.truncate_bit_pattern.md): AutoTruncator class, to optimize for the number of msbs to keep during truncate operation.
+- [`context.Context`](./torus.fhe.mlir.context.md): Context class, to perform operations on conversions.
+- [`conversion.Conversion`](./torus.fhe.mlir.conversion.md): Conversion class, to store MLIR operations with additional information.
+- [`conversion.ConversionType`](./torus.fhe.mlir.conversion.md): ConversionType class, to make it easier to work with MLIR types.
+- [`converter.Converter`](./torus.fhe.mlir.converter.md): Converter class, to convert a computation graph to MLIR.
+- [`assign_bit_widths.AdditionalConstraints`](./torus.fhe.mlir.processors.assign_bit_widths.md): AdditionalConstraints class to customize bit-width assignment step easily.
+- [`assign_bit_widths.AssignBitWidths`](./torus.fhe.mlir.processors.assign_bit_widths.md): AssignBitWidths graph processor, to assign proper bit-widths to be compatible with FHE.
+- [`assign_node_ids.AssignNodeIds`](./torus.fhe.mlir.processors.assign_node_ids.md) to node properties.
+- [`check_integer_only.CheckIntegerOnly`](./torus.fhe.mlir.processors.check_integer_only.md): CheckIntegerOnly graph processor, to make sure the graph only contains integer nodes.
+- [`process_rounding.ProcessRounding`](./torus.fhe.mlir.processors.process_rounding.md): ProcessRounding graph processor, to analyze rounding and support regular operations on it.
+- [`utils.Comparison`](./torus.fhe.mlir.utils.md): Comparison enum, to store the result comparison in 2-bits as there are three possible outcomes.
+- [`utils.HashableNdarray`](./torus.fhe.mlir.utils.md): HashableNdarray class, to use numpy arrays in dictionaries.
+- [`evaluator.ConstantEvaluator`](./torus.fhe.representation.evaluator.md): ConstantEvaluator class, to evaluate Operation.Constant nodes.
+- [`evaluator.GenericEvaluator`](./torus.fhe.representation.evaluator.md): GenericEvaluator class, to evaluate Operation.Generic nodes.
+- [`evaluator.GenericTupleEvaluator`](./torus.fhe.representation.evaluator.md): GenericEvaluator class, to evaluate Operation.Generic nodes where args are packed in a tuple.
+- [`evaluator.InputEvaluator`](./torus.fhe.representation.evaluator.md): InputEvaluator class, to evaluate Operation.Input nodes.
+- [`graph.Graph`](./torus.fhe.representation.graph.md): Graph class, to represent computation graphs.
+- [`graph.GraphProcessor`](./torus.fhe.representation.graph.md): GraphProcessor base class, to define the API for a graph processing pipeline.
+- [`graph.MultiGraphProcessor`](./torus.fhe.representation.graph.md): MultiGraphProcessor base class, to define the API for a multiple graph processing pipeline.
+- [`node.Node`](./torus.fhe.representation.node.md): Node class, to represent computation in a computation graph.
+- [`operation.Operation`](./torus.fhe.representation.operation.md): Operation enum, to distinguish nodes within a computation graph.
+- [`bridge.Bridge`](./torus.fhe.tfhers.bridge.md): TFHErs Bridge extend a Client with TFHErs functionalities.
+- [`dtypes.CryptoParams`](./torus.fhe.tfhers.dtypes.md): Crypto parameters used for a tfhers integer.
+- [`dtypes.EncryptionKeyChoice`](./torus.fhe.tfhers.dtypes.md): TFHErs key choice: big or small.
+- [`dtypes.TFHERSIntegerType`](./torus.fhe.tfhers.dtypes.md) to represent tfhers integer types.
+- [`specs.TFHERSClientSpecs`](./torus.fhe.tfhers.specs.md): TFHE-rs client specs.
+- [`values.TFHERSInteger`](./torus.fhe.tfhers.values.md) into typed values, using tfhers types.
+- [`tracer.Annotation`](./torus.fhe.tracing.tracer.md): Base annotation for direct definition.
+- [`tracer.ScalarAnnotation`](./torus.fhe.tracing.tracer.md): Base scalar annotation for direct definition.
+- [`tracer.TensorAnnotation`](./torus.fhe.tracing.tracer.md): Base tensor annotation for direct definition.
+- [`tracer.Tracer`](./torus.fhe.tracing.tracer.md): Tracer class, to create computation graphs from python functions.
+- [`typing.f32`](./torus.fhe.tracing.typing.md): Scalar f32 annotation.
+- [`typing.f64`](./torus.fhe.tracing.typing.md): Scalar f64 annotation.
+- [`typing.int1`](./torus.fhe.tracing.typing.md): Scalar int1 annotation.
+- [`typing.int10`](./torus.fhe.tracing.typing.md): Scalar int10 annotation.
+- [`typing.int11`](./torus.fhe.tracing.typing.md): Scalar int11 annotation.
+- [`typing.int12`](./torus.fhe.tracing.typing.md): Scalar int12 annotation.
+- [`typing.int13`](./torus.fhe.tracing.typing.md): Scalar int13 annotation.
+- [`typing.int14`](./torus.fhe.tracing.typing.md): Scalar int14 annotation.
+- [`typing.int15`](./torus.fhe.tracing.typing.md): Scalar int15 annotation.
+- [`typing.int16`](./torus.fhe.tracing.typing.md): Scalar int16 annotation.
+- [`typing.int17`](./torus.fhe.tracing.typing.md): Scalar int17 annotation.
+- [`typing.int18`](./torus.fhe.tracing.typing.md): Scalar int18 annotation.
+- [`typing.int19`](./torus.fhe.tracing.typing.md): Scalar int19 annotation.
+- [`typing.int2`](./torus.fhe.tracing.typing.md): Scalar int2 annotation.
+- [`typing.int20`](./torus.fhe.tracing.typing.md): Scalar int20 annotation.
+- [`typing.int21`](./torus.fhe.tracing.typing.md): Scalar int21 annotation.
+- [`typing.int22`](./torus.fhe.tracing.typing.md): Scalar int22 annotation.
+- [`typing.int23`](./torus.fhe.tracing.typing.md): Scalar int23 annotation.
+- [`typing.int24`](./torus.fhe.tracing.typing.md): Scalar int24 annotation.
+- [`typing.int25`](./torus.fhe.tracing.typing.md): Scalar int25 annotation.
+- [`typing.int26`](./torus.fhe.tracing.typing.md): Scalar int26 annotation.
+- [`typing.int27`](./torus.fhe.tracing.typing.md): Scalar int27 annotation.
+- [`typing.int28`](./torus.fhe.tracing.typing.md): Scalar int28 annotation.
+- [`typing.int29`](./torus.fhe.tracing.typing.md): Scalar int29 annotation.
+- [`typing.int3`](./torus.fhe.tracing.typing.md): Scalar int3 annotation.
+- [`typing.int30`](./torus.fhe.tracing.typing.md): Scalar int30 annotation.
+- [`typing.int31`](./torus.fhe.tracing.typing.md): Scalar int31 annotation.
+- [`typing.int32`](./torus.fhe.tracing.typing.md): Scalar int32 annotation.
+- [`typing.int33`](./torus.fhe.tracing.typing.md): Scalar int33 annotation.
+- [`typing.int34`](./torus.fhe.tracing.typing.md): Scalar int34 annotation.
+- [`typing.int35`](./torus.fhe.tracing.typing.md): Scalar int35 annotation.
+- [`typing.int36`](./torus.fhe.tracing.typing.md): Scalar int36 annotation.
+- [`typing.int37`](./torus.fhe.tracing.typing.md): Scalar int37 annotation.
+- [`typing.int38`](./torus.fhe.tracing.typing.md): Scalar int38 annotation.
+- [`typing.int39`](./torus.fhe.tracing.typing.md): Scalar int39 annotation.
+- [`typing.int4`](./torus.fhe.tracing.typing.md): Scalar int4 annotation.
+- [`typing.int40`](./torus.fhe.tracing.typing.md): Scalar int40 annotation.
+- [`typing.int41`](./torus.fhe.tracing.typing.md): Scalar int41 annotation.
+- [`typing.int42`](./torus.fhe.tracing.typing.md): Scalar int42 annotation.
+- [`typing.int43`](./torus.fhe.tracing.typing.md): Scalar int43 annotation.
+- [`typing.int44`](./torus.fhe.tracing.typing.md): Scalar int44 annotation.
+- [`typing.int45`](./torus.fhe.tracing.typing.md): Scalar int45 annotation.
+- [`typing.int46`](./torus.fhe.tracing.typing.md): Scalar int46 annotation.
+- [`typing.int47`](./torus.fhe.tracing.typing.md): Scalar int47 annotation.
+- [`typing.int48`](./torus.fhe.tracing.typing.md): Scalar int48 annotation.
+- [`typing.int49`](./torus.fhe.tracing.typing.md): Scalar int49 annotation.
+- [`typing.int5`](./torus.fhe.tracing.typing.md): Scalar int5 annotation.
+- [`typing.int50`](./torus.fhe.tracing.typing.md): Scalar int50 annotation.
+- [`typing.int51`](./torus.fhe.tracing.typing.md): Scalar int51 annotation.
+- [`typing.int52`](./torus.fhe.tracing.typing.md): Scalar int52 annotation.
+- [`typing.int53`](./torus.fhe.tracing.typing.md): Scalar int53 annotation.
+- [`typing.int54`](./torus.fhe.tracing.typing.md): Scalar int54 annotation.
+- [`typing.int55`](./torus.fhe.tracing.typing.md): Scalar int55 annotation.
+- [`typing.int56`](./torus.fhe.tracing.typing.md): Scalar int56 annotation.
+- [`typing.int57`](./torus.fhe.tracing.typing.md): Scalar int57 annotation.
+- [`typing.int58`](./torus.fhe.tracing.typing.md): Scalar int58 annotation.
+- [`typing.int59`](./torus.fhe.tracing.typing.md): Scalar int59 annotation.
+- [`typing.int6`](./torus.fhe.tracing.typing.md): Scalar int6 annotation.
+- [`typing.int60`](./torus.fhe.tracing.typing.md): Scalar int60 annotation.
+- [`typing.int61`](./torus.fhe.tracing.typing.md): Scalar int61 annotation.
+- [`typing.int62`](./torus.fhe.tracing.typing.md): Scalar int62 annotation.
+- [`typing.int63`](./torus.fhe.tracing.typing.md): Scalar int63 annotation.
+- [`typing.int64`](./torus.fhe.tracing.typing.md): Scalar int64 annotation.
+- [`typing.int7`](./torus.fhe.tracing.typing.md): Scalar int7 annotation.
+- [`typing.int8`](./torus.fhe.tracing.typing.md): Scalar int8 annotation.
+- [`typing.int9`](./torus.fhe.tracing.typing.md): Scalar int9 annotation.
+- [`typing.tensor`](./torus.fhe.tracing.typing.md): Tensor annotation.
+- [`typing.uint1`](./torus.fhe.tracing.typing.md): Scalar uint1 annotation.
+- [`typing.uint10`](./torus.fhe.tracing.typing.md): Scalar uint10 annotation.
+- [`typing.uint11`](./torus.fhe.tracing.typing.md): Scalar uint11 annotation.
+- [`typing.uint12`](./torus.fhe.tracing.typing.md): Scalar uint12 annotation.
+- [`typing.uint13`](./torus.fhe.tracing.typing.md): Scalar uint13 annotation.
+- [`typing.uint14`](./torus.fhe.tracing.typing.md): Scalar uint14 annotation.
+- [`typing.uint15`](./torus.fhe.tracing.typing.md): Scalar uint15 annotation.
+- [`typing.uint16`](./torus.fhe.tracing.typing.md): Scalar uint16 annotation.
+- [`typing.uint17`](./torus.fhe.tracing.typing.md): Scalar uint17 annotation.
+- [`typing.uint18`](./torus.fhe.tracing.typing.md): Scalar uint18 annotation.
+- [`typing.uint19`](./torus.fhe.tracing.typing.md): Scalar uint19 annotation.
+- [`typing.uint2`](./torus.fhe.tracing.typing.md): Scalar uint2 annotation.
+- [`typing.uint20`](./torus.fhe.tracing.typing.md): Scalar uint20 annotation.
+- [`typing.uint21`](./torus.fhe.tracing.typing.md): Scalar uint21 annotation.
+- [`typing.uint22`](./torus.fhe.tracing.typing.md): Scalar uint22 annotation.
+- [`typing.uint23`](./torus.fhe.tracing.typing.md): Scalar uint23 annotation.
+- [`typing.uint24`](./torus.fhe.tracing.typing.md): Scalar uint24 annotation.
+- [`typing.uint25`](./torus.fhe.tracing.typing.md): Scalar uint25 annotation.
+- [`typing.uint26`](./torus.fhe.tracing.typing.md): Scalar uint26 annotation.
+- [`typing.uint27`](./torus.fhe.tracing.typing.md): Scalar uint27 annotation.
+- [`typing.uint28`](./torus.fhe.tracing.typing.md): Scalar uint28 annotation.
+- [`typing.uint29`](./torus.fhe.tracing.typing.md): Scalar uint29 annotation.
+- [`typing.uint3`](./torus.fhe.tracing.typing.md): Scalar uint3 annotation.
+- [`typing.uint30`](./torus.fhe.tracing.typing.md): Scalar uint30 annotation.
+- [`typing.uint31`](./torus.fhe.tracing.typing.md): Scalar uint31 annotation.
+- [`typing.uint32`](./torus.fhe.tracing.typing.md): Scalar uint32 annotation.
+- [`typing.uint33`](./torus.fhe.tracing.typing.md): Scalar uint33 annotation.
+- [`typing.uint34`](./torus.fhe.tracing.typing.md): Scalar uint34 annotation.
+- [`typing.uint35`](./torus.fhe.tracing.typing.md): Scalar uint35 annotation.
+- [`typing.uint36`](./torus.fhe.tracing.typing.md): Scalar uint36 annotation.
+- [`typing.uint37`](./torus.fhe.tracing.typing.md): Scalar uint37 annotation.
+- [`typing.uint38`](./torus.fhe.tracing.typing.md): Scalar uint38 annotation.
+- [`typing.uint39`](./torus.fhe.tracing.typing.md): Scalar uint39 annotation.
+- [`typing.uint4`](./torus.fhe.tracing.typing.md): Scalar uint4 annotation.
+- [`typing.uint40`](./torus.fhe.tracing.typing.md): Scalar uint40 annotation.
+- [`typing.uint41`](./torus.fhe.tracing.typing.md): Scalar uint41 annotation.
+- [`typing.uint42`](./torus.fhe.tracing.typing.md): Scalar uint42 annotation.
+- [`typing.uint43`](./torus.fhe.tracing.typing.md): Scalar uint43 annotation.
+- [`typing.uint44`](./torus.fhe.tracing.typing.md): Scalar uint44 annotation.
+- [`typing.uint45`](./torus.fhe.tracing.typing.md): Scalar uint45 annotation.
+- [`typing.uint46`](./torus.fhe.tracing.typing.md): Scalar uint46 annotation.
+- [`typing.uint47`](./torus.fhe.tracing.typing.md): Scalar uint47 annotation.
+- [`typing.uint48`](./torus.fhe.tracing.typing.md): Scalar uint48 annotation.
+- [`typing.uint49`](./torus.fhe.tracing.typing.md): Scalar uint49 annotation.
+- [`typing.uint5`](./torus.fhe.tracing.typing.md): Scalar uint5 annotation.
+- [`typing.uint50`](./torus.fhe.tracing.typing.md): Scalar uint50 annotation.
+- [`typing.uint51`](./torus.fhe.tracing.typing.md): Scalar uint51 annotation.
+- [`typing.uint52`](./torus.fhe.tracing.typing.md): Scalar uint52 annotation.
+- [`typing.uint53`](./torus.fhe.tracing.typing.md): Scalar uint53 annotation.
+- [`typing.uint54`](./torus.fhe.tracing.typing.md): Scalar uint54 annotation.
+- [`typing.uint55`](./torus.fhe.tracing.typing.md): Scalar uint55 annotation.
+- [`typing.uint56`](./torus.fhe.tracing.typing.md): Scalar uint56 annotation.
+- [`typing.uint57`](./torus.fhe.tracing.typing.md): Scalar uint57 annotation.
+- [`typing.uint58`](./torus.fhe.tracing.typing.md): Scalar uint58 annotation.
+- [`typing.uint59`](./torus.fhe.tracing.typing.md): Scalar uint59 annotation.
+- [`typing.uint6`](./torus.fhe.tracing.typing.md): Scalar uint6 annotation.
+- [`typing.uint60`](./torus.fhe.tracing.typing.md): Scalar uint60 annotation.
+- [`typing.uint61`](./torus.fhe.tracing.typing.md): Scalar uint61 annotation.
+- [`typing.uint62`](./torus.fhe.tracing.typing.md): Scalar uint62 annotation.
+- [`typing.uint63`](./torus.fhe.tracing.typing.md): Scalar uint63 annotation.
+- [`typing.uint64`](./torus.fhe.tracing.typing.md): Scalar uint64 annotation.
+- [`typing.uint7`](./torus.fhe.tracing.typing.md): Scalar uint7 annotation.
+- [`typing.uint8`](./torus.fhe.tracing.typing.md): Scalar uint8 annotation.
+- [`typing.uint9`](./torus.fhe.tracing.typing.md): Scalar uint9 annotation.
+- [`value_description.ValueDescription`](./torus.fhe.values.value_description.md): ValueDescription class, to combine data type, shape, and encryption status into a single object.
+
+## Functions
+
+- [`compiler.check_gpu_available`](./torus.compiler.md): Check whether a CUDA device is available and online.
+- [`compiler.check_gpu_enabled`](./torus.compiler.md): Check whether the compiler and runtime support GPU offloading.
+- [`compiler.init_dfr`](./torus.compiler.md): Initialize dataflow parallelization.
+- [`compiler.round_trip`](./torus.compiler.md): Parse the MLIR input, then return it back.
+- [`compilation_feedback.tag_from_location`](./torus.compiler.compilation_feedback.md): Extract tag of the operation from its location.
+- [`utils.lookup_runtime_lib`](./torus.compiler.utils.md): Try to find the absolute path to the runtime library.
+- [`decorators.circuit`](./torus.fhe.compilation.decorators.md): Provide a direct interface for compilation of single circuit programs.
+- [`decorators.compiler`](./torus.fhe.compilation.decorators.md): Provide an easy interface for the compilation of single-circuit programs.
+- [`decorators.function`](./torus.fhe.compilation.decorators.md): Provide an easy interface to define a function within an fhe module.
+- [`decorators.module`](./torus.fhe.compilation.decorators.md): Provide an easy interface for the compilation of multi functions modules.
+- [`utils.add_nodes_from_to`](./torus.fhe.compilation.utils.md): Add nodes from `from_nodes` to `to_nodes`, to `all_nodes`.
+- [`utils.check_subgraph_fusibility`](./torus.fhe.compilation.utils.md): Determine if a subgraph can be fused.
+- [`utils.convert_subgraph_to_subgraph_node`](./torus.fhe.compilation.utils.md): Convert a subgraph to Operation.Generic node.
+- [`utils.find_closest_integer_output_nodes`](./torus.fhe.compilation.utils.md): Find the closest upstream integer output nodes to a set of start nodes in a graph.
+- [`utils.find_float_subgraph_with_unique_terminal_node`](./torus.fhe.compilation.utils.md): Find a subgraph with float computations that end with an integer output.
+- [`utils.find_single_lca`](./torus.fhe.compilation.utils.md): Find the single lowest common ancestor of a list of nodes.
+- [`utils.find_tlu_subgraph_with_multiple_variable_inputs_that_has_a_single_common_ancestor`](./torus.fhe.compilation.utils.md): Find a subgraph with a tlu computation that has multiple variable inputs     where all variable inputs share a common ancestor.
+- [`utils.friendly_type_format`](./torus.fhe.compilation.utils.md): Convert a type to a string. Remove package name and class/type keywords.
+- [`utils.fuse`](./torus.fhe.compilation.utils.md): Fuse appropriate subgraphs in a graph to a single Operation.Generic node.
+- [`utils.get_terminal_size`](./torus.fhe.compilation.utils.md): Get the terminal size.
+- [`utils.inputset`](./torus.fhe.compilation.utils.md): Generate a random inputset.
+- [`utils.is_single_common_ancestor`](./torus.fhe.compilation.utils.md): Determine if a node is the single common ancestor of a list of nodes.
+- [`utils.validate_input_args`](./torus.fhe.compilation.utils.md): Validate input arguments.
+- [`utils.combine_dtypes`](./torus.fhe.dtypes.utils.md): Get the 'BaseDataType' that can represent a set of 'BaseDataType's.
+- [`array.array`](./torus.fhe.extensions.array.md): Create an encrypted array from either encrypted or clear values.
+- [`bits.bits`](./torus.fhe.extensions.bits.md): Extract bits of integers.
+- [`constant.constant`](./torus.fhe.extensions.constant.md): Trivial encryption of a cleartext value.
+- [`convolution.conv`](./torus.fhe.extensions.convolution.md): Trace and evaluate convolution operations.
+- [`hint.hint`](./torus.fhe.extensions.hint.md): Hint the compilation process about properties of a value.
+- [`identity.identity`](./torus.fhe.extensions.identity.md): Apply identity function to x.
+- [`identity.refresh`](./torus.fhe.extensions.identity.md): Refresh x.
+- [`maxpool.maxpool`](./torus.fhe.extensions.maxpool.md): Evaluate or trace MaxPool operation.
+- [`multivariate.multivariate`](./torus.fhe.extensions.multivariate.md): Wrap a multivariate function so that it is traced into a single generic node.
+- [`ones.one`](./torus.fhe.extensions.ones.md): Create an encrypted scalar with the value of one.
+- [`ones.ones`](./torus.fhe.extensions.ones.md): Create an encrypted array of ones.
+- [`ones.ones_like`](./torus.fhe.extensions.ones.md): Create an encrypted array of ones with the same shape as another array.
+- [`relu.relu`](./torus.fhe.extensions.relu.md): Rectified linear unit extension.
+- [`round_bit_pattern.round_bit_pattern`](./torus.fhe.extensions.round_bit_pattern.md): Round the bit pattern of an integer.
+- [`tag.tag`](./torus.fhe.extensions.tag.md): Introduce a new tag to the tag stack.
+- [`truncate_bit_pattern.truncate_bit_pattern`](./torus.fhe.extensions.truncate_bit_pattern.md): Round the bit pattern of an integer.
+- [`univariate.univariate`](./torus.fhe.extensions.univariate.md): Wrap a univariate function so that it is traced into a single generic node.
+- [`zeros.zero`](./torus.fhe.extensions.zeros.md): Create an encrypted scalar with the value of zero.
+- [`zeros.zeros`](./torus.fhe.extensions.zeros.md): Create an encrypted array of zeros.
+- [`zeros.zeros_like`](./torus.fhe.extensions.zeros.md): Create an encrypted array of zeros with the same shape as another array.
+- [`utils.assert_that`](./torus.fhe.internal.utils.md): Assert a condition.
+- [`utils.unreachable`](./torus.fhe.internal.utils.md): Raise a RuntimeError to indicate unreachable code is entered.
+- [`utils.construct_deduplicated_tables`](./torus.fhe.mlir.utils.md): Construct lookup tables for each cell of the input for an Operation.Generic node.
+- [`utils.construct_table`](./torus.fhe.mlir.utils.md): Construct the lookup table for an Operation.Generic node.
+- [`utils.construct_table_multivariate`](./torus.fhe.mlir.utils.md): Construct the lookup table for a multivariate node.
+- [`utils.flood_replace_none_values`](./torus.fhe.mlir.utils.md): Use flooding algorithm to replace `None` values.
+- [`utils.format_constant`](./torus.fhe.representation.utils.md): Get the textual representation of a constant.
+- [`utils.format_indexing_element`](./torus.fhe.representation.utils.md): Format an indexing element.
+- [`tfhers.get_type_from_params`](./torus.fhe.tfhers.md): Get a TFHE-rs integer type from TFHE-rs parameters in JSON format.
+- [`tfhers.get_type_from_params_dict`](./torus.fhe.tfhers.md): Get a TFHE-rs integer type from TFHE-rs parameters in JSON format.
+- [`bridge.new_bridge`](./torus.fhe.tfhers.bridge.md): Create a TFHErs bridge from a circuit or module or client.
+- [`tracing.from_native`](./torus.fhe.tfhers.tracing.md): Convert a Torus integer to the tfhers representation.
+- [`tracing.to_native`](./torus.fhe.tfhers.tracing.md): Convert a tfhers integer to the Torus representation.
+- [`scalar.clear_scalar_builder`](./torus.fhe.values.scalar.md): Build a clear scalar value.
+- [`scalar.encrypted_scalar_builder`](./torus.fhe.values.scalar.md): Build an encrypted scalar value.
+- [`scalar.clear_scalar_builder`](./torus.fhe.values.scalar.md): Build a clear scalar value.
+- [`scalar.encrypted_scalar_builder`](./torus.fhe.values.scalar.md): Build an encrypted scalar value.
+- [`tensor.clear_tensor_builder`](./torus.fhe.values.tensor.md): Build a clear tensor value.
+- [`tensor.encrypted_tensor_builder`](./torus.fhe.values.tensor.md): Build an encrypted tensor value.
+- [`tensor.clear_tensor_builder`](./torus.fhe.values.tensor.md): Build a clear tensor value.
+- [`tensor.encrypted_tensor_builder`](./torus.fhe.values.tensor.md): Build an encrypted tensor value.

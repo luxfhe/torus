@@ -1,0 +1,33 @@
+name: check commit compliance
+on:
+  pull_request:
+
+jobs:
+  commit-compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit signatures
+        uses: 1Password/check-signed-commits-action@ed2885f3ed2577a4f5d3c3fe895432a557d23d52
+      - name: Check first line
+        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
+        with:
+          pattern: '^(feat|fix|test|bench|docs|chore|refactor|perf)\((compiler|backend|frontend|optimizer|tools|ci|common).*\): '
+          flags: 'gs'
+          error: 'Your first line has to contain a commit type and scope like "feat(my_feature): msg".'
+          excludeDescription: 'true' # optional: this excludes the description body of a pull request
+          excludeTitle: 'true' # optional: this excludes the title of a pull request
+          checkAllCommitMessages: 'true' # optional: this checks all commits associated with a pull request
+          accessToken: ${{ secrets.GITHUB_TOKEN }} # github access token is only required if checkAllCommitMessages is true
+      - name: checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: 'false'
+      - name: linelint
+        uses: fernandrone/linelint@8136e0fa9997122d80f5f793e0bb9a45e678fbb1 # 0.0.4
+        id: linelint
+      - name: markdown-link-check
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          config-file: 'ci/markdown_link_check_config.json'

@@ -1,0 +1,13 @@
+add_mlir_library(
+  FHELinalgDialectTransforms
+  Tiling.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/FHELinalg
+  DEPENDS
+  FHELinalgDialect
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR
+  FHELinalgDialect
+  MLIRLinalgTransforms)
