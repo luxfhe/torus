@@ -2,7 +2,7 @@ pub use cxx::{SharedPtr, UniquePtr};
 pub use ffi::c_void;
 
 mod ffi;
-#[cfg(feature = "tfhe-rs")]
+#[cfg(feature = "Lux-FHE")]
 pub mod tfhe;
 
 #[cfg(feature = "compiler")]

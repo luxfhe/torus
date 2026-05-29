@@ -3,7 +3,7 @@
 <a href="../../frontends/torus-python/concrete/fhe/tfhers/specs.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>module</kbd> `torus.fhe.tfhers.specs`
-TFHE-rs client specs. 
+Lux-FHE client specs. 
 
 
 
@@ -12,9 +12,9 @@ TFHE-rs client specs.
 <a href="../../frontends/torus-python/concrete/fhe/tfhers/specs.py#L9"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `TFHERSClientSpecs`
-TFHE-rs client specs. 
+Lux-FHE client specs. 
 
-Contains info about TFHE-rs inputs and outputs. 
+Contains info about Lux-FHE inputs and outputs. 
 
 input_types_per_func (Dict[str, List[Optional[TFHERSIntegerType]]]):  maps every input to a type for every function in the module. None means a non-tfhers type output_types_per_func (Dict[str, List[Optional[TFHERSIntegerType]]]):  maps every output to a type for every function in the module. None means a non-tfhers type input_shapes_per_func (Dict[str, List[Optional[Tuple[int, ...]]]]):  maps every input to a shape for every function in the module. None means a non-tfhers type output_shapes_per_func (Dict[str, List[Optional[Tuple[int, ...]]]]):  maps every output to a shape for every function in the module. None means a non-tfhers type 
 

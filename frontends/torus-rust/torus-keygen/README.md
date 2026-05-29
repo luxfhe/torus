@@ -9,12 +9,12 @@
 <hr/>
 
 <p align="center">
-  <a href="https://docs.luxfhe.com/torus"> 📒 Documentation</a> | <a href="https://luxfhe.com/community"> 💛 Community support</a> | <a href="https://github.com/luxfhe.com/awesome-zama"> 📚 FHE resources by Lux Industries</a>
+  <a href="https://docs.luxfhe.com/torus"> 📒 Documentation</a> | <a href="https://luxfhe.com/community"> 💛 Community support</a> | <a href="https://github.com/luxfhe.com/awesome-lux"> 📚 FHE resources by Lux Industries</a>
 </p>
 
 <p align="center">
   <a href="https://github.com/luxfhe/torus/blob/main/LICENSE.txt"><img src="https://img.shields.io/badge/License-BSD--3--Clause--Clear-%23ffb243?style=flat-square"></a>
-  <a href="https://github.com/luxfhe.com/bounty-program"><img src="https://img.shields.io/badge/Contribute-Zama%20Bounty%20Program-%23ffd208?style=flat-square"></a>
+  <a href="https://github.com/luxfhe.com/bounty-program"><img src="https://img.shields.io/badge/Contribute-Lux Industries%20Bounty%20Program-%23ffd208?style=flat-square"></a>
   <a href="https://slsa.dev"><img alt="SLSA 3" src="https://slsa.dev/images/gh-badge-level3.svg" /></a>
 </p>
 

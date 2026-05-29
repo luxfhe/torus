@@ -234,7 +234,7 @@ Create a server using MLIR and output sign information.
 
  composition_rules (Iterable[Tuple[str, int, str, int]]):  composition rules to be applied when compiling 
 
- tfhers_specs (Optional[TFHERSClientSpecs]):  TFHE-rs client specs 
+ tfhers_specs (Optional[TFHERSClientSpecs]):  Lux-FHE client specs 
 
 ---
 

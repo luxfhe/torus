@@ -53,7 +53,7 @@ class MakeBuild(build_ext):
 setuptools.setup(
     name="torus-compiler",
     version=find_version(),
-    author="Zama Team",
+    author="Lux Industries",
     author_email="hello@luxfhe.com",
     description="Concrete Compiler",
     license="BSD-3",

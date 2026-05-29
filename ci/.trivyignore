@@ -6,14 +6,14 @@ misconfigurations:
     paths:
       - docker/Dockerfile.cuda-env
       - docker/Dockerfile.concrete-python
-      - docker/Dockerfile.concrete-compiler-env
-      - docker/Dockerfile.concrete-compiler-env-gpu
+      - docker/Dockerfile.torus-compiler-env
+      - docker/Dockerfile.torus-compiler-env-gpu
   - id: AVD-DS-0002
     statement: The images are used as a CI environment
     paths:
       - docker/Dockerfile.cuda-env
-      - docker/Dockerfile.concrete-compiler-env
-      - docker/Dockerfile.concrete-compiler-env-gpu
+      - docker/Dockerfile.torus-compiler-env
+      - docker/Dockerfile.torus-compiler-env-gpu
 
 secrets:
 

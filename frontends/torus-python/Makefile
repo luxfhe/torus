@@ -200,7 +200,7 @@ ruff:
 	ruff check benchmarks/
 
 check-links:
-	@# Check that no links target the main branch, some internal repositories (Concrete ML or Concrete) or our internal GitBook
+	@# Check that no links target the main branch, some internal repositories (TorusML or Concrete) or our internal GitBook
 	bash ./scripts/links/check_internal_links.sh
 
 	@# To avoid some issues with priviledges and linkcheckmd

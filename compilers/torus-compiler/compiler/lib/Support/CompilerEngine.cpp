@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Zama
+// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -358,12 +358,12 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
 #else
     // Allow compilation to complete if only code generation is expected.
     if (target != Target::LIBRARY) {
-      warnx("This instance of the Concrete compiler does not support GPU "
+      warnx("This instance of the Torus compiler does not support GPU "
             "acceleration."
             " Allowing code generation to proceed, but execution will not be "
             "possible.");
     } else {
-      warnx("This instance of the Concrete compiler does not support GPU "
+      warnx("This instance of the Torus compiler does not support GPU "
             "acceleration."
             " If you are using Concrete-Python, it means that the module "
             "installed is not GPU enabled.\n"

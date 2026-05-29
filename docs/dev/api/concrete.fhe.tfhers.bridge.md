@@ -39,7 +39,7 @@ Create a TFHErs bridge from a circuit or module or client.
 ## <kbd>class</kbd> `Bridge`
 TFHErs Bridge extend a Client with TFHErs functionalities. 
 
-client (fhe.Client): the client instance to be attached by the Bridge tfhers_specs (fhe.tfhers.TFHERSClientSpecs): the TFHE-rs specs of the client 
+client (fhe.Client): the client instance to be attached by the Bridge tfhers_specs (fhe.tfhers.TFHERSClientSpecs): the Lux-FHE specs of the client 
 
 <a href="../../frontends/torus-python/concrete/fhe/tfhers/bridge.py#L29"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 

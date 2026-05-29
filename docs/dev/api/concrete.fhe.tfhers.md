@@ -27,13 +27,13 @@ get_type_from_params(
 ) → TFHERSIntegerType
 ```
 
-Get a TFHE-rs integer type from TFHE-rs parameters in JSON format. 
+Get a Lux-FHE integer type from Lux-FHE parameters in JSON format. 
 
 
 
 **Args:**
  
- - <b>`path_to_params_json`</b> (str):  path to the TFHE-rs parameters (JSON format) 
+ - <b>`path_to_params_json`</b> (str):  path to the Lux-FHE parameters (JSON format) 
  - <b>`is_signed`</b> (bool):  sign of the result type 
  - <b>`precision`</b> (int):  precision of the result type 
 
@@ -58,13 +58,13 @@ get_type_from_params_dict(
 ) → TFHERSIntegerType
 ```
 
-Get a TFHE-rs integer type from TFHE-rs parameters in JSON format. 
+Get a Lux-FHE integer type from Lux-FHE parameters in JSON format. 
 
 
 
 **Args:**
  
- - <b>`crypto_param_dict`</b> (Dict):  dictionary of TFHE-rs parameters 
+ - <b>`crypto_param_dict`</b> (Dict):  dictionary of Lux-FHE parameters 
  - <b>`is_signed`</b> (bool):  sign of the result type 
  - <b>`precision`</b> (int):  precision of the result type 
 

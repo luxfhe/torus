@@ -1,12 +1,12 @@
 # Serialization of Ciphertexts and Keys
 
-This document explains how to serialize and deserialize ciphertexts and secret keys when working with TFHE-rs in Rust.
+This document explains how to serialize and deserialize ciphertexts and secret keys when working with Lux-FHE in Rust.
 
-Torus already has its serilization functions (e.g. `tfhers_bridge.export_value`, `tfhers_bridge.import_value`, `tfhers_bridge.keygen_with_initial_keys`, `tfhers_bridge.serialize_input_secret_key`). However, when implementing a TFHE-rs computation in Rust, we must use a compatible serialization.
+Torus already has its serilization functions (e.g. `tfhers_bridge.export_value`, `tfhers_bridge.import_value`, `tfhers_bridge.keygen_with_initial_keys`, `tfhers_bridge.serialize_input_secret_key`). However, when implementing a Lux-FHE computation in Rust, we must use a compatible serialization.
 
 ## Ciphertexts
 
-We should deserialize `FheUint8` using safe serialization functions from TFHE-rs
+We should deserialize `FheUint8` using safe serialization functions from Lux-FHE
 
 ```rust
 use tfhe::FheUint8;
@@ -33,7 +33,7 @@ fn save_fheuint8(fheuint: FheUint8, path: &String) {
 
 ## Secret Key
 
-We should deserialize `LweSecretKey` using safe serialization functions from TFHE-rs
+We should deserialize `LweSecretKey` using safe serialization functions from Lux-FHE
 
 ```rust
 use tfhe::core_crypto::prelude::LweSecretKey;
