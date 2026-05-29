@@ -1,0 +1,67 @@
+# Publishing Torus
+
+This document covers how Torus reaches its distribution channels. There is
+exactly one way to ship each artefact; everything else is a draft.
+
+## PyPI — `torus-fhe`
+
+The `frontends/torus-python/` package is published to PyPI as **`torus-fhe`**
+(the project name is set in `frontends/torus-python/pyproject.toml`).
+
+### One-time setup (operator)
+
+1. Generate a scoped PyPI API token at <https://pypi.org/manage/account/token/>.
+   - Scope: project `torus-fhe` (after the first manual upload reserves the
+     name) or "Entire account" for the inaugural push.
+2. Add it to the `luxfhe/torus` GitHub repo as a secret named
+   `PYPI_API_TOKEN` (Settings → Secrets and variables → Actions → New
+   repository secret).
+3. Create a GitHub environment called `pypi` and gate it on a required
+   reviewer if release approval is desired. The `torus-pypi` workflow
+   references this environment.
+
+### Release flow (each version)
+
+1. Bump `frontends/torus-python/version.txt` (the source of truth for
+   `setup.py`'s `version()` helper).
+2. Commit on `main`.
+3. Tag and push:
+
+   ```bash
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+4. The `.github/workflows/torus-pypi.yml` workflow fires on the `v*` tag,
+   builds an sdist + wheel via `pypa/build`, and uploads with
+   `pypa/gh-action-pypi-publish@release/v1`. `skip-existing: true` makes the
+   step idempotent if the same version was already uploaded out-of-band.
+
+### Versioning rules
+
+- Patch bumps only between releases (e.g. `v0.1.0` → `v0.1.1`). Never jump a
+  major or minor unless the change is genuinely API-breaking.
+- The Torus version is decoupled from the upstream Concrete history; we
+  start at `v0.1.0` on first publish.
+
+### What is NOT yet automated
+
+- **Native bindings**: the wheel produced by this workflow is currently a
+  pure-Python distribution. The full cross-platform wheel matrix (manylinux
+  + macOS arm64/x86_64) for the compiled `toruslang_core` bindings is a
+  follow-up. Until it lands, GPU/FPGA users build from source via
+  `compilers/torus-compiler/`.
+- **PyPI trusted publishing**: the workflow uses a long-lived API token. A
+  later pass should migrate to OIDC trusted publishing (no secret needed)
+  via the same environment hook.
+
+## GitHub container images
+
+Compiler and runtime container images are pushed to GHCR under
+`ghcr.io/luxfhe/torus-*` by the existing per-component workflows in
+`.github/workflows/`. See `docker/` for the source Dockerfiles.
+
+## Documentation
+
+`docs.luxfhe.com/torus` is built from `docs/` and published by the
+`refresh_zama_pypi.yml`-era workflow (slated for rename in the next pass).
