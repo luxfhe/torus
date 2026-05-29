@@ -1,0 +1,7 @@
+ARG BASEIMAGE=ghcr.io/luxfhe/torus/compiler-ci:latest
+# hadolint ignore=DL3006
+FROM $BASEIMAGE
+
+# Setup CUDA
+COPY --from=ghcr.io/luxfhe/torus/cuda:11-8 /usr/local/cuda-11.8/ /usr/local/cuda-11.8/
+ENV PATH="$PATH:/usr/local/cuda-11.8/bin"

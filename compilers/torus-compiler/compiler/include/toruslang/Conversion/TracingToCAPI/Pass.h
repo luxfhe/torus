@@ -1,0 +1,18 @@
+// Part of the Concrete Compiler Project, under the BSD3 License with Zama
+// Exceptions. See
+// https://github.com/luxfhe/torus/blob/main/LICENSE.txt
+// for license information.
+
+#ifndef ZAMALANG_CONVERSION_TRACINGTOCAPI_PASS_H_
+#define ZAMALANG_CONVERSION_TRACINGTOCAPI_PASS_H_
+
+#include "mlir/Pass/Pass.h"
+
+namespace mlir {
+namespace toruslang {
+/// Create a pass to convert `Tracing` dialect to CAPI calls.
+std::unique_ptr<OperationPass<ModuleOp>> createConvertTracingToCAPIPass();
+} // namespace toruslang
+} // namespace mlir
+
+#endif

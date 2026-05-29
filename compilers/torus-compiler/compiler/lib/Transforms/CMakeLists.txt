@@ -1,0 +1,20 @@
+add_mlir_library(
+  ConcretelangTransforms
+  Batching.cpp
+  CollapseParallelLoops.cpp
+  ForLoopToParallel.cpp
+  SCFForallToSCFFor.cpp
+  LinalgFillToLinalgGeneric.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Transforms
+  DEPENDS
+  MLIRTransforms
+  ConcretelangTransformsBufferizePassIncGen
+  ConcretelangInterfaces
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR
+  MLIRMemRefDialect
+  MLIRTransforms
+  ConcretelangInterfaces)

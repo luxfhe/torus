@@ -1,0 +1,6 @@
+add_subdirectory(EncryptedMulToDoubleTLU)
+add_subdirectory(DynamicTLU)
+add_subdirectory(BigInt)
+add_subdirectory(Boolean)
+add_subdirectory(Max)
+add_subdirectory(Optimizer)

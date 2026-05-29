@@ -1,0 +1,141 @@
+name: torus-ml test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/concrete_ml_test.yml
+      - frontends/torus-python/**
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+
+env:
+  DOCKER_IMAGE: ghcr.io/luxfhe/torus/compiler-ci
+  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+concurrency:
+  group: concrete_ml_test_${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  setup-instance:
+    runs-on: ubuntu-latest
+    outputs:
+      runner-name: ${{ steps.start-instance.outputs.label }}
+    steps:
+      - name: Start instance
+        id: start-instance
+        uses: luxfhe.com/slab-github-runner@f26b8d611b2e695158fb0a6980834f0612f65ef8 # v1.4.0
+        with:
+          mode: start
+          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
+          slab-url: ${{ secrets.SLAB_BASE_URL }}
+          job-secret: ${{ secrets.JOB_SECRET }}
+          backend: aws
+          profile: cpu-test
+
+  build-and-run-tests:
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    needs: setup-instance
+    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: recursive
+          persist-credentials: 'false'
+      - name: Set release version
+        run: echo "__version__ = \"$(date +"%Y.%m.%d")\"" >| frontends/torus-python/version.txt
+      - name: Expose release version from Python
+        run: cp frontends/torus-python/version.txt frontends/torus-python/concrete/fhe/version.py
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Build wheel
+        uses: addnab/docker-run-action@4f65fabd2431ebc8d299f8e5a018d79a769ae185 # v3
+        id: build-compiler-bindings
+        with:
+          registry: ghcr.io
+          image: ${{ env.DOCKER_IMAGE }}
+          username: ${{ secrets.GHCR_LOGIN }}
+          password: ${{ secrets.GHCR_PASSWORD }}
+          options: >-
+            -v ${{ github.workspace }}:/concrete
+            -v ${{ github.workspace }}/build:/build
+          shell: bash
+          run: |
+            set -e
+
+            ccache -z
+            ccache -p
+            
+            export PYTHON=${{ format('python{0}', matrix.python-version) }}
+            echo "Using $PYTHON"
+
+            cd /concrete/frontends/torus-python
+            make PYTHON=$PYTHON venv
+            source .venv/bin/activate
+            
+            cd /concrete/compilers/torus-compiler/compiler
+            make BUILD_DIR=/build CCACHE=ON DATAFLOW_EXECUTION_ENABLED=ON Python3_EXECUTABLE=$(which python) python-bindings
+            
+            echo "Debug: ccache statistics (after the build):"
+            ccache -s
+
+            cd /concrete/frontends/torus-python
+
+            export COMPILER_BUILD_DIRECTORY="/build"
+            make whl
+            
+            deactivate
+
+      - name: Setup Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: ML Tests
+        run: |
+          export HOME="/home/ubuntu"
+          CONCRETE_PYTHON_WHEEL="$(pwd)/frontends/torus-python/dist/*manylinux*.whl"
+          apt update
+          apt install git git-lfs -y
+          pip install poetry==1.8.4
+          ./ci/scripts/test_cml.sh --use-wheel "${CONCRETE_PYTHON_WHEEL}" --verbose
+      - name: Slack Notification
+        if: ${{ failure() && github.ref == 'refs/heads/main' }}
+        continue-on-error: true
+        uses: rtCamp/action-slack-notify@c33737706dea87cd7784c687dadc9adf1be59990
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: "build-and-run-tests finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+
+  teardown-instance:
+    if: ${{ always() && needs.setup-instance.result != 'skipped' }}
+    needs: [ setup-instance, build-and-run-tests ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stop instance
+        id: stop-instance
+        uses: luxfhe.com/slab-github-runner@f26b8d611b2e695158fb0a6980834f0612f65ef8 # v1.4.0
+        with:
+          mode: stop
+          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
+          slab-url: ${{ secrets.SLAB_BASE_URL }}
+          job-secret: ${{ secrets.JOB_SECRET }}
+          label: ${{ needs.setup-instance.outputs.runner-name }}
+
+      - name: Slack Notification
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: rtCamp/action-slack-notify@c33737706dea87cd7784c687dadc9adf1be59990
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: "Instance teardown finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"

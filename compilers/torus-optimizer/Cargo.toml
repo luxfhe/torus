@@ -1,0 +1,19 @@
+[workspace]
+
+members = [
+    "torus-optimizer",
+    "v0-parameters",
+    "torus-optimizer-cpp",
+    "charts",
+    "brute-force-optimizer",
+]
+
+resolver = "2"
+
+[profile.test]
+
+
+overflow-checks = true
+
+[profile.release]
+overflow-checks = true
