@@ -22,27 +22,27 @@ use serde::Serialize;
 const BLOCK_PARAMS: ClassicPBSParameters = tfhe::shortint::prelude::PARAM_MESSAGE_2_CARRY_3_KS_PBS;
 const SERIALIZE_SIZE_LIMIT: u64 = 1_000_000_000;
 
-// safe_save write to a path a value that implement the tfhe-rs safe serialization
+// safe_save write to a path a value that implement the Lux-FHE safe serialization
 fn safe_save<T: Serialize + Versionize + Named>(path: &String, value: &T) {
     let file = fs::File::create(path).unwrap();
     safe_serialize(value, file, SERIALIZE_SIZE_LIMIT).unwrap()
 }
 
-// safe_load read from a path a value that implement the tfhe-rs safe serialization
+// safe_load read from a path a value that implement the Lux-FHE safe serialization
 fn safe_load<T: DeserializeOwned + Unversionize + Named>(path: &String) -> T {
     let file = fs::File::open(path).unwrap();
     safe_deserialize(file, SERIALIZE_SIZE_LIMIT).unwrap()
 }
 
-// unsafe_save write to a path a value that NOT implement the tfhe-rs safe serialization
-// TODO: Remove me when all object implemennt tfhe-rs safe serialization
+// unsafe_save write to a path a value that NOT implement the Lux-FHE safe serialization
+// TODO: Remove me when all object implemennt Lux-FHE safe serialization
 fn unsafe_save<T: Serialize>(path: &String, value: &T) {
     let file = fs::File::create(path).unwrap();
     bincode::serialize_into(file, value).unwrap()
 }
 
-// unsafe_load read from a path a value that NOT implement the tfhe-rs safe serialization
-// TODO: Remove me when all object implemennt tfhe-rs safe serialization
+// unsafe_load read from a path a value that NOT implement the Lux-FHE safe serialization
+// TODO: Remove me when all object implemennt Lux-FHE safe serialization
 fn unsafe_load<T: DeserializeOwned>(path: &String) -> T {
     let file = fs::File::open(path).unwrap();
     bincode::deserialize_from(file).unwrap()
@@ -414,10 +414,10 @@ fn main() {
             Command::new("save-params")
                 .short_flag('p')
                 .long_flag("save-params")
-                .about("save TFHE-rs parameters used into a file (JSON)")
+                .about("save Lux-FHE parameters used into a file (JSON)")
                 .arg(
                     Arg::new("filename")
-                        .help("filename to save TFHE-rs parameters to")
+                        .help("filename to save Lux-FHE parameters to")
                         .required(true),
                 ),
         )

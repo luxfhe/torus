@@ -210,7 +210,7 @@ fi
 make update_encrypted_dataframe
 
 # Launch CML tests with pytest (and ignore flaky ones)
-# As compared to regular `make pytest`, known flaky errors from Concrete ML are simply ignored
+# As compared to regular `make pytest`, known flaky errors from TorusML are simply ignored
 # and coverage is disabled
 # The "-x" option is added so that the run stops at the first test that fails
 echo

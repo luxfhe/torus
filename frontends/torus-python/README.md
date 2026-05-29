@@ -46,12 +46,12 @@ make pytest
 
 Alternatively you can use VSCode to develop Torus-Python:
 
-Suppose the compiler bindings were built in `/home/zama/concrete/compilers/torus-compiler/compiler/build`:
+Suppose the compiler bindings were built in `/home/lux/concrete/compilers/torus-compiler/compiler/build`:
 
 - Create a `.env` file in the torus-python root directory
-- Determine the absolute path of the local compiler repository, e.g. `/home/zama/concrete`. Replace this with your 
+- Determine the absolute path of the local compiler repository, e.g. `/home/lux/concrete`. Replace this with your 
 path in the following two lines
-- Add to it `PYTHONPATH=$(PYTHON_PATH):/home/zama/concrete/compilers/torus-compiler/compiler/build/tools/toruslang/python_packages/toruslang_core/`
-- Add to it `LD_PRELOAD=/home/zama/concrete/compilers/torus-compiler/compiler/build/lib/libToruslangRuntime.so`
+- Add to it `PYTHONPATH=$(PYTHON_PATH):/home/lux/concrete/compilers/torus-compiler/compiler/build/tools/toruslang/python_packages/toruslang_core/`
+- Add to it `LD_PRELOAD=/home/lux/concrete/compilers/torus-compiler/compiler/build/lib/libToruslangRuntime.so`
 
 You can now configure `pytest` in VScode and run the tests using the graphical interface.

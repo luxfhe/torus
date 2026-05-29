@@ -9,7 +9,7 @@ if grep -r "tree/main" ../../docs | grep "\.md:" | grep -v "https://huggingface.
 fi
 
 
-# We don't want links to our internal repositories (Concrete ML or Concrete), expect if they are
+# We don't want links to our internal repositories (TorusML or Concrete), expect if they are
 # GitHub issues
 if grep -r "torus-ml-internal" ../../docs | grep "\.md:" | grep -v "torus-ml-internal/issues"; then
     echo -n -e "\nThe above links contain references to the 'torus-ml-internal' private "

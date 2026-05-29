@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - .github/workflows/concrete_ml_test.yml
+      - .github/workflows/torus_ml_test.yml
       - frontends/torus-python/**
   push:
     branches:
@@ -19,7 +19,7 @@ env:
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
 concurrency:
-  group: concrete_ml_test_${{ github.ref }}
+  group: torus_ml_test_${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:

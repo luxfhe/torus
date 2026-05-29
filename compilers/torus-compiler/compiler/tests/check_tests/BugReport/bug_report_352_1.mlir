@@ -1,6 +1,6 @@
 // RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
 // Just ensure that compile
-// https://github.com/zama-ai/concrete-internal/issues/352
+// https://github.com/luxfhe/torus-internal/issues/352
   func.func @main(%arg0: tensor<1x1x8x8x!FHE.esint<2>>, %arg1: tensor<1x1x8x8x!FHE.esint<2>>) -> tensor<1x1x8x8x!FHE.esint<2>> {
     %cst = arith.constant dense<1> : tensor<1x1x1x1xi3>
     %0 = "FHELinalg.conv2d"(%arg0, %cst) {dilations = dense<1> : tensor<2xi64>, group = 1 : i64, padding = dense<0> : tensor<4xi64>, strides = dense<1> : tensor<2xi64>} : (tensor<1x1x8x8x!FHE.esint<2>>, tensor<1x1x1x1xi3>) -> tensor<1x1x8x8x!FHE.esint<2>>

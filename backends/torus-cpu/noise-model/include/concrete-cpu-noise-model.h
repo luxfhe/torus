@@ -1,4 +1,4 @@
-// Copyright © 2022 ZAMA.
+// Copyright © 2022 LUX.
 // All rights reserved.
 
 #ifndef CONCRETE_CPU_NOISE_MODEL_FFI_H
