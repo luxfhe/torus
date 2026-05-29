@@ -677,7 +677,7 @@ def test_tfhers_client_specs(function, parameters, dtype: tfhers.TFHERSIntegerTy
         ),
     ],
 )
-def test_tfhers_binary_encrypted_complete_circuit_concrete_keygen(
+def test_tfhers_binary_encrypted_complete_circuit_torus_keygen(
     function, parameters, dtype: tfhers.TFHERSIntegerType, helpers
 ):
     """
@@ -717,9 +717,9 @@ def test_tfhers_binary_encrypted_complete_circuit_concrete_keygen(
     sample = helpers.generate_sample(parameters)
 
     ###### Full Torus Execution ################################################
-    concrete_encoded_sample = (dtype.encode(v) for v in sample)
-    concrete_encoded_result = circuit.encrypt_run_decrypt(*concrete_encoded_sample)
-    assert (dtype.decode(concrete_encoded_result) == function(*sample)).all()
+    torus_encoded_sample = (dtype.encode(v) for v in sample)
+    torus_encoded_result = circuit.encrypt_run_decrypt(*torus_encoded_sample)
+    assert (dtype.decode(torus_encoded_result) == function(*sample)).all()
 
     ###### TFHErs Encryption & Computation ########################################
     tfhers_bridge = tfhers.new_bridge(circuit)
@@ -749,16 +749,16 @@ def test_tfhers_binary_encrypted_complete_circuit_concrete_keygen(
         == 0
     )
 
-    def prepare_value(concrete_value, repeat_int: int = 1) -> str:
-        if isinstance(concrete_value, (int, np.integer)):
+    def prepare_value(torus_value, repeat_int: int = 1) -> str:
+        if isinstance(torus_value, (int, np.integer)):
             assert repeat_int >= 1
             values = [
-                concrete_value,
+                torus_value,
             ] * repeat_int
-        elif isinstance(concrete_value, np.ndarray):
-            values = concrete_value.flatten().tolist()
+        elif isinstance(torus_value, np.ndarray):
+            values = torus_value.flatten().tolist()
         else:
-            msg = f"concrete_value should either be int or ndarray, not {type(concrete_value)}"
+            msg = f"torus_value should either be int or ndarray, not {type(torus_value)}"
             raise TypeError(msg)
         return "--value=" + ",".join(map(str, values))
 
@@ -823,7 +823,7 @@ def test_tfhers_binary_encrypted_complete_circuit_concrete_keygen(
 
     tfhers_encrypted_result = circuit.run(*cts)
 
-    # concrete decryption should work
+    # torus decryption should work
     decrypted = circuit.decrypt(tfhers_encrypted_result)
     assert isinstance(decrypted, (list, np.ndarray))
     decoded = dtype.decode(decrypted)
@@ -1018,7 +1018,7 @@ def test_tfhers_binary_encrypted_complete_circuit_concrete_keygen(
         ),
     ],
 )
-def test_tfhers_one_tfhers_one_native_complete_circuit_concrete_keygen(
+def test_tfhers_one_tfhers_one_native_complete_circuit_torus_keygen(
     function, parameters, dtype: tfhers.TFHERSIntegerType, helpers
 ):
     """
@@ -1058,8 +1058,8 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_concrete_keygen(
     sample = helpers.generate_sample(parameters)
 
     ###### Full Torus Execution ################################################
-    concrete_encoded_result = circuit.encrypt_run_decrypt(dtype.encode(sample[0]), sample[1])
-    assert (dtype.decode(concrete_encoded_result) == function(*sample)).all()
+    torus_encoded_result = circuit.encrypt_run_decrypt(dtype.encode(sample[0]), sample[1])
+    assert (dtype.decode(torus_encoded_result) == function(*sample)).all()
 
     ###### TFHErs Encryption ######################################################
     tfhers_bridge = tfhers.new_bridge(circuit)
@@ -1085,7 +1085,7 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_concrete_keygen(
         == 0
     )
 
-    # import first ciphertexts and encrypt second with concrete
+    # import first ciphertexts and encrypt second with torus
     with open(ct1_path, "rb") as f:
         buff = f.read()
         tfhers_ct = tfhers_bridge.import_value(buff, 0)
@@ -1095,7 +1095,7 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_concrete_keygen(
 
     tfhers_encrypted_result = circuit.run(tfhers_ct, native_ct)
 
-    # concrete decryption should work
+    # torus decryption should work
     decrypted = circuit.decrypt(tfhers_encrypted_result)
     assert (dtype.decode(decrypted) == function(*sample)).all()  # type: ignore
 
@@ -1240,9 +1240,9 @@ def test_tfhers_binary_encrypted_complete_circuit_tfhers_keygen(
     tfhers_bridge.keygen_with_initial_keys({0: sk_buff}, force=True)
 
     ###### Full Torus Execution ################################################
-    concrete_encoded_sample = (dtype.encode(v) for v in sample)
-    concrete_encoded_result = circuit.encrypt_run_decrypt(*concrete_encoded_sample)
-    assert (dtype.decode(concrete_encoded_result) == function(*sample)).all()
+    torus_encoded_sample = (dtype.encode(v) for v in sample)
+    torus_encoded_result = circuit.encrypt_run_decrypt(*torus_encoded_sample)
+    assert (dtype.decode(torus_encoded_result) == function(*sample)).all()
 
     ###### TFHErs Encryption ######################################################
 
@@ -1276,7 +1276,7 @@ def test_tfhers_binary_encrypted_complete_circuit_tfhers_keygen(
 
     tfhers_encrypted_result = circuit.run(*cts)
 
-    # concrete decryption should work
+    # torus decryption should work
     decrypted = circuit.decrypt(tfhers_encrypted_result)
     assert (dtype.decode(decrypted) == function(*sample)).all()  # type: ignore
 
@@ -1479,9 +1479,9 @@ def test_tfhers_binary_encrypted_complete_circuit_tfhers_keygen_with_modules(
         tfhers_bridge.keygen_with_initial_keys({("add", 0): sk_buff}, force=True)
 
     ###### Full Torus Execution ################################################
-    concrete_encoded_sample = (dtype.encode(v) for v in sample)
-    concrete_encoded_result = add_module.add.encrypt_run_decrypt(*concrete_encoded_sample)
-    assert (dtype.decode(concrete_encoded_result) == function(*sample)).all()
+    torus_encoded_sample = (dtype.encode(v) for v in sample)
+    torus_encoded_result = add_module.add.encrypt_run_decrypt(*torus_encoded_sample)
+    assert (dtype.decode(torus_encoded_result) == function(*sample)).all()
 
     ###### TFHErs Encryption ######################################################
 
@@ -1527,7 +1527,7 @@ def test_tfhers_binary_encrypted_complete_circuit_tfhers_keygen_with_modules(
 
     tfhers_encrypted_result = add_module.add.run(*cts)
 
-    # concrete decryption should work
+    # torus decryption should work
     decrypted = add_module.add.decrypt(tfhers_encrypted_result)
     assert (dtype.decode(decrypted) == function(*sample)).all()  # type: ignore
 
@@ -1766,8 +1766,8 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_tfhers_keygen(
     tfhers_bridge.keygen_with_initial_keys({0: sk_buff}, force=True)
 
     ###### Full Torus Execution ################################################
-    concrete_encoded_result = circuit.encrypt_run_decrypt(dtype.encode(sample[0]), sample[1])
-    assert (dtype.decode(concrete_encoded_result) == function(*sample)).all()
+    torus_encoded_result = circuit.encrypt_run_decrypt(dtype.encode(sample[0]), sample[1])
+    assert (dtype.decode(torus_encoded_result) == function(*sample)).all()
 
     ###### TFHErs Encryption ######################################################
 
@@ -1783,7 +1783,7 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_tfhers_keygen(
         == 0
     )
 
-    # import first ciphertexts and encrypt second with concrete
+    # import first ciphertexts and encrypt second with torus
     with open(ct1_path, "rb") as f:
         buff = f.read()
         tfhers_ct = tfhers_bridge.import_value(buff, 0)
@@ -1793,7 +1793,7 @@ def test_tfhers_one_tfhers_one_native_complete_circuit_tfhers_keygen(
 
     tfhers_encrypted_result = circuit.run(tfhers_ct, native_ct)
 
-    # concrete decryption should work
+    # torus decryption should work
     decrypted = circuit.decrypt(tfhers_encrypted_result)
     assert (dtype.decode(decrypted) == function(*sample)).all()  # type: ignore
 

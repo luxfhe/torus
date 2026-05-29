@@ -1,0 +1,37 @@
+# pyproject.toml — Torus Python frontend metadata.
+#
+# The build backend remains setup.py (see ./setup.py): it knows how to pick up
+# the native bindings produced under $COMPILER_BUILD_DIRECTORY. This file
+# carries the static distribution metadata that PyPI requires (PEP 621) and
+# nothing else — there is exactly one way to build (setup.py) and exactly one
+# place to read metadata (here).
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torus-fhe"
+description = "Torus — Lux Industries FHE compiler (CPU/GPU/FPGA targets)"
+authors = [
+    {name = "Lux Industries Inc.", email = "engineering@lux.network"},
+]
+readme = "../../README.md"
+license = {text = "BSD-3-Clause"}
+requires-python = ">=3.9"
+keywords = ["fhe", "homomorphic", "encryption", "tfhe", "privacy", "security"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Compilers",
+]
+# Version, dependencies, and packages are still resolved by setup.py until the
+# native-binding build step is migrated to a PEP 517 backend. Declaring them
+# dynamic keeps PyPI happy and avoids two sources of truth.
+dynamic = ["version", "dependencies", "optional-dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/luxfhe/torus"
+Documentation = "https://docs.luxfhe.com/torus"
+Repository = "https://github.com/luxfhe/torus.git"
