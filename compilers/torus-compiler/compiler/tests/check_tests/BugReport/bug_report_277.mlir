@@ -1,6 +1,6 @@
 // RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
 // Just ensure that compile
-// https://github.com/zama-ai/concrete-internal/issues/277
+// https://github.com/luxfhe/torus-internal/issues/277
 func.func @main(%arg0: tensor<1x!FHE.eint<4>>) -> tensor<1x!FHE.esint<9>> {
   %cst = arith.constant dense<[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225]> : tensor<16xi64>
   %0 = "FHELinalg.apply_lookup_table"(%arg0, %cst) : (tensor<1x!FHE.eint<4>>, tensor<16xi64>) -> tensor<1x!FHE.eint<9>>

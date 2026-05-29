@@ -208,7 +208,7 @@ dependencies = [
 [[package]]
 name = "concrete_quantizer"
 version = "0.1.0"
-source = "git+https://github.com/zama-ai/torus-ml-processing-rs#0e0ba9a036cc24fa38dad199230f74be7fdcfd3f"
+source = "git+https://github.com/luxfhe/torus-ml-processing-rs#0e0ba9a036cc24fa38dad199230f74be7fdcfd3f"
 dependencies = [
  "ndarray",
  "serde",

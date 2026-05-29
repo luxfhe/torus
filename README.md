@@ -93,7 +93,7 @@ The original work is © 2024 ZAMA, used under license. Modifications are © 2026
 | **Lux FHE** | Umbrella framework | — |
 | **Torus** | FHE compiler / runtime (this repo) | `luxfhe/torus` |
 | **TorusVM** | Core FHE runtime VM (what Torus compiles to) | (embedded in Torus) |
-| **TorusEVM** | Encrypted EVM execution | [`luxfhe/fhevm`](https://github.com/luxfhe/fhevm) (rename pending) |
+| **TorusEVM** | Encrypted EVM execution | [`luxfhe/fhevm`](https://github.com/luxfhe/fhevm) (Lux FHEVM stack) |
 | **TorusML** | Private machine learning | [`luxfhe/ml-sdk`](https://github.com/luxfhe/ml-sdk) |
 | **TorusNet** | Threshold decryption network | [`luxfhe/threshold`](https://github.com/luxfhe/threshold) |
 | Lux-FHE (Go library) | TFHE on `luxfi/lattice` | [`luxfi/fhe`](https://github.com/luxfi/fhe) |

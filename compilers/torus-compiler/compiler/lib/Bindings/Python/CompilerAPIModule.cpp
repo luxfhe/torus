@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Zama
+// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -1555,7 +1555,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
                 std::make_shared<std::vector<uint64_t>>(std::move(glwe_sk)),
                 params.info);
           },
-          "Deserialize an LweSecretKey from glwe encoded (tfhe-rs "
+          "Deserialize an LweSecretKey from glwe encoded (Lux-FHE "
           "compatible) "
           "bytes and associated parameters.",
           arg("buffer"), arg("params"))
@@ -1576,7 +1576,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto bytes = pybind11::bytes((char *)buffer.data(), buffer_size);
             return bytes;
           },
-          "Serialize an LweSecretKey to glwe encoded (tfhe-rs compatible) "
+          "Serialize an LweSecretKey to glwe encoded (Lux-FHE compatible) "
           "bytes and associated parameters.",
           arg("glwe_dimension"), arg("polynomial_size"))
       .def_property_readonly(
@@ -1766,7 +1766,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto bytes = pybind11::bytes((char *)buffer.data(), buffer_size);
             return bytes;
           },
-          "Serialize the `key_id` secret key as a tfhe-rs GLWE key with "
+          "Serialize the `key_id` secret key as a Lux-FHE GLWE key with "
           "parameters `glwe_dim` and `poly_size`.",
           arg("key_id"), arg("glwe_dim"), arg("poly_size"))
       .def(
@@ -2322,7 +2322,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
              stringStream << ">";
              return stringStream.str();
            })
-      .doc() = "TFHE-rs integer description";
+      .doc() = "Lux-FHE integer description";
 
   m.def("import_tfhers_int",
         [](const pybind11::bytes &serialized_fheuint,

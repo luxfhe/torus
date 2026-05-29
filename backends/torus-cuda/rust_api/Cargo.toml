@@ -2,7 +2,7 @@
 name = "torus-cuda"
 version = "0.1.2"
 edition = "2021"
-authors = ["Zama team"]
+authors = ["Lux Industries team"]
 license = "BSD-3-Clause-Clear"
 description = "Cuda implementation for the concrete framework."
 homepage = "https://www.luxfhe.com/"

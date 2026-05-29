@@ -56,8 +56,8 @@ pip install torus-python[full]
 You can also get the **Torus** docker image. Replace `v2.4.0` below by the version you want to install:
 
 ```shell
-docker pull zamafhe/torus-python:v2.4.0
-docker run --rm -it zamafhe/torus-python:latest /bin/bash
+docker pull luxfhe/torus-python:v2.4.0
+docker run --rm -it luxfhe/torus-python:latest /bin/bash
 ```
 
 Docker is not supported on Apple Silicon.

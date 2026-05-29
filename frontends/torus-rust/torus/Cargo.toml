@@ -31,6 +31,6 @@ libc = "0.2"
 ar = "0.9"
 
 [features]
-default = ["tfhe-rs", "compiler"]
+default = ["Lux-FHE", "compiler"]
 compiler = ["dep:quote", "dep:proc-macro2"]
-tfhe-rs = ["dep:tfhe"]
+Lux-FHE = ["dep:tfhe"]

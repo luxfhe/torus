@@ -1,6 +1,6 @@
 // RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
 // Just ensure that compile
-// https://github.com/zama-ai/concrete-internal/issues/376
+// https://github.com/luxfhe/torus-internal/issues/376
 func.func @main(%arg0: tensor<1x1x2x2x!FHE.eint<7>>) -> tensor<1x1x13x12x!FHE.eint<7>> {
   %c1_i8 = arith.constant 1 : i8
   %0 = "FHE.zero_tensor"() : () -> tensor<1x1x2x7x!FHE.eint<7>>

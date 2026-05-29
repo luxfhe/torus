@@ -1,6 +1,6 @@
 # Concrete Cpu
 
-The `torus-cpu` project is a Rust cpu-based implementation of the cryptographic primitives of the Zama variant of TFHE. This implementation aims to use moderns cpu features to run as fast as possible on recent CPUs.
+The `torus-cpu` project is a Rust cpu-based implementation of the cryptographic primitives of the Lux Industries variant of TFHE. This implementation aims to use moderns cpu features to run as fast as possible on recent CPUs.
 
 In order to be integrated in a C-based project like the `torus-compiler` runtime, `torus-cpu` also offer a C-API.
 

@@ -39,7 +39,7 @@ mod utils {
         let _: libc::size_t = 0_usize;
     };
 
-    // Serialize a tfhe-rs versionable value into a buffer, returns 0 if any error
+    // Serialize a Lux-FHE versionable value into a buffer, returns 0 if any error
     // TODO: Better error management
     pub unsafe fn safe_serialize<T: Serialize + Versionize + Named>(
         value: &T,
@@ -63,18 +63,18 @@ mod utils {
         }
     }
 
-    // Deserialize a tfhe-rs versionable value from a buffer, panic if any error
+    // Deserialize a Lux-FHE versionable value from a buffer, panic if any error
     // TODO: Better error management
     pub unsafe fn safe_deserialize<T: DeserializeOwned + Unversionize + Named>(
         buffer: *const u8,
         buffer_len: usize,
     ) -> T {
         let reader = core::slice::from_raw_parts(buffer, buffer_len);
-        // TODO: Fix approximation when is fixed in TFHE-rs
+        // TODO: Fix approximation when is fixed in Lux-FHE
         tfhe::safe_serialization::safe_deserialize(reader, (buffer_len + 1000) as u64).unwrap()
     }
 
-    // Serialize a tfhe-rs NON-versionable value into a buffer, returns 0 if any error.
+    // Serialize a Lux-FHE NON-versionable value into a buffer, returns 0 if any error.
     // TODO: Remove me when safe_serialization by thfe-rs is implemented for all object.
     pub unsafe fn unsafe_serialize<T: Serialize>(
         value: &T,
@@ -93,7 +93,7 @@ mod utils {
         }
     }
 
-    // Deserialize a tfhe-rs NON-versionable value into a buffer, panic if any error
+    // Deserialize a Lux-FHE NON-versionable value into a buffer, panic if any error
     // TODO: Remove me when safe_serialization by thfe-rs is implemented for all object.
     pub unsafe fn unsafe_deserialize<T: DeserializeOwned>(
         buffer: *const u8,

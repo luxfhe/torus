@@ -71,7 +71,7 @@
 - [`torus.fhe.tfhers`](./torus.fhe.tfhers.md): tfhers module to represent, and compute on tfhers integer values.
 - [`torus.fhe.tfhers.bridge`](./torus.fhe.tfhers.bridge.md): Declaration of `tfhers.Bridge` class.
 - [`torus.fhe.tfhers.dtypes`](./torus.fhe.tfhers.dtypes.md): Declaration of `TFHERSIntegerType` class.
-- [`torus.fhe.tfhers.specs`](./torus.fhe.tfhers.specs.md): TFHE-rs client specs.
+- [`torus.fhe.tfhers.specs`](./torus.fhe.tfhers.specs.md): Lux-FHE client specs.
 - [`torus.fhe.tfhers.tracing`](./torus.fhe.tfhers.tracing.md): Tracing of tfhers operations.
 - [`torus.fhe.tfhers.values`](./torus.fhe.tfhers.values.md): Declaration of `TFHERSInteger` which wraps values as being of tfhers types.
 - [`torus.fhe.tracing`](./torus.fhe.tracing.md): Provide `function` to `computation graph` functionality.
@@ -174,7 +174,7 @@
 - [`dtypes.CryptoParams`](./torus.fhe.tfhers.dtypes.md): Crypto parameters used for a tfhers integer.
 - [`dtypes.EncryptionKeyChoice`](./torus.fhe.tfhers.dtypes.md): TFHErs key choice: big or small.
 - [`dtypes.TFHERSIntegerType`](./torus.fhe.tfhers.dtypes.md) to represent tfhers integer types.
-- [`specs.TFHERSClientSpecs`](./torus.fhe.tfhers.specs.md): TFHE-rs client specs.
+- [`specs.TFHERSClientSpecs`](./torus.fhe.tfhers.specs.md): Lux-FHE client specs.
 - [`values.TFHERSInteger`](./torus.fhe.tfhers.values.md) into typed values, using tfhers types.
 - [`tracer.Annotation`](./torus.fhe.tracing.tracer.md): Base annotation for direct definition.
 - [`tracer.ScalarAnnotation`](./torus.fhe.tracing.tracer.md): Base scalar annotation for direct definition.
@@ -367,8 +367,8 @@
 - [`utils.flood_replace_none_values`](./torus.fhe.mlir.utils.md): Use flooding algorithm to replace `None` values.
 - [`utils.format_constant`](./torus.fhe.representation.utils.md): Get the textual representation of a constant.
 - [`utils.format_indexing_element`](./torus.fhe.representation.utils.md): Format an indexing element.
-- [`tfhers.get_type_from_params`](./torus.fhe.tfhers.md): Get a TFHE-rs integer type from TFHE-rs parameters in JSON format.
-- [`tfhers.get_type_from_params_dict`](./torus.fhe.tfhers.md): Get a TFHE-rs integer type from TFHE-rs parameters in JSON format.
+- [`tfhers.get_type_from_params`](./torus.fhe.tfhers.md): Get a Lux-FHE integer type from Lux-FHE parameters in JSON format.
+- [`tfhers.get_type_from_params_dict`](./torus.fhe.tfhers.md): Get a Lux-FHE integer type from Lux-FHE parameters in JSON format.
 - [`bridge.new_bridge`](./torus.fhe.tfhers.bridge.md): Create a TFHErs bridge from a circuit or module or client.
 - [`tracing.from_native`](./torus.fhe.tfhers.tracing.md): Convert a Torus integer to the tfhers representation.
 - [`tracing.to_native`](./torus.fhe.tfhers.tracing.md): Convert a tfhers integer to the Torus representation.
