@@ -1,0 +1,27 @@
+[package]
+name = "torus-optimizer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bincode = "1.3"
+torus-cpu-noise-model = { path = "../../../backends/torus-cpu/noise-model/" }
+torus-security-curves = { path = "../../../tools/parameter-curves/torus-security-curves-rust" }
+file-lock = "2.1.6"
+ordered-float = "3.9.1"
+puruspe = "0.2.0"
+rand = "0.8"
+rustc-hash = "1.1"
+serde = { version = "1.0", features = ["derive"] }
+
+[dev-dependencies]
+approx = "0.5"
+once_cell = "1.16.0"
+pretty_assertions = "1.2.1"
+
+[lib]
+crate-type = [
+    "lib", # rust
+]

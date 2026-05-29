@@ -1,0 +1,19 @@
+add_mlir_dialect_library(
+  ConcretelangConcreteTransforms
+  BufferizableOpInterfaceImpl.cpp
+  AddRuntimeContext.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Concrete
+  DEPENDS
+  ConcreteTransformsIncGen
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  ConcretelangConversion
+  MLIRArithDialect
+  MLIRBufferizationDialect
+  MLIRBufferizationTransforms
+  MLIRIR
+  MLIRMemRefDialect
+  MLIRPass
+  MLIRTransforms)

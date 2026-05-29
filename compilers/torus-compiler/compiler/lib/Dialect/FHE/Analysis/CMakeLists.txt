@@ -1,0 +1,15 @@
+add_mlir_library(
+  FHEDialectAnalysis
+  utils.cpp
+  ConcreteOptimizer.cpp
+  MANP.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/FHE
+  DEPENDS
+  FHEDialect
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR
+  FHEDialect
+  rust_deps_bundle)

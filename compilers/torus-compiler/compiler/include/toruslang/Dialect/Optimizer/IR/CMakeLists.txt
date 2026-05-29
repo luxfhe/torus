@@ -1,0 +1,10 @@
+set(LLVM_TARGET_DEFINITIONS OptimizerOps.td)
+mlir_tablegen(OptimizerOps.h.inc -gen-op-decls)
+mlir_tablegen(OptimizerOps.cpp.inc -gen-op-defs)
+mlir_tablegen(OptimizerOpsDialect.h.inc -gen-dialect-decls -dialect=Optimizer)
+mlir_tablegen(OptimizerOpsDialect.cpp.inc -gen-dialect-defs -dialect=Optimizer)
+add_public_tablegen_target(MLIROptimizerOpsIncGen)
+add_dependencies(mlir-headers MLIROptimizerOpsIncGen)
+
+add_toruslang_doc(OptimizerOps OptimizerDialect toruslang/ -gen-dialect-doc -dialect=Optimizer)
+add_toruslang_doc(OptimizerOps OptimizerOps toruslang/ -gen-op-doc)

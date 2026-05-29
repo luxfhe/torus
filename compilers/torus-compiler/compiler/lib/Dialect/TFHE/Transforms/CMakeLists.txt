@@ -1,0 +1,16 @@
+add_mlir_library(
+  TFHEDialectTransforms
+  Optimization.cpp
+  OperationTransformations.cpp
+  TFHECircuitSolutionParametrization.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/TFHE
+  DEPENDS
+  TFHEDialect
+  OptimizerDialect
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR
+  TFHEDialect
+  OptimizerDialect)

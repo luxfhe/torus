@@ -1,0 +1,19 @@
+[package]
+# see https://doc.rust-lang.org/cargo/reference/manifest.html
+name = "torus-optimizer-cpp"
+version = "0.1.0"
+authors = [""]
+edition = "2021"
+
+[dependencies]
+cxx = "1"
+torus-optimizer = { path = "../torus-optimizer" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[build-dependencies]
+cxx-build = "1"
+
+[lib]
+path = "src/torus-optimizer.rs"
+crate-type = ["lib", "staticlib"]

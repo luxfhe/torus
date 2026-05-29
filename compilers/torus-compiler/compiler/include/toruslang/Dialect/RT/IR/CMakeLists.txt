@@ -1,0 +1,13 @@
+set(LLVM_TARGET_DEFINITIONS RTOps.td)
+mlir_tablegen(RTOps.h.inc -gen-op-decls)
+mlir_tablegen(RTOps.cpp.inc -gen-op-defs)
+mlir_tablegen(RTOpsTypes.h.inc -gen-typedef-decls -typedefs-dialect=RT)
+mlir_tablegen(RTOpsTypes.cpp.inc -gen-typedef-defs -typedefs-dialect=RT)
+mlir_tablegen(RTOpsDialect.h.inc -gen-dialect-decls -dialect=RT)
+mlir_tablegen(RTOpsDialect.cpp.inc -gen-dialect-defs -dialect=RT)
+add_public_tablegen_target(MLIRRTOpsIncGen)
+add_dependencies(mlir-headers MLIRRTOpsIncGen)
+
+add_toruslang_doc(RTOps RTDialect toruslang/ -gen-dialect-doc -dialect=RT)
+add_toruslang_doc(RTOps RTOps toruslang/ -gen-op-doc)
+add_toruslang_doc(RTTypes RTTypes toruslang/ -gen-typedef-doc)
