@@ -1,4 +1,4 @@
-name: Refresh Lux Industries PyPI
+name: Refresh PyPI
 
 on:
   workflow_dispatch:

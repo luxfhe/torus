@@ -11,8 +11,8 @@ files=$(find ./compiler/{include,lib,src} $EXCLUDE_DIRS -iregex '^.*\.\(cpp\|cc\
 
 for file in $files
 do
-    cmp <(head -n 4 $file) <(echo "// Part of the Torus Compiler Project, under the BSD3 License with Zama
-// Exceptions. See
+    cmp <(head -n 4 $file) <(echo "// Part of the Torus Compiler Project, under the BSD 3-Clause Clear
+// License. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.") || print_and_exit $file
 done
@@ -22,6 +22,6 @@ files=$(find ./compiler/{include,lib,src} -iregex '^.*\.\(py\)$' ! -path ./compi
 
 for file in $files
 do
-    cmp <(head -n 2 $file) <(echo "#  Part of the Torus Compiler Project, under the BSD3 License with Zama Exceptions.
+    cmp <(head -n 2 $file) <(echo "#  Part of the Torus Compiler Project, under the BSD 3-Clause Clear License.
 #  See https://github.com/luxfhe/torus/blob/main/LICENSE.txt for license information.") || print_and_exit $file
 done

@@ -84,7 +84,10 @@ Torus compiles to any FHE scheme exposed by the Lux primitive stack:
 
 BSD 3-Clause Clear. See [`LICENSE.txt`](LICENSE.txt) and [`NOTICE`](NOTICE).
 
-The original work is © 2024 ZAMA, used under license. Modifications are © 2026 Lux Industries Inc. Per BSD-3-Clause-Clear §3, no name of ZAMA or its contributors is used to endorse Torus — this is a Lux Industries product, branded as such everywhere it is marketed. The attribution in `NOTICE` is legal compliance, not endorsement.
+The original copyright holder is named in [`NOTICE`](NOTICE); modifications are
+© 2026 Lux Industries Inc. Per BSD-3-Clause-Clear §3 that attribution is
+compliance and not endorsement — Torus is a Lux Industries product and is
+marketed as one.
 
 ## The Lux FHE family
 

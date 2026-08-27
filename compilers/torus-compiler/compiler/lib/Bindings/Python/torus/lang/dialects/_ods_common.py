@@ -1,4 +1,4 @@
-#  Part of the Torus Compiler Project, under the BSD3 License with Zama Exceptions.
+#  Part of the Torus Compiler Project, under the BSD 3-Clause Clear License.
 #  See https://github.com/luxfhe/torus/blob/main/LICENSE.txt for license information.
 
 # We need this helpers from the mlir bindings, they are used in the generated files
