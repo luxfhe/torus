@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -17,8 +17,8 @@ namespace mlir {
 namespace toruslang {
 
 void CircuitCompilationFeedback::fillFromCircuitInfo(
-    concreteprotocol::CircuitInfo::Reader circuitInfo) {
-  auto computeGateSize = [&](const concreteprotocol::GateInfo::Reader reader) {
+    torusprotocol::CircuitInfo::Reader circuitInfo) {
+  auto computeGateSize = [&](const torusprotocol::GateInfo::Reader reader) {
     unsigned int nElements = 1;
     for (auto dimension : reader.getRawInfo().getShape().getDimensions()) {
       nElements *= dimension;
@@ -60,7 +60,7 @@ void CircuitCompilationFeedback::fillFromCircuitInfo(
 }
 
 void ProgramCompilationFeedback::fillFromProgramInfo(
-    const Message<concreteprotocol::ProgramInfo> &programInfo) {
+    const Message<torusprotocol::ProgramInfo> &programInfo) {
   auto params = programInfo.asReader();
 
   // Compute the size of secret keys
@@ -89,7 +89,7 @@ void ProgramCompilationFeedback::fillFromProgramInfo(
     auto level = bskInfo.getParams().getLevelCount();
     auto glweDimension = bskInfo.getParams().getGlweDimension();
     totalBootstrapKeysSize +=
-        concrete_cpu_bootstrap_key_size_u64(
+        torus_cpu_bootstrap_key_size_u64(
             level, glweDimension, outputLweDimension, inputLweDimension) *
         byteSize;
   }
@@ -110,7 +110,7 @@ void ProgramCompilationFeedback::fillFromProgramInfo(
     auto outputLweDimension = outputKeyInfo.getParams().getLweDimension();
     auto level = kskInfo.getParams().getLevelCount();
     totalKeyswitchKeysSize +=
-        concrete_cpu_keyswitch_key_size_u64(level, inputLweDimension,
+        torus_cpu_keyswitch_key_size_u64(level, inputLweDimension,
                                             outputLweDimension) *
         byteSize;
   }

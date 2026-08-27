@@ -7,16 +7,16 @@ add_compile_options(-fexceptions)
 # Declare native Python extension
 # ######################################################################################################################
 
-declare_mlir_python_sources(ConcretelangBindingsPythonExtension)
+declare_mlir_python_sources(ToruslangBindingsPythonExtension)
 
 declare_mlir_python_extension(
-  ConcretelangBindingsPythonExtension.Core
+  ToruslangBindingsPythonExtension.Core
   MODULE_NAME
   _toruslang
   ADD_TO_PARENT
-  ConcretelangBindingsPythonExtension
+  ToruslangBindingsPythonExtension
   SOURCES
-  ConcretelangModule.cpp
+  ToruslangModule.cpp
   FHEModule.cpp
   CompilerAPIModule.cpp
   EMBED_CAPI_LINK_LIBS
@@ -27,62 +27,62 @@ declare_mlir_python_extension(
 # ######################################################################################################################
 
 declare_mlir_python_sources(
-  ConcretelangBindingsPythonSources
+  ToruslangBindingsPythonSources
   ROOT_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}"
   SOURCES
-  concrete/compiler/__init__.py
-  concrete/compiler/compilation_feedback.py
-  concrete/compiler/compilation_context.py
-  concrete/compiler/tfhers_int.py
-  concrete/compiler/utils.py
-  concrete/__init__.py
-  concrete/lang/__init__.py
-  concrete/lang/dialects/__init__.py
-  concrete/lang/dialects/_ods_common.py)
+  torus/compiler/__init__.py
+  torus/compiler/compilation_feedback.py
+  torus/compiler/compilation_context.py
+  torus/compiler/tfhers_int.py
+  torus/compiler/utils.py
+  torus/__init__.py
+  torus/lang/__init__.py
+  torus/lang/dialects/__init__.py
+  torus/lang/dialects/_ods_common.py)
 
 # ######################################################################################################################
 # Declare dialect-specific bindings.
 # ######################################################################################################################
 
-declare_mlir_python_sources(ConcretelangBindingsPythonSources.Dialects ADD_TO_PARENT ConcretelangBindingsPythonSources)
+declare_mlir_python_sources(ToruslangBindingsPythonSources.Dialects ADD_TO_PARENT ToruslangBindingsPythonSources)
 
 declare_mlir_dialect_python_bindings(
   ADD_TO_PARENT
-  ConcretelangBindingsPythonSources.Dialects
+  ToruslangBindingsPythonSources.Dialects
   ROOT_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}"
   TORUSLANGBindingsPythonFHEOps
   TD_FILE
-  concrete/lang/dialects/FHEOps.td
+  torus/lang/dialects/FHEOps.td
   SOURCES
-  concrete/lang/dialects/fhe.py
+  torus/lang/dialects/fhe.py
   DIALECT_NAME
   FHE)
 
 declare_mlir_dialect_python_bindings(
   ADD_TO_PARENT
-  ConcretelangBindingsPythonSources.Dialects
+  ToruslangBindingsPythonSources.Dialects
   ROOT_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}"
   TORUSLANGBindingsPythonFHELinalgOps
   TD_FILE
-  concrete/lang/dialects/FHELinalgOps.td
+  torus/lang/dialects/FHELinalgOps.td
   SOURCES
-  concrete/lang/dialects/fhelinalg.py
+  torus/lang/dialects/fhelinalg.py
   DIALECT_NAME
   FHELinalg)
 
 declare_mlir_dialect_python_bindings(
   ADD_TO_PARENT
-  ConcretelangBindingsPythonSources.Dialects
+  ToruslangBindingsPythonSources.Dialects
   ROOT_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}"
   TORUSLANGBindingsPythonTracingOps
   TD_FILE
-  concrete/lang/dialects/TracingOps.td
+  torus/lang/dialects/TracingOps.td
   SOURCES
-  concrete/lang/dialects/tracing.py
+  torus/lang/dialects/tracing.py
   DIALECT_NAME
   Tracing)
 
@@ -92,9 +92,9 @@ declare_mlir_dialect_python_bindings(
 
 # Bundle our own, self-contained CAPI library with all of our deps.
 add_mlir_python_common_capi_library(
-  ConcretelangBindingsPythonCAPI
+  ToruslangBindingsPythonCAPI
   INSTALL_COMPONENT
-  ConcretelangBindingsPythonModules
+  ToruslangBindingsPythonModules
   INSTALL_DESTINATION
   python_packages/toruslang_core/mlir/_mlir_libs
   # NOTE: When the MLIR API is relocated under toruslang, this would change to .../toruslang/_mlir_libs
@@ -105,21 +105,21 @@ add_mlir_python_common_capi_library(
   DECLARED_SOURCES
   # TODO: This can be chopped down significantly for size.
   MLIRPythonSources
-  ConcretelangBindingsPythonSources
-  ConcretelangBindingsPythonExtension)
+  ToruslangBindingsPythonSources
+  ToruslangBindingsPythonExtension)
 
-target_include_directories(ConcretelangBindingsPythonCAPI PUBLIC ${CONCRETE_CPU_INCLUDE_DIR})
+target_include_directories(ToruslangBindingsPythonCAPI PUBLIC ${TORUS_CPU_INCLUDE_DIR})
 
 target_link_libraries(
-  ConcretelangBindingsPythonCAPI
-  PRIVATE $<LINK_LIBRARY:WHOLE_ARCHIVE,ConcretelangSupport> $<LINK_LIBRARY:WHOLE_ARCHIVE,ConcretelangClientLib>
-          $<LINK_LIBRARY:WHOLE_ARCHIVE,ConcretelangServerLib>)
+  ToruslangBindingsPythonCAPI
+  PRIVATE $<LINK_LIBRARY:WHOLE_ARCHIVE,ToruslangSupport> $<LINK_LIBRARY:WHOLE_ARCHIVE,ToruslangClientLib>
+          $<LINK_LIBRARY:WHOLE_ARCHIVE,ToruslangServerLib>)
 
 # Bundle the MLIR python sources into our package. The MLIR API is position independent, so we explicitly output it to
 # the mlir/ folder as a temporary measure. It will eventually migrate under the toruslang/ folder and be accessible
 # under the unified "import toruslang..." namespace.
 add_mlir_python_modules(
-  ConcretelangMLIRPythonModules
+  ToruslangMLIRPythonModules
   ROOT_PREFIX
   "${TORUSLANG_PYTHON_PACKAGES_DIR}/toruslang_core/mlir"
   INSTALL_PREFIX
@@ -128,18 +128,18 @@ add_mlir_python_modules(
   MLIRPythonSources
   # We need the circt extensions co-located with the MLIR extensions. When the namespace is unified, this moves to the
   # below.
-  ConcretelangBindingsPythonExtension
+  ToruslangBindingsPythonExtension
   COMMON_CAPI_LINK_LIBS
-  ConcretelangBindingsPythonCAPI)
+  ToruslangBindingsPythonCAPI)
 
 # Bundle the TORUSLANG python sources into our package.
 add_mlir_python_modules(
-  ConcretelangPythonModules
+  ToruslangPythonModules
   ROOT_PREFIX
   "${TORUSLANG_PYTHON_PACKAGES_DIR}/toruslang_core"
   INSTALL_PREFIX
   "python_packages/toruslang_core"
   DECLARED_SOURCES
-  ConcretelangBindingsPythonSources
+  ToruslangBindingsPythonSources
   COMMON_CAPI_LINK_LIBS
-  ConcretelangBindingsPythonCAPI)
+  ToruslangBindingsPythonCAPI)

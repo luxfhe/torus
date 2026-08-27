@@ -193,17 +193,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-cpu"
+name = "torus-cpu"
 version = "0.1.0"
 dependencies = [
  "aligned-vec",
  "bincode",
  "bytemuck",
  "cbindgen",
- "concrete-cpu-noise-model",
- "concrete-csprng",
- "concrete-fft 0.4.1",
- "concrete-security-curves",
+ "torus-cpu-noise-model",
+ "torus-csprng",
+ "torus-fft 0.4.1",
+ "torus-security-curves",
  "dyn-stack 0.10.0",
  "libc",
  "num-complex",
@@ -216,15 +216,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-cpu-noise-model"
+name = "torus-cpu-noise-model"
 version = "0.1.0"
 dependencies = [
  "cbindgen",
- "concrete-security-curves",
+ "torus-security-curves",
 ]
 
 [[package]]
-name = "concrete-csprng"
+name = "torus-csprng"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90518357249582c16a6b64d7410243dfb3109d5bf0ad1665c058c9a59f2fc4cc"
@@ -235,7 +235,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-fft"
+name = "torus-fft"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3144f883422ee22c65d4f408c11b3406513eadc0d50b3d65bfadcb97852817e0"
@@ -248,7 +248,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-fft"
+name = "torus-fft"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "86ff7397e00e903afb03f0adca6a5f3bec3a6e96a7cdb70bdc088e01b125e170"
@@ -263,7 +263,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-ntt"
+name = "torus-ntt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bea708a14b4cfe650eec644eac11889a187404a3a0738a41a5524b0f548850a1"
@@ -273,12 +273,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-optimizer"
+name = "torus-optimizer"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "concrete-cpu-noise-model",
- "concrete-security-curves",
+ "torus-cpu-noise-model",
+ "torus-security-curves",
  "file-lock",
  "ordered-float",
  "puruspe",
@@ -288,10 +288,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-optimizer-cpp"
+name = "torus-optimizer-cpp"
 version = "0.1.0"
 dependencies = [
- "concrete-optimizer",
+ "torus-optimizer",
  "cxx",
  "cxx-build",
  "serde",
@@ -299,7 +299,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-security-curves"
+name = "torus-security-curves"
 version = "0.1.0"
 
 [[package]]
@@ -788,9 +788,9 @@ checksum = "03251193000f4bd3b042892be858ee50e8b3719f2b08e5833ac4353724632430"
 name = "rust_deps_bundle"
 version = "0.1.0"
 dependencies = [
- "concrete-cpu",
- "concrete-cpu-noise-model",
- "concrete-optimizer-cpp",
+ "torus-cpu",
+ "torus-cpu-noise-model",
+ "torus-optimizer-cpp",
 ]
 
 [[package]]
@@ -949,9 +949,9 @@ dependencies = [
  "aligned-vec",
  "bincode",
  "bytemuck",
- "concrete-csprng",
- "concrete-fft 0.5.1",
- "concrete-ntt",
+ "torus-csprng",
+ "torus-fft 0.5.1",
+ "torus-ntt",
  "dyn-stack 0.10.0",
  "itertools",
  "paste",

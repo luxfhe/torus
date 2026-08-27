@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -15,7 +15,7 @@
 #include "toruslang/Common/Protocol.h"
 #include "toruslang/Common/Security.h"
 #include "toruslang/Conversion/Utils/GlobalFHEContext.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteTypes.h"
+#include "toruslang/Dialect/Torus/IR/TorusTypes.h"
 #include "toruslang/Dialect/FHE/IR/FHETypes.h"
 #include "toruslang/Dialect/TFHE/IR/TFHEAttrs.h"
 #include "toruslang/Dialect/TFHE/IR/TFHEOps.h"
@@ -59,11 +59,11 @@ namespace toruslang {
 const auto keyFormat = ::toruslang::security::BINARY;
 typedef double Variance;
 
-llvm::Expected<Message<concreteprotocol::GateInfo>>
+llvm::Expected<Message<torusprotocol::GateInfo>>
 generateGate(mlir::Type inputType,
-             const Message<concreteprotocol::EncodingInfo> &inputEncodingInfo,
+             const Message<torusprotocol::EncodingInfo> &inputEncodingInfo,
              ::toruslang::security::SecurityCurve curve,
-             concreteprotocol::Compression compression) {
+             torusprotocol::Compression compression) {
 
   auto inputEncoding = inputEncodingInfo.asReader().getEncoding();
   if (!inputEncoding.hasIntegerCiphertext() &&
@@ -75,7 +75,7 @@ generateGate(mlir::Type inputType,
   if (auto inputTensorType = inputType.dyn_cast<mlir::RankedTensorType>()) {
     inputType = inputTensorType.getElementType();
   }
-  auto output = Message<concreteprotocol::GateInfo>();
+  auto output = Message<torusprotocol::GateInfo>();
 
   if (inputEncoding.hasIntegerCiphertext()) {
     auto normKey = inputType.cast<TFHE::GLWECipherTextType>()
@@ -84,7 +84,7 @@ generateGate(mlir::Type inputType,
                        .value();
     auto lweCiphertextGateInfo =
         output.asBuilder().initTypeInfo().initLweCiphertext();
-    auto concreteShape = lweCiphertextGateInfo.initConcreteShape();
+    auto concreteShape = lweCiphertextGateInfo.initTorusShape();
     lweCiphertextGateInfo.setAbstractShape(inputShape);
     auto encodingDimensions = inputShape.getDimensions();
     size_t gateDimensionsSize = inputShape.getDimensions().size() + 1;
@@ -112,7 +112,7 @@ generateGate(mlir::Type inputType,
                              .size());
     }
     auto ciphertextSize = normKey.dimension + 1;
-    if (compression == concreteprotocol::Compression::SEED) {
+    if (compression == torusprotocol::Compression::SEED) {
       ciphertextSize = 3;
     }
     gateDimensions.set(gateDimensionsSize - 1, ciphertextSize);
@@ -139,13 +139,13 @@ generateGate(mlir::Type inputType,
     size_t gateDimensionsSize = inputShape.getDimensions().size() + 1;
     lweCiphertextGateInfo.setAbstractShape(inputShape);
     auto gateDimensions =
-        lweCiphertextGateInfo.initConcreteShape().initDimensions(
+        lweCiphertextGateInfo.initTorusShape().initDimensions(
             gateDimensionsSize);
     for (size_t i = 0; i < encodingDimensions.size(); i++) {
       gateDimensions.set(i, encodingDimensions[i]);
     }
     auto ciphertextSize = normKey.dimension + 1;
-    if (compression == concreteprotocol::Compression::SEED) {
+    if (compression == torusprotocol::Compression::SEED) {
       ciphertextSize = 3;
     }
     gateDimensions.set(gateDimensionsSize - 1, ciphertextSize);
@@ -192,24 +192,24 @@ generateGate(mlir::Type inputType,
   return output;
 }
 
-Message<concreteprotocol::KeysetInfo>
+Message<torusprotocol::KeysetInfo>
 extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
                   ::toruslang::security::SecurityCurve curve,
                   bool compressEvaluationKeys) {
 
-  auto output = Message<concreteprotocol::KeysetInfo>();
+  auto output = Message<torusprotocol::KeysetInfo>();
 
   // Pushing secret keys
   auto secretKeysBuilder =
       output.asBuilder().initLweSecretKeys(circuitKeys.secretKeys.size());
   for (size_t i = 0; i < circuitKeys.secretKeys.size(); i++) {
-    auto infoMessage = Message<concreteprotocol::LweSecretKeyInfo>();
+    auto infoMessage = Message<torusprotocol::LweSecretKeyInfo>();
     auto sk = circuitKeys.secretKeys[i];
     infoMessage.asBuilder().setId(sk.getNormalized()->index);
     auto paramsBuilder = infoMessage.asBuilder().initParams();
     paramsBuilder.setIntegerPrecision(64);
     paramsBuilder.setLweDimension(sk.getNormalized().value().dimension);
-    paramsBuilder.setKeyType(concreteprotocol::KeyType::BINARY);
+    paramsBuilder.setKeyType(torusprotocol::KeyType::BINARY);
     secretKeysBuilder.setWithCaveats(i, infoMessage.asReader());
   }
 
@@ -217,7 +217,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
   auto keyswitchKeysBuilder =
       output.asBuilder().initLweKeyswitchKeys(circuitKeys.keyswitchKeys.size());
   for (size_t i = 0; i < circuitKeys.keyswitchKeys.size(); i++) {
-    auto infoMessage = Message<concreteprotocol::LweKeyswitchKeyInfo>();
+    auto infoMessage = Message<torusprotocol::LweKeyswitchKeyInfo>();
     auto ksk = circuitKeys.keyswitchKeys[i];
     infoMessage.asBuilder().setId(ksk.getIndex());
     infoMessage.asBuilder().setInputId(
@@ -226,10 +226,10 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
         ksk.getOutputKey().getNormalized().value().index);
     if (!compressEvaluationKeys) {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::NONE);
+          torusprotocol::Compression::NONE);
     } else {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::SEED);
+          torusprotocol::Compression::SEED);
     }
     auto paramsBuilder = infoMessage.asBuilder().initParams();
     paramsBuilder.setLevelCount(ksk.getLevels());
@@ -241,7 +241,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
         ksk.getInputKey().getNormalized().value().dimension);
     paramsBuilder.setOutputLweDimension(
         ksk.getOutputKey().getNormalized().value().dimension);
-    paramsBuilder.setKeyType(concreteprotocol::KeyType::BINARY);
+    paramsBuilder.setKeyType(torusprotocol::KeyType::BINARY);
     paramsBuilder.initModulus().initMod().initNative();
     keyswitchKeysBuilder.setWithCaveats(i, infoMessage.asReader());
   }
@@ -250,7 +250,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
   auto bootstrapKeysBuilder =
       output.asBuilder().initLweBootstrapKeys(circuitKeys.bootstrapKeys.size());
   for (size_t i = 0; i < circuitKeys.bootstrapKeys.size(); i++) {
-    auto infoMessage = Message<concreteprotocol::LweBootstrapKeyInfo>();
+    auto infoMessage = Message<torusprotocol::LweBootstrapKeyInfo>();
     auto bsk = circuitKeys.bootstrapKeys[i];
     infoMessage.asBuilder().setId(bsk.getIndex());
     infoMessage.asBuilder().setInputId(
@@ -259,10 +259,10 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
         bsk.getOutputKey().getNormalized().value().index);
     if (!compressEvaluationKeys) {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::NONE);
+          torusprotocol::Compression::NONE);
     } else {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::SEED);
+          torusprotocol::Compression::SEED);
     }
     auto paramsBuilder = infoMessage.asBuilder().initParams();
     paramsBuilder.setLevelCount(bsk.getLevels());
@@ -274,7 +274,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
     paramsBuilder.setVariance(
         curve.getVariance(bsk.getGlweDim(), bsk.getPolySize(), 64));
     paramsBuilder.setIntegerPrecision(64);
-    paramsBuilder.setKeyType(concreteprotocol::KeyType::BINARY);
+    paramsBuilder.setKeyType(torusprotocol::KeyType::BINARY);
     paramsBuilder.initModulus().initMod().initNative();
     bootstrapKeysBuilder.setWithCaveats(i, infoMessage.asReader());
   }
@@ -284,7 +284,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
       output.asBuilder().initPackingKeyswitchKeys(
           circuitKeys.packingKeyswitchKeys.size());
   for (size_t i = 0; i < circuitKeys.packingKeyswitchKeys.size(); i++) {
-    auto infoMessage = Message<concreteprotocol::PackingKeyswitchKeyInfo>();
+    auto infoMessage = Message<torusprotocol::PackingKeyswitchKeyInfo>();
     auto pksk = circuitKeys.packingKeyswitchKeys[i];
     infoMessage.asBuilder().setId(pksk.getIndex());
     infoMessage.asBuilder().setInputId(
@@ -293,10 +293,10 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
         pksk.getOutputKey().getNormalized().value().index);
     if (!compressEvaluationKeys) {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::NONE);
+          torusprotocol::Compression::NONE);
     } else {
       infoMessage.asBuilder().setCompression(
-          concreteprotocol::Compression::SEED);
+          torusprotocol::Compression::SEED);
     }
     auto paramsBuilder = infoMessage.asBuilder().initParams();
     paramsBuilder.setLevelCount(pksk.getLevels());
@@ -310,7 +310,7 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
         pksk.getOutputKey().getNormalized().value().dimension,
         pksk.getOutputKey().getNormalized().value().polySize, 64));
     paramsBuilder.setIntegerPrecision(64);
-    paramsBuilder.setKeyType(concreteprotocol::KeyType::BINARY);
+    paramsBuilder.setKeyType(torusprotocol::KeyType::BINARY);
     paramsBuilder.initModulus().initMod().initNative();
     packingKeyswitchKeysBuilder.setWithCaveats(i, infoMessage.asReader());
   }
@@ -318,13 +318,13 @@ extractKeysetInfo(TFHE::TFHECircuitKeys circuitKeys,
   return output;
 }
 
-llvm::Expected<Message<concreteprotocol::CircuitInfo>>
+llvm::Expected<Message<torusprotocol::CircuitInfo>>
 extractCircuitInfo(mlir::func::FuncOp funcOp,
-                   concreteprotocol::CircuitEncodingInfo::Reader encodings,
+                   torusprotocol::CircuitEncodingInfo::Reader encodings,
                    ::toruslang::security::SecurityCurve curve,
                    bool compressInputCiphertexts) {
 
-  auto output = Message<concreteprotocol::CircuitInfo>();
+  auto output = Message<torusprotocol::CircuitInfo>();
 
   // Create input and output circuit gate parameters
   auto funcType = funcOp.getFunctionType();
@@ -337,10 +337,10 @@ extractCircuitInfo(mlir::func::FuncOp funcOp,
     auto ty = funcType.getInput(i);
     auto encoding = encodings.getInputs()[i];
     auto compression = compressInputCiphertexts
-                           ? concreteprotocol::Compression::SEED
-                           : concreteprotocol::Compression::NONE;
+                           ? torusprotocol::Compression::SEED
+                           : torusprotocol::Compression::NONE;
     auto maybeGate =
-        generateGate(ty, (Message<concreteprotocol::EncodingInfo>)encoding,
+        generateGate(ty, (Message<torusprotocol::EncodingInfo>)encoding,
                      curve, compression);
     if (!maybeGate) {
       return maybeGate.takeError();
@@ -350,9 +350,9 @@ extractCircuitInfo(mlir::func::FuncOp funcOp,
   for (unsigned int i = 0; i < funcType.getNumResults(); i++) {
     auto ty = funcType.getResult(i);
     auto encoding = encodings.getOutputs()[i];
-    auto compression = concreteprotocol::Compression::NONE;
+    auto compression = torusprotocol::Compression::NONE;
     auto maybeGate =
-        generateGate(ty, (Message<concreteprotocol::EncodingInfo>)encoding,
+        generateGate(ty, (Message<torusprotocol::EncodingInfo>)encoding,
                      curve, compression);
     if (!maybeGate) {
       return maybeGate.takeError();
@@ -363,13 +363,13 @@ extractCircuitInfo(mlir::func::FuncOp funcOp,
   return output;
 }
 
-llvm::Expected<Message<concreteprotocol::ProgramInfo>> extractProgramInfo(
+llvm::Expected<Message<torusprotocol::ProgramInfo>> extractProgramInfo(
     mlir::ModuleOp module,
-    const Message<concreteprotocol::ProgramEncodingInfo> &encodings,
+    const Message<torusprotocol::ProgramEncodingInfo> &encodings,
     ::toruslang::security::SecurityCurve curve,
     bool compressInputCiphertexts) {
 
-  auto output = Message<concreteprotocol::ProgramInfo>();
+  auto output = Message<torusprotocol::ProgramInfo>();
   auto circuitsCount = encodings.asReader().getCircuits().size();
   auto circuitsBuilder = output.asBuilder().initCircuits(circuitsCount);
   auto rangeOps = module.getOps<mlir::func::FuncOp>();
@@ -398,10 +398,10 @@ llvm::Expected<Message<concreteprotocol::ProgramInfo>> extractProgramInfo(
   return output;
 }
 
-llvm::Expected<Message<concreteprotocol::ProgramInfo>>
+llvm::Expected<Message<torusprotocol::ProgramInfo>>
 createProgramInfoFromTfheDialect(
     mlir::ModuleOp module, int bitsOfSecurity,
-    const Message<concreteprotocol::ProgramEncodingInfo> &encodings,
+    const Message<torusprotocol::ProgramEncodingInfo> &encodings,
     bool compressEvaluationKeys, bool compressInputCiphertexts) {
 
   // Check that security curves exist
@@ -420,7 +420,7 @@ createProgramInfoFromTfheDialect(
   }
 
   // Extract the output Program Info.
-  Message<concreteprotocol::ProgramInfo> output = *maybeProgramInfo;
+  Message<torusprotocol::ProgramInfo> output = *maybeProgramInfo;
 
   // We extract the keys of the circuit
   auto keysetInfo = extractKeysetInfo(TFHE::extractCircuitKeys(module), *curve,

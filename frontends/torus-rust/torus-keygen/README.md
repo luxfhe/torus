@@ -22,7 +22,7 @@
 
 ## About
 
-This crate is part of the [Concrete](https://github.com/luxfhe/torus) framework. Its main purpose is to provide a way to manage Concrete Keys in Rust and Wasm.
+This crate is part of the [Torus](https://github.com/luxfhe/torus) framework. Its main purpose is to provide a way to manage Torus Keys in Rust and Wasm.
 
 #### Key Features
 - 🚀 Keygen with low memory footprint for Wasm targets
@@ -36,7 +36,7 @@ This software is distributed under the **BSD-3-Clause-Clear** license. Read [thi
 
 ## Support
 
-<a target="_blank" href="https://community.luxfhe.com/c/concrete/7">
+<a target="_blank" href="https://community.luxfhe.com/c/torus/7">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/luxfhe/torus/assets/157474013/204c349f-b9c7-41d6-b93a-48ecd6977ff6">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/luxfhe/torus/assets/157474013/588b6aae-9677-463a-8542-209bb8106366">

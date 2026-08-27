@@ -1,6 +1,6 @@
-// RUN: concretecompiler --action=dump-fhe-df-parallelized %s --optimizer-strategy=dag-mono --parallelize | FileCheck  %s
-// RUN: concretecompiler --action=dump-llvm-ir %s --optimizer-strategy=dag-mono --parallelize
-// RUN: concretecompiler --action=dump-llvm-ir %s --optimizer-strategy=dag-multi --parallelize
+// RUN: toruscompiler --action=dump-fhe-df-parallelized %s --optimizer-strategy=dag-mono --parallelize | FileCheck  %s
+// RUN: toruscompiler --action=dump-llvm-ir %s --optimizer-strategy=dag-mono --parallelize
+// RUN: toruscompiler --action=dump-llvm-ir %s --optimizer-strategy=dag-multi --parallelize
 
 // CHECK:       scf.forall.in_parallel {
 // CHECK-NEXT:    tensor.parallel_insert_slice %from_elements into %arg3[%arg2] [1] [1] : tensor<1x!RT.future<tensor<8x9x!FHE.eint<6>>>> into tensor<4x!RT.future<tensor<8x9x!FHE.eint<6>>>>

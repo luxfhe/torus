@@ -15,17 +15,17 @@ func.func @main(%arg0: tensor<4x4x!FHE.eint<6>>, %arg1: tensor<4x2xi7>) -> tenso
 }
 ```
 
-You can use the `concretecompiler` binary to compile this MLIR program. Same can be done with `torus-python`, as we only need the compilation artifacts at the end.
+You can use the `toruscompiler` binary to compile this MLIR program. Same can be done with `torus-python`, as we only need the compilation artifacts at the end.
 
 ```bash
-$ concretecompiler --action=compile -o python-demo example.mlir
+$ toruscompiler --action=compile -o python-demo example.mlir
 ```
 
 You should be able to see artifacts listed in the `python-demo` directory
 
 ```bash
 $ ls python-demo/
-client_parameters.concrete.params.json  compilation_feedback.json  fhecircuit-client.h  sharedlib.so  staticlib.a
+client_parameters.torus.params.json  compilation_feedback.json  fhecircuit-client.h  sharedlib.so  staticlib.a
 ```
 
 Now we want to use the Python bindings in order to call the compiled circuit.

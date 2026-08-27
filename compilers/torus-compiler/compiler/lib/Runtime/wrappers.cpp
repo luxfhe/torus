@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -586,7 +586,7 @@ void memref_add_lwe_ciphertexts_u64(
   assert(out_size == ct0_size && out_size == ct1_size &&
          "size of lwe buffer are incompatible");
   size_t lwe_dimension = out_size - 1;
-  concrete_cpu_add_lwe_ciphertext_u64(out_aligned + out_offset,
+  torus_cpu_add_lwe_ciphertext_u64(out_aligned + out_offset,
                                       ct0_aligned + ct0_offset,
                                       ct1_aligned + ct1_offset, lwe_dimension);
 }
@@ -598,7 +598,7 @@ void memref_add_plaintext_lwe_ciphertext_u64(
     uint64_t ct0_stride, uint64_t plaintext) {
   assert(out_size == ct0_size && "size of lwe buffer are incompatible");
   size_t lwe_dimension = out_size - 1;
-  concrete_cpu_add_plaintext_lwe_ciphertext_u64(out_aligned + out_offset,
+  torus_cpu_add_plaintext_lwe_ciphertext_u64(out_aligned + out_offset,
                                                 ct0_aligned + ct0_offset,
                                                 plaintext, lwe_dimension);
 }
@@ -610,7 +610,7 @@ void memref_mul_cleartext_lwe_ciphertext_u64(
     uint64_t ct0_stride, uint64_t cleartext) {
   assert(out_size == ct0_size && "size of lwe buffer are incompatible");
   size_t lwe_dimension = out_size - 1;
-  concrete_cpu_mul_cleartext_lwe_ciphertext_u64(out_aligned + out_offset,
+  torus_cpu_mul_cleartext_lwe_ciphertext_u64(out_aligned + out_offset,
                                                 ct0_aligned + ct0_offset,
                                                 cleartext, lwe_dimension);
 }
@@ -622,7 +622,7 @@ void memref_negate_lwe_ciphertext_u64(
     uint64_t ct0_stride) {
   assert(out_size == ct0_size && "size of lwe buffer are incompatible");
   size_t lwe_dimension = {out_size - 1};
-  concrete_cpu_negate_lwe_ciphertext_u64(
+  torus_cpu_negate_lwe_ciphertext_u64(
       out_aligned + out_offset, ct0_aligned + ct0_offset, lwe_dimension);
 }
 
@@ -640,7 +640,7 @@ void memref_keyswitch_lwe_u64(uint64_t *out_allocated, uint64_t *out_aligned,
   // Get keyswitch key
   const uint64_t *keyswitch_key = context->keyswitch_key_buffer(ksk_index);
   // Get stack parameter
-  concrete_cpu_keyswitch_lwe_ciphertext_u64(
+  torus_cpu_keyswitch_lwe_ciphertext_u64(
       out_aligned + out_offset, ct0_aligned + ct0_offset, keyswitch_key,
       decomposition_level_count, decomposition_base_log, input_dimension,
       output_dimension);
@@ -788,13 +788,13 @@ void memref_bootstrap_lwe_u64(
   // Get stack parameter
   size_t scratch_size;
   size_t scratch_align;
-  concrete_cpu_bootstrap_lwe_ciphertext_u64_scratch(
+  torus_cpu_bootstrap_lwe_ciphertext_u64_scratch(
       &scratch_size, &scratch_align, glwe_dimension, polynomial_size, fft);
   // Allocate scratch
   auto scratch = (uint8_t *)aligned_alloc(scratch_align, scratch_size);
 
   // Bootstrap
-  concrete_cpu_bootstrap_lwe_ciphertext_u64(
+  torus_cpu_bootstrap_lwe_ciphertext_u64(
       out_aligned + out_offset, ct0_aligned + ct0_offset, glwe_ct,
       bootstrap_key, decomposition_level_count, decomposition_base_log,
       glwe_dimension, polynomial_size, input_lwe_dimension, fft, scratch,
@@ -946,13 +946,13 @@ void memref_wop_pbs_crt_buffer(
 
     size_t scratch_size;
     size_t scratch_align;
-    concrete_cpu_extract_bit_lwe_ciphertext_u64_scratch(
+    torus_cpu_extract_bit_lwe_ciphertext_u64_scratch(
         &scratch_size, &scratch_align, lwe_small_dim, lwe_big_dim, glwe_dim,
         polynomial_size, fft);
     // Allocate scratch
     auto *scratch = (uint8_t *)aligned_alloc(scratch_align, scratch_size);
 
-    concrete_cpu_extract_bit_lwe_ciphertext_u64(
+    torus_cpu_extract_bit_lwe_ciphertext_u64(
         &extract_bits_output_buffer[lwe_small_size *
                                     extract_bits_output_offset],
         in_block, bootstrap_key, keyswicth_key, lwe_small_dim,
@@ -975,7 +975,7 @@ void memref_wop_pbs_crt_buffer(
   // Vertical packing
   size_t scratch_size;
   size_t scratch_align;
-  concrete_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64_scratch(
+  torus_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64_scratch(
       &scratch_size, &scratch_align, ct_out_count, lwe_small_dim, ct_in_count,
       lut_size, lut_count, glwe_dim, polynomial_size, polynomial_size,
       cbs_level_count, fft);
@@ -984,7 +984,7 @@ void memref_wop_pbs_crt_buffer(
 
   auto fp_keyswicth_key = context->fp_keyswitch_key_buffer(pksk_index);
 
-  concrete_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64(
+  torus_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64(
       out_aligned + out_offset, extract_bits_output_buffer,
       lut_ct_aligned + lut_ct_offset, bootstrap_key, fp_keyswicth_key,
       lwe_big_dim, ct_out_count, lwe_small_dim, ct_in_count, lut_size,
@@ -1042,7 +1042,7 @@ void memref_trace_message(char *message_ptr, uint32_t message_len) {
   std::cout << message << std::flush;
 }
 
-void *concrete_checked_malloc(size_t size) {
+void *torus_checked_malloc(size_t size) {
   void *ptr = malloc(size);
   if (ptr != nullptr)
     return ptr;

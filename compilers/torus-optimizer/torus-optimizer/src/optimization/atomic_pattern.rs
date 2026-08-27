@@ -1,4 +1,4 @@
-use concrete_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
+use torus_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
 
 use super::config::{Config, SearchSpace};
 use super::decomposition::cmux::CmuxComplexityNoise;

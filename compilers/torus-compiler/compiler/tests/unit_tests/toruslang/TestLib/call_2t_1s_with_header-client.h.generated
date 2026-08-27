@@ -1,15 +1,15 @@
 #include "boost/outcome.h"
-#include "concretelang/ClientLib/ClientLambda.h"
-#include "concretelang/ClientLib/KeySetCache.h"
-#include "concretelang/ClientLib/Types.h"
-#include "concretelang/Common/Error.h"
+#include "toruslang/ClientLib/ClientLambda.h"
+#include "toruslang/ClientLib/KeySetCache.h"
+#include "toruslang/ClientLib/Types.h"
+#include "toruslang/Common/Error.h"
 
 namespace fhecircuit {
 namespace client {
 
 namespace extract {
-  using namespace concretelang::clientlib;
-  using concretelang::error::StringError;
+  using namespace toruslang::clientlib;
+  using toruslang::error::StringError;
   using extract_t = TypedClientLambda<scalar_out, tensor1_in, tensor1_in>;
   static const std::string name = "extract";
 

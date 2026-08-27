@@ -1,8 +1,8 @@
-add_custom_target(ConcretelangTFHETransformsTests)
+add_custom_target(ToruslangTFHETransformsTests)
 
-add_dependencies(ConcretelangUnitTests ConcretelangTFHETransformsTests)
+add_dependencies(ToruslangUnitTests ToruslangTFHETransformsTests)
 
-add_unittest(ConcretelangTFHETransformsTests unit_tests_toruslang_tfhe_transforms Parametrization.cpp)
+add_unittest(ToruslangTFHETransformsTests unit_tests_toruslang_tfhe_transforms Parametrization.cpp)
 
 target_link_libraries(
   unit_tests_toruslang_tfhe_transforms
@@ -10,7 +10,7 @@ target_link_libraries(
           MLIRParser
           MLIRExecutionEngine
           TFHEGlobalParametrization
-          ConcretelangSupport
-          ConcretelangClientLib
-          ConcretelangServerLib
-          ConcretelangCommon)
+          ToruslangSupport
+          ToruslangClientLib
+          ToruslangServerLib
+          ToruslangCommon)

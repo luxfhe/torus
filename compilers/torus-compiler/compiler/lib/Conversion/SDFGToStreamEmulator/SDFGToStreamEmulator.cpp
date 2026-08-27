@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -467,8 +467,8 @@ void SDFGToStreamEmulatorPass::runOnOperation() {
 
   target.addIllegalOp<SDFG::Init, SDFG::Start, SDFG::Shutdown,
                       SDFG::MakeProcess, SDFG::MakeStream, SDFG::Put>();
-  // All Concrete ops are legal after the conversion
-  target.addLegalDialect<mlir::toruslang::Concrete::ConcreteDialect>();
+  // All Torus ops are legal after the conversion
+  target.addLegalDialect<mlir::toruslang::Torus::TorusDialect>();
   target.addLegalDialect<mlir::arith::ArithDialect>();
   target.addLegalOp<mlir::func::ReturnOp, mlir::func::FuncOp,
                     mlir::func::CallOp, SDFG::Get, mlir::tensor::CastOp>();

@@ -11,17 +11,17 @@ files=$(find ./compiler/{include,lib,src} $EXCLUDE_DIRS -iregex '^.*\.\(cpp\|cc\
 
 for file in $files
 do
-    cmp <(head -n 4 $file) <(echo "// Part of the Concrete Compiler Project, under the BSD3 License with Zama
+    cmp <(head -n 4 $file) <(echo "// Part of the Torus Compiler Project, under the BSD3 License with Zama
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.") || print_and_exit $file
 done
 
 # Ignore python package namespace init file
-files=$(find ./compiler/{include,lib,src} -iregex '^.*\.\(py\)$' ! -path ./compiler/lib/Bindings/Python/concrete/__init__.py)
+files=$(find ./compiler/{include,lib,src} -iregex '^.*\.\(py\)$' ! -path ./compiler/lib/Bindings/Python/torus/__init__.py)
 
 for file in $files
 do
-    cmp <(head -n 2 $file) <(echo "#  Part of the Concrete Compiler Project, under the BSD3 License with Zama Exceptions.
+    cmp <(head -n 2 $file) <(echo "#  Part of the Torus Compiler Project, under the BSD3 License with Zama Exceptions.
 #  See https://github.com/luxfhe/torus/blob/main/LICENSE.txt for license information.") || print_and_exit $file
 done

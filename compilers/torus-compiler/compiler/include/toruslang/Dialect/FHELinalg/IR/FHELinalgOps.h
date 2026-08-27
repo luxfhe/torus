@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -35,9 +35,9 @@ LogicalResult verifyTensorUnaryEint(mlir::Operation *op);
 /// The result shape should have the size of the largest shape of operands and
 /// each dimension `i` should be equals to the maximum of dimensions `i` of
 /// each operands.
-template <typename ConcreteType>
+template <typename Derived>
 class TensorBroadcastingRules
-    : public mlir::OpTrait::TraitBase<ConcreteType, TensorBroadcastingRules> {
+    : public mlir::OpTrait::TraitBase<Derived, TensorBroadcastingRules> {
 public:
   static LogicalResult verifyTrait(Operation *op) {
     return impl::verifyTensorBroadcastingRules(op);
@@ -48,9 +48,9 @@ public:
 /// signature
 /// `(tensor<...x!FHE.eint<$p>>, tensor<...xi$p'>) ->
 /// tensor<...x!FHE.eint<$p>>` where `$p <= $p+1`.
-template <typename ConcreteType>
+template <typename Derived>
 class TensorBinaryEintInt
-    : public mlir::OpTrait::TraitBase<ConcreteType, TensorBinaryEintInt> {
+    : public mlir::OpTrait::TraitBase<Derived, TensorBinaryEintInt> {
 public:
   static LogicalResult verifyTrait(Operation *op) {
     return impl::verifyTensorBinaryEintInt(op);
@@ -61,9 +61,9 @@ public:
 /// signature
 /// `(tensor<...xi$p'>, tensor<...x!FHE.eint<$p>>) ->
 /// tensor<...x!FHE.eint<$p>>` where `$p <= $p+1`.
-template <typename ConcreteType>
+template <typename Derived>
 class TensorBinaryIntEint
-    : public mlir::OpTrait::TraitBase<ConcreteType, TensorBinaryEintInt> {
+    : public mlir::OpTrait::TraitBase<Derived, TensorBinaryEintInt> {
 public:
   static LogicalResult verifyTrait(Operation *op) {
     return impl::verifyTensorBinaryIntEint(op);
@@ -73,9 +73,9 @@ public:
 /// TensorBinary verify the operation match the following signature
 /// `(tensor<...x!FHE.eint<$p>>, tensor<...x!FHE.eint<$p>>) ->
 /// tensor<...x!FHE.eint<$p>>`
-template <typename ConcreteType>
+template <typename Derived>
 class TensorBinaryEint
-    : public mlir::OpTrait::TraitBase<ConcreteType, TensorBinaryEint> {
+    : public mlir::OpTrait::TraitBase<Derived, TensorBinaryEint> {
 public:
   static LogicalResult verifyTrait(Operation *op) {
     return impl::verifyTensorBinaryEint(op);
@@ -84,9 +84,9 @@ public:
 
 /// TensorBinary verify the operation match the following signature
 /// `(tensor<...x!FHE.eint<$p>>) -> tensor<...x!FHE.eint<$p>>`
-template <typename ConcreteType>
+template <typename Derived>
 class TensorUnaryEint
-    : public mlir::OpTrait::TraitBase<ConcreteType, TensorUnaryEint> {
+    : public mlir::OpTrait::TraitBase<Derived, TensorUnaryEint> {
 public:
   static LogicalResult verifyTrait(Operation *op) {
     return impl::verifyTensorUnaryEint(op);

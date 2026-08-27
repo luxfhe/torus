@@ -17,7 +17,7 @@ Torus is made of 4 main categories of sub-project that are organized in subdirec
 
 The module structure of **Torus Python**. You are encouraged to check individual `.py` files to learn more.
 
-* concrete
+* torus
   * fhe
     * **dtypes:** data type specifications (e.g., int4, uint5, float32)
     * **values:** value specifications (i.e., data type + shape + encryption status)

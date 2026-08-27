@@ -1,0 +1,13 @@
+set(LLVM_TARGET_DEFINITIONS TorusOps.td)
+mlir_tablegen(TorusOps.h.inc -gen-op-decls)
+mlir_tablegen(TorusOps.cpp.inc -gen-op-defs)
+mlir_tablegen(TorusOpsTypes.h.inc -gen-typedef-decls -typedefs-dialect=Torus)
+mlir_tablegen(TorusOpsTypes.cpp.inc -gen-typedef-defs -typedefs-dialect=Torus)
+mlir_tablegen(TorusOpsDialect.h.inc -gen-dialect-decls -dialect=Torus)
+mlir_tablegen(TorusOpsDialect.cpp.inc -gen-dialect-defs -dialect=Torus)
+add_public_tablegen_target(MLIRTorusOpsIncGen)
+add_dependencies(mlir-headers MLIRTorusOpsIncGen)
+
+add_toruslang_doc(TorusOps TorusDialect toruslang/ -gen-dialect-doc -dialect=Torus)
+add_toruslang_doc(TorusOps TorusOps toruslang/ -gen-op-doc)
+add_toruslang_doc(TorusTypes TorusTypes toruslang/ -gen-typedef-doc)

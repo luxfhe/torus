@@ -1,6 +1,6 @@
-use concrete_cpu::c_api::linear_op::{
-    concrete_cpu_add_lwe_ciphertext_u64, concrete_cpu_add_plaintext_lwe_ciphertext_u64,
-    concrete_cpu_mul_cleartext_lwe_ciphertext_u64, concrete_cpu_negate_lwe_ciphertext_u64,
+use torus_cpu::c_api::linear_op::{
+    torus_cpu_add_lwe_ciphertext_u64, torus_cpu_add_plaintext_lwe_ciphertext_u64,
+    torus_cpu_mul_cleartext_lwe_ciphertext_u64, torus_cpu_negate_lwe_ciphertext_u64,
 };
 use criterion::{criterion_group, criterion_main, Criterion};
 
@@ -12,7 +12,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let ct0 = vec![0_u64; lwe_size];
             let ct1 = vec![0_u64; lwe_size];
             b.iter(|| unsafe {
-                concrete_cpu_add_lwe_ciphertext_u64(
+                torus_cpu_add_lwe_ciphertext_u64(
                     out.as_mut_ptr(),
                     ct0.as_ptr(),
                     ct1.as_ptr(),
@@ -26,7 +26,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let ct0 = vec![0_u64; lwe_size];
             let plaintext = 0_u64;
             b.iter(|| unsafe {
-                concrete_cpu_add_plaintext_lwe_ciphertext_u64(
+                torus_cpu_add_plaintext_lwe_ciphertext_u64(
                     out.as_mut_ptr(),
                     ct0.as_ptr(),
                     plaintext,
@@ -40,7 +40,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let ct0 = vec![0_u64; lwe_size];
             let cleartext = 0_u64;
             b.iter(|| unsafe {
-                concrete_cpu_mul_cleartext_lwe_ciphertext_u64(
+                torus_cpu_mul_cleartext_lwe_ciphertext_u64(
                     out.as_mut_ptr(),
                     ct0.as_ptr(),
                     cleartext,
@@ -53,7 +53,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
             let mut out = vec![0_u64; lwe_size];
             let ct0 = vec![0_u64; lwe_size];
             b.iter(|| unsafe {
-                concrete_cpu_negate_lwe_ciphertext_u64(
+                torus_cpu_negate_lwe_ciphertext_u64(
                     out.as_mut_ptr(),
                     ct0.as_ptr(),
                     lwe_dimension,

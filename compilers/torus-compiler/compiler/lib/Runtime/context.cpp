@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -14,8 +14,8 @@ namespace toruslang {
 
 FFT::FFT(size_t polynomial_size)
     : fft(nullptr), polynomial_size(polynomial_size) {
-  fft = (struct Fft *)aligned_alloc(CONCRETE_FFT_ALIGN, CONCRETE_FFT_SIZE);
-  concrete_cpu_construct_concrete_fft(fft, polynomial_size);
+  fft = (struct Fft *)aligned_alloc(TORUS_FFT_ALIGN, TORUS_FFT_SIZE);
+  torus_cpu_construct_torus_fft(fft, polynomial_size);
 }
 
 FFT::FFT(FFT &&other) : fft(other.fft), polynomial_size(other.polynomial_size) {
@@ -24,7 +24,7 @@ FFT::FFT(FFT &&other) : fft(other.fft), polynomial_size(other.polynomial_size) {
 
 FFT::~FFT() {
   if (fft != nullptr) {
-    concrete_cpu_destroy_concrete_fft(fft);
+    torus_cpu_destroy_torus_fft(fft);
     free(fft);
   }
 }
@@ -72,7 +72,7 @@ RuntimeContext::convert_to_fourier_domain(LweBootstrapKey &bsk) {
   // Allocate scratch for key conversion
   size_t scratch_size;
   size_t scratch_align;
-  concrete_cpu_bootstrap_key_convert_u64_to_fourier_scratch(
+  torus_cpu_bootstrap_key_convert_u64_to_fourier_scratch(
       &scratch_size, &scratch_align, fft.fft);
   auto scratch = (uint8_t *)aligned_alloc(scratch_align, scratch_size);
 
@@ -83,7 +83,7 @@ RuntimeContext::convert_to_fourier_domain(LweBootstrapKey &bsk) {
   auto bsk_data = bsk_buffer.data();
 
   // Convert bootstrap_key to the fourier domain
-  concrete_cpu_bootstrap_key_convert_u64_to_fourier(
+  torus_cpu_bootstrap_key_convert_u64_to_fourier(
       bsk_data, fourier_data->data(), decomposition_level_count,
       decomposition_base_log, glwe_dimension, polynomial_size,
       input_lwe_dimension, fft.fft, scratch, scratch_size);

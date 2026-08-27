@@ -31,12 +31,12 @@ Result<TestProgram> setupTestProgram(std::string source,
   mlir::toruslang::CompilerEngine ce{ccx};
   mlir::toruslang::CompilationOptions options;
 
-  auto circuitEncoding = Message<concreteprotocol::CircuitEncodingInfo>();
+  auto circuitEncoding = Message<torusprotocol::CircuitEncodingInfo>();
   auto inputs = circuitEncoding.asBuilder().initInputs(2);
   auto outputs = circuitEncoding.asBuilder().initOutputs(1);
   circuitEncoding.asBuilder().setName(funcname);
 
-  auto encodingInfo = Message<concreteprotocol::EncodingInfo>();
+  auto encodingInfo = Message<torusprotocol::EncodingInfo>();
   encodingInfo.asBuilder().initShape();
   auto integer = encodingInfo.asBuilder().getEncoding().initIntegerCiphertext();
   integer.getMode().initNative();
@@ -47,7 +47,7 @@ Result<TestProgram> setupTestProgram(std::string source,
   inputs.setWithCaveats(1, encodingInfo.asReader());
   outputs.setWithCaveats(0, encodingInfo.asReader());
 
-  options.encodings = Message<concreteprotocol::ProgramEncodingInfo>();
+  options.encodings = Message<torusprotocol::ProgramEncodingInfo>();
   options.encodings->asBuilder().initCircuits(1).setWithCaveats(
       0, circuitEncoding.asReader());
 

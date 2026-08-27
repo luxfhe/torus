@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -54,44 +54,44 @@ typedef std::function<Result<TransportValue>(Value)> ReturnTransformer;
 class TransformerFactory {
 public:
   static Result<InputTransformer>
-  getIndexInputTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getIndexInputTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<OutputTransformer>
-  getIndexOutputTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getIndexOutputTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<ArgTransformer>
-  getIndexArgTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getIndexArgTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<ReturnTransformer>
-  getIndexReturnTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getIndexReturnTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<InputTransformer>
-  getPlaintextInputTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getPlaintextInputTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<OutputTransformer>
-  getPlaintextOutputTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getPlaintextOutputTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<ArgTransformer>
-  getPlaintextArgTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getPlaintextArgTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<ReturnTransformer>
-  getPlaintextReturnTransformer(Message<concreteprotocol::GateInfo> gateInfo);
+  getPlaintextReturnTransformer(Message<torusprotocol::GateInfo> gateInfo);
 
   static Result<InputTransformer> getLweCiphertextInputTransformer(
-      ClientKeyset keyset, Message<concreteprotocol::GateInfo> gateInfo,
+      ClientKeyset keyset, Message<torusprotocol::GateInfo> gateInfo,
       std::shared_ptr<toruslang::csprng::EncryptionCSPRNG> csprng,
       bool useSimulation);
 
   static Result<OutputTransformer> getLweCiphertextOutputTransformer(
-      ClientKeyset keyset, Message<concreteprotocol::GateInfo> gateInfo,
+      ClientKeyset keyset, Message<torusprotocol::GateInfo> gateInfo,
       bool useSimulation);
 
   static Result<ArgTransformer>
-  getLweCiphertextArgTransformer(Message<concreteprotocol::GateInfo> gateInfo,
+  getLweCiphertextArgTransformer(Message<torusprotocol::GateInfo> gateInfo,
                                  bool useSimulation);
 
   static Result<ReturnTransformer> getLweCiphertextReturnTransformer(
-      Message<concreteprotocol::GateInfo> gateInfo, bool useSimulation);
+      Message<torusprotocol::GateInfo> gateInfo, bool useSimulation);
 };
 
 } // namespace transformers

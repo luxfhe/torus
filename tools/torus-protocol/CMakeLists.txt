@@ -46,8 +46,8 @@ add_executable(capnpc IMPORTED)
 set_property(TARGET capnpc PROPERTY IMPORTED_LOCATION ${CAPNP_CMD})
 add_dependencies(capnpc capnp_repo)
 
-get_filename_component(CONCRETE_PROTOCOL_CAPNP_FILE "src/torus-protocol.capnp" ABSOLUTE)
-get_filename_component(CONCRETE_PROTOCOL_FOLDER "${CONCRETE_PROTOCOL_CAPNP_FILE}" DIRECTORY)
+get_filename_component(TORUS_PROTOCOL_CAPNP_FILE "src/torus-protocol.capnp" ABSOLUTE)
+get_filename_component(TORUS_PROTOCOL_FOLDER "${TORUS_PROTOCOL_CAPNP_FILE}" DIRECTORY)
 set(GENERATED_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 file(MAKE_DIRECTORY "${GENERATED_DIRECTORY}")
 get_filename_component(CAPNP_GENERATED_CPP "${GENERATED_DIRECTORY}/torus-protocol.capnp.c++" ABSOLUTE)
@@ -57,7 +57,7 @@ set_source_files_properties(${CAPNP_GENERATED_HDR} PROPERTIES GENERATED TRUE)
 
 add_custom_command(
   OUTPUT ${CAPNP_GENERATED_CPP} ${CAPNP_GENERATED_HDR}
-  COMMAND ${CAPNP_CMD} compile --src-prefix=${CONCRETE_PROTOCOL_FOLDER} --import-path=${CAPNP_INCLUDE_DIR} --output=${CAPNP_CMD}c-c++:${GENERATED_DIRECTORY} ${CONCRETE_PROTOCOL_CAPNP_FILE} DEPENDS capnpc
+  COMMAND ${CAPNP_CMD} compile --src-prefix=${TORUS_PROTOCOL_FOLDER} --import-path=${CAPNP_INCLUDE_DIR} --output=${CAPNP_CMD}c-c++:${GENERATED_DIRECTORY} ${TORUS_PROTOCOL_CAPNP_FILE} DEPENDS capnpc
 )
 
 include_directories(${CAPNP_INCLUDE_DIR})

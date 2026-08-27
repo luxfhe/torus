@@ -1,7 +1,7 @@
 add_compile_options(-fexceptions -fsized-deallocation -fno-rtti)
 
 add_mlir_library(
-  ConcretelangCommon
+  ToruslangCommon
   Protocol.cpp
   CRT.cpp
   Csprng.cpp
@@ -18,6 +18,6 @@ add_mlir_library(
   kj)
 
 target_include_directories(
-  ConcretelangCommon
-  PUBLIC ${CONCRETE_CPU_INCLUDE_DIR}
-  PUBLIC ${CONCRETE_CPU_NOISE_MODEL_INCLUDE_DIR})
+  ToruslangCommon
+  PUBLIC ${TORUS_CPU_INCLUDE_DIR}
+  PUBLIC ${TORUS_CPU_NOISE_MODEL_INCLUDE_DIR})

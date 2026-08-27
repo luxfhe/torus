@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=roundtrip %s 2>&1| FileCheck %s
+// RUN: toruscompiler --action=roundtrip %s 2>&1| FileCheck %s
 
 /////////////////////////////////////////////////
 // FHELinalg.add_eint_int

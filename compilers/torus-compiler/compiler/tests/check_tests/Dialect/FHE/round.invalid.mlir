@@ -1,4 +1,4 @@
-// RUN: not concretecompiler --split-input-file --action=roundtrip  %s 2>&1| FileCheck %s
+// RUN: not toruscompiler --split-input-file --action=roundtrip  %s 2>&1| FileCheck %s
 
 // CHECK-LABEL: error: 'FHE.round' op should have the input width larger than the output width.
 func.func @larger_output_width(%arg0: !FHE.eint<3>) -> !FHE.eint<4> {

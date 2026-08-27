@@ -18,7 +18,7 @@ CC_COMPILER?=
 CXX_COMPILER?=
 CUDA_SUPPORT?=OFF
 INSTALL_PREFIX?=$(abspath $(BUILD_DIR))/install
-INSTALL_PATH=$(abspath $(INSTALL_PREFIX))/concretecompiler/
+INSTALL_PATH=$(abspath $(INSTALL_PREFIX))/toruscompiler/
 MAKEFILE_ROOT_DIR=$(shell pwd)
 MINIMAL_TESTS?=OFF
 STUBGEN=$(shell $(Python3_EXECUTABLE) -c "import sysconfig; sp = sysconfig.get_paths()['scripts']; print(f\"{sp}/stubgen\")")
@@ -113,7 +113,7 @@ ifeq ($(BUILD_TYPE),Debug)
 	LIBOMP_LINK_TO_LIBSTDCXX_OPT=-DLIBOMP_USE_STDCPPLIB=ON
 endif
 
-all: concretecompiler runtime python-bindings build-tests build-benchmarks doc torus-rust
+all: toruscompiler runtime python-bindings build-tests build-benchmarks doc torus-rust
 
 # COMPILER #####################################################
 
@@ -156,25 +156,25 @@ update-dialect-doc: doc
 	cp $(BUILD_DIR)/tools/toruslang/docs/toruslang/*Dialect.md $(DOCS_DIR)/dev/compilation/ && \
 	sed -i -e 's/\[TOC\]//' $(DOCS_DIR)/dev/compilation/*Dialect.md
 
-concretecompiler: build-initialized
-	cmake --build $(BUILD_DIR) --target concretecompiler
+toruscompiler: build-initialized
+	cmake --build $(BUILD_DIR) --target toruscompiler
 
 runtime: build-initialized
-	cmake --build $(BUILD_DIR) --target ConcretelangRuntime
+	cmake --build $(BUILD_DIR) --target ToruslangRuntime
 
 python-bindings: build-initialized runtime
-	cmake --build $(BUILD_DIR) --target ConcretelangMLIRPythonModules
-	cmake --build $(BUILD_DIR) --target ConcretelangPythonModules
-	PYTHONPATH=${PYTHONPATH}:$(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core LD_PRELOAD=$(BUILD_DIR)/lib/libConcretelangRuntime.so $(STUBGEN) -m mlir._mlir_libs._toruslang._compiler --include-docstrings -o $(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core
+	cmake --build $(BUILD_DIR) --target ToruslangMLIRPythonModules
+	cmake --build $(BUILD_DIR) --target ToruslangPythonModules
+	PYTHONPATH=${PYTHONPATH}:$(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core LD_PRELOAD=$(BUILD_DIR)/lib/libToruslangRuntime.so $(STUBGEN) -m mlir._mlir_libs._toruslang._compiler --include-docstrings -o $(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core
 
 clientlib: build-initialized
-	cmake --build $(BUILD_DIR) --target ConcretelangClientLib
+	cmake --build $(BUILD_DIR) --target ToruslangClientLib
 
 serverlib: build-initialized
-	cmake --build $(BUILD_DIR) --target ConcretelangServerLib
+	cmake --build $(BUILD_DIR) --target ToruslangServerLib
 
 torus-rust: build-initialized
-	cmake --build $(BUILD_DIR) --target ConcreteRust
+	cmake --build $(BUILD_DIR) --target TorusRust
 
 GITHUB_URL=https://api.github.com/repos/luxfhe.com/torus-compiler-internal
 GITHUB_URL_LIST_ARTIFACTS="${GITHUB_URL}/actions/artifacts?name=${KEYSETCACHENAME}&per_page=1"
@@ -216,23 +216,23 @@ run-tests: run-check-tests run-unit-tests run-end-to-end-tests run-random-end-to
 
 ## check-tests
 
-run-check-tests: concretecompiler file-check not
+run-check-tests: toruscompiler file-check not
 	$(BUILD_DIR)/bin/llvm-lit -v tests/check_tests
 
 ## unit-tests
 
 build-unit-tests: build-initialized
-	cmake --build $(BUILD_DIR) --target ConcretelangUnitTests
+	cmake --build $(BUILD_DIR) --target ToruslangUnitTests
 
 run-unit-tests: build-unit-tests
 	find $(BUILD_DIR)/tools/toruslang/tests/unit_tests -name unit_tests_toruslang* $(FIND_EXECUTABLE_ARG) -type f | xargs -n1 ./run_test_bin.sh
 
 ## python-tests
 
-run-python-tests: python-bindings concretecompiler runtime
-	PYTHONPATH=${PYTHONPATH}:$(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core LD_PRELOAD=$(BUILD_DIR)/lib/libConcretelangRuntime.so pytest -vs -m $(PYTHON_TESTS_MARKER) tests/python
+run-python-tests: python-bindings toruscompiler runtime
+	PYTHONPATH=${PYTHONPATH}:$(BUILD_DIR)/tools/toruslang/python_packages/toruslang_core LD_PRELOAD=$(BUILD_DIR)/lib/libToruslangRuntime.so pytest -vs -m $(PYTHON_TESTS_MARKER) tests/python
 
-test-compiler-file-output: concretecompiler
+test-compiler-file-output: toruscompiler
 	pytest -vs tests/test_compiler_file_output
 
 ## end-to-end-tests
@@ -399,11 +399,11 @@ show-stress-tests-summary:
 	@echo 'Parameters issues:'
 	@cd tests/stress_tests/trace && grep BAD -R || echo 'No issues'
 
-stress-tests: concretecompiler
+stress-tests: toruscompiler
 	pytest -vs tests/stress_tests
 
 # useful for faster cache generation, need pytest-parallel
-stress-tests-fast-cache: concretecompiler
+stress-tests-fast-cache: toruscompiler
 	pytest --workers auto -vs tests/stress_tests
 
 # LLVM/MLIR dependencies
@@ -432,13 +432,13 @@ update-python-version:
 	echo "__version__ = \"`git describe --tags --abbrev=0 | grep -e '[0-9].*' -o`\"" > lib/Bindings/Python/version.txt
 
 check-python-format:
-	black --check tests/python/ lib/Bindings/Python/concrete/
+	black --check tests/python/ lib/Bindings/Python/torus/
 
 python-format:
-	black tests/python/ lib/Bindings/Python/concrete/
+	black tests/python/ lib/Bindings/Python/torus/
 
 python-lint:
-	pylint --rcfile=../pylintrc lib/Bindings/Python/concrete/compiler
+	pylint --rcfile=../pylintrc lib/Bindings/Python/torus/compiler
 
 # libraries we want to have in the installation that aren't already a deps of other targets
 install-deps:
@@ -459,7 +459,7 @@ else
 endif
 
 
-install: concretecompiler install-deps
+install: toruscompiler install-deps
 	$(info Install prefix set to $(INSTALL_PREFIX))
 	$(info Installing under $(INSTALL_PATH))
 	mkdir -p $(INSTALL_PATH)/include
@@ -490,7 +490,7 @@ FORCE:
 
 .PHONY: build-initialized \
 	build-end-to-end-jit \
-	concretecompiler \
+	toruscompiler \
 	python-bindings \
 	add-deps \
 	file-check \

@@ -1,0 +1,19 @@
+add_mlir_dialect_library(
+  ToruslangTorusTransforms
+  BufferizableOpInterfaceImpl.cpp
+  AddRuntimeContext.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Torus
+  DEPENDS
+  TorusTransformsIncGen
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  ToruslangConversion
+  MLIRArithDialect
+  MLIRBufferizationDialect
+  MLIRBufferizationTransforms
+  MLIRIR
+  MLIRMemRefDialect
+  MLIRPass
+  MLIRTransforms)

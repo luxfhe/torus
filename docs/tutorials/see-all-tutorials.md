@@ -2,8 +2,8 @@
 
 ### Start here
 
-* [Part I - Torus,  Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/lux-concrete-fully-homomorphic-encryption-compiler)
-* [Part II - The Architecture of Torus, Lux Industries' Fully Homomorphic Encryption Compiler Leveraging MLIR](https://www.luxfhe.com/post/the-architecture-of-concrete-lux-fully-homomorphic-encryption-compiler-leveraging-mlir)
+* [Part I - Torus,  Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/lux-torus-fully-homomorphic-encryption-compiler)
+* [Part II - The Architecture of Torus, Lux Industries' Fully Homomorphic Encryption Compiler Leveraging MLIR](https://www.luxfhe.com/post/the-architecture-of-torus-lux-fully-homomorphic-encryption-compiler-leveraging-mlir)
 
 ### Go further
 
@@ -26,9 +26,9 @@
 
 #### Video tutorials
 
-* [Compute an XOR distance in FHE using Torus](https://www.luxfhe.com/post/video-tutorial-compute-an-xor-distance-in-fhe-using-concrete) - May 2024
-* [Speed up neural networks with approximate rounding using Torus](https://www.luxfhe.com/post/video-tutorial-speed-up-neural-networks-with-approximate-rounding-using-concrete) - May 2024
-* [Compile composable functions with Torus](https://www.luxfhe.com/post/video-tutorial-compile-composable-functions-with-concrete) - February 2024
-* [How to use dynamic table look-ups using Torus](https://www.luxfhe.com/post/video-tutorial-how-to-use-dynamic-table-look-ups-using-concrete) - October 2023
-* [Dive into Torus - Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/video-tutorial-dive-into-concrete-luxs-fully-homomorphic-encryption-compiler) - October 2023
-* [How To Get Started With Torus - Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/how-to-started-with-concrete-lux-fully-homomorphic-encryption-compiler)  - July 2023
+* [Compute an XOR distance in FHE using Torus](https://www.luxfhe.com/post/video-tutorial-compute-an-xor-distance-in-fhe-using-torus) - May 2024
+* [Speed up neural networks with approximate rounding using Torus](https://www.luxfhe.com/post/video-tutorial-speed-up-neural-networks-with-approximate-rounding-using-torus) - May 2024
+* [Compile composable functions with Torus](https://www.luxfhe.com/post/video-tutorial-compile-composable-functions-with-torus) - February 2024
+* [How to use dynamic table look-ups using Torus](https://www.luxfhe.com/post/video-tutorial-how-to-use-dynamic-table-look-ups-using-torus) - October 2023
+* [Dive into Torus - Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/video-tutorial-dive-into-torus-luxs-fully-homomorphic-encryption-compiler) - October 2023
+* [How To Get Started With Torus - Lux Industries' Fully Homomorphic Encryption Compiler](https://www.luxfhe.com/post/how-to-started-with-torus-lux-fully-homomorphic-encryption-compiler)  - July 2023

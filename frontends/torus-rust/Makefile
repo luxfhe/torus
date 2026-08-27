@@ -1,4 +1,4 @@
-CARGO_SUBDIRS := concrete torus-macro test torus-keygen
+CARGO_SUBDIRS := torus torus-macro test torus-keygen
 COMPILER_BUILD_DIRECTORY := ../../../compilers/torus-compiler/compiler/build
 
 .PHONY: test clean run pcc

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-fhe-df-parallelized %s --optimizer-strategy=dag-mono --parallelize --passes hoist-await-future --skip-program-info | FileCheck  %s
+// RUN: toruscompiler --action=dump-fhe-df-parallelized %s --optimizer-strategy=dag-mono --parallelize --passes hoist-await-future --skip-program-info | FileCheck  %s
 
 func.func @_dfr_DFT_work_function__main0(%arg0: !RT.rtptr<tensor<2x!FHE.eint<6>>>, %arg1: !RT.rtptr<tensor<2x!FHE.eint<6>>>, %arg2: !RT.rtptr<tensor<2xi7>>, %arg3: !RT.rtptr<tensor<2x!FHE.eint<6>>>) attributes {_dfr_work_function_attribute} {
   return

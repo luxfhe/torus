@@ -9,7 +9,7 @@ from test_compiler_file_output.utils import assert_exists, content, remove, run
 TEST_PATH = os.path.dirname(__file__)
 
 CCOMPILER = "cc"
-CONCRETECOMPILER = "concretecompiler"
+TORUSCOMPILER = "toruscompiler"
 
 SOURCE_1 = f"{TEST_PATH}/return_13.ir"
 SOURCE_2 = f"{TEST_PATH}/return_0.ir"
@@ -22,7 +22,7 @@ DYNAMIC_LIB_NAME = "/sharedlib.dylib" if sys.platform == "darwin" else "/sharedl
 LIB_DYNAMIC = ARTIFACTS_DIR + DYNAMIC_LIB_NAME
 LIBS = (LIB_STATIC, LIB_DYNAMIC)
 HEADER_FILE = ARTIFACTS_DIR + "/fhecircuit-client.h"
-CLIENT_PARAMS_FILE = ARTIFACTS_DIR + "/client_parameters.concrete.params.json"
+CLIENT_PARAMS_FILE = ARTIFACTS_DIR + "/client_parameters.torus.params.json"
 ALL_ARTIFACTS = LIBS + (HEADER_FILE, CLIENT_PARAMS_FILE)
 
 assert_exists(SOURCE_1, SOURCE_2, SOURCE_C_1, SOURCE_C_2)
@@ -31,7 +31,7 @@ assert_exists(SOURCE_1, SOURCE_2, SOURCE_C_1, SOURCE_C_2)
 def test_roundtrip():
     remove(OUTPUT)
 
-    run(CONCRETECOMPILER, SOURCE_1, "--action=roundtrip", "-o", OUTPUT)
+    run(TORUSCOMPILER, SOURCE_1, "--action=roundtrip", "-o", OUTPUT)
 
     assert_exists(OUTPUT)
     assert content(SOURCE_1) == content(OUTPUT)
@@ -42,7 +42,7 @@ def test_roundtrip():
 def test_roundtrip_many():
     remove(OUTPUT)
 
-    run(CONCRETECOMPILER, SOURCE_1, SOURCE_2, "--action=roundtrip", "-o", OUTPUT)
+    run(TORUSCOMPILER, SOURCE_1, SOURCE_2, "--action=roundtrip", "-o", OUTPUT)
 
     assert_exists(OUTPUT)
     assert f"{content(SOURCE_1)}{content(SOURCE_2)}" == content(OUTPUT)
@@ -53,7 +53,7 @@ def test_roundtrip_many():
 def test_compile_library():
     remove(ALL_ARTIFACTS)
 
-    run(CONCRETECOMPILER, SOURCE_1, "--action=compile", "-o", ARTIFACTS_DIR)
+    run(TORUSCOMPILER, SOURCE_1, "--action=compile", "-o", ARTIFACTS_DIR)
 
     assert_exists(ALL_ARTIFACTS)
 
@@ -76,7 +76,7 @@ def test_compile_library():
 def test_compile_many_library():
     remove(ALL_ARTIFACTS)
 
-    run(CONCRETECOMPILER, SOURCE_1, SOURCE_2, "--action=compile", "-o", ARTIFACTS_DIR)
+    run(TORUSCOMPILER, SOURCE_1, SOURCE_2, "--action=compile", "-o", ARTIFACTS_DIR)
 
     assert_exists(LIBS)
 

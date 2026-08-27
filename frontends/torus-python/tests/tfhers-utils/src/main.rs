@@ -5,7 +5,7 @@ use std::path::Path;
 
 use clap::{Arg, ArgAction, Command};
 
-use concrete_quantizer::Quantizer;
+use torus_quantizer::Quantizer;
 use tfhe::core_crypto::prelude::LweSecretKey;
 use tfhe::named::Named;
 use tfhe::prelude::*;

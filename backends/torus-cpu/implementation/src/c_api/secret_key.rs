@@ -1,4 +1,4 @@
-use concrete_csprng::generators::SoftwareRandomGenerator;
+use torus_csprng::generators::SoftwareRandomGenerator;
 use tfhe::core_crypto::commons::math::random::{CompressionSeed, Seed};
 use tfhe::core_crypto::prelude::*;
 
@@ -8,7 +8,7 @@ use super::utils::nounwind;
 use core::slice;
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_init_secret_key_u64(
+pub unsafe extern "C" fn torus_cpu_init_secret_key_u64(
     sk: *mut u64,
     dimension: usize,
     csprng: *mut SecCsprng,
@@ -16,7 +16,7 @@ pub unsafe extern "C" fn concrete_cpu_init_secret_key_u64(
     nounwind(|| {
         let mut sk = LweSecretKey::from_container(slice::from_raw_parts_mut(
             sk,
-            concrete_cpu_lwe_secret_key_size_u64(dimension),
+            torus_cpu_lwe_secret_key_size_u64(dimension),
         ));
         tfhe::core_crypto::algorithms::generate_binary_lwe_secret_key(
             &mut sk,
@@ -26,7 +26,7 @@ pub unsafe extern "C" fn concrete_cpu_init_secret_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_encrypt_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_encrypt_lwe_ciphertext_u64(
     // secret key
     lwe_sk: *const u64,
     // ciphertext
@@ -43,10 +43,10 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_lwe_ciphertext_u64(
     nounwind(|| {
         let lwe_sk = LweSecretKey::from_container(slice::from_raw_parts(
             lwe_sk,
-            concrete_cpu_lwe_secret_key_size_u64(lwe_dimension),
+            torus_cpu_lwe_secret_key_size_u64(lwe_dimension),
         ));
         let mut lwe_out = LweCiphertext::from_container(
-            slice::from_raw_parts_mut(lwe_out, concrete_cpu_lwe_ciphertext_size_u64(lwe_dimension)),
+            slice::from_raw_parts_mut(lwe_out, torus_cpu_lwe_ciphertext_size_u64(lwe_dimension)),
             CiphertextModulus::new_native(),
         );
         encrypt_lwe_ciphertext(
@@ -60,7 +60,7 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_encrypt_seeded_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_encrypt_seeded_lwe_ciphertext_u64(
     // secret key
     lwe_sk: *const u64,
     // seeded ciphertext
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_seeded_lwe_ciphertext_u64(
     nounwind(|| {
         let lwe_sk = LweSecretKey::from_container(slice::from_raw_parts(
             lwe_sk,
-            concrete_cpu_lwe_secret_key_size_u64(lwe_dimension),
+            torus_cpu_lwe_secret_key_size_u64(lwe_dimension),
         ));
 
         let seed = Seed(u128::from_le_bytes(compression_seed.little_endian_bytes));
@@ -103,7 +103,7 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_seeded_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_encrypt_ggsw_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_encrypt_ggsw_ciphertext_u64(
     // secret key
     glwe_sk: *const u64,
     // ciphertext
@@ -127,14 +127,14 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_ggsw_ciphertext_u64(
         let glwe_sk = GlweSecretKey::from_container(
             slice::from_raw_parts(
                 glwe_sk,
-                concrete_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
+                torus_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
             ),
             PolynomialSize(polynomial_size),
         );
         let mut ggsw_out = GgswCiphertext::from_container(
             slice::from_raw_parts_mut(
                 ggsw_out,
-                concrete_cpu_ggsw_ciphertext_size_u64(glwe_dimension, polynomial_size, level),
+                torus_cpu_ggsw_ciphertext_size_u64(glwe_dimension, polynomial_size, level),
             ),
             GlweDimension(glwe_dimension).to_glwe_size(),
             PolynomialSize(polynomial_size),
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn concrete_cpu_encrypt_ggsw_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_decrypt_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_decrypt_lwe_ciphertext_u64(
     // secret key
     lwe_sk: *const u64,
     // ciphertext
@@ -165,12 +165,12 @@ pub unsafe extern "C" fn concrete_cpu_decrypt_lwe_ciphertext_u64(
     nounwind(|| {
         let lwe_sk = LweSecretKey::from_container(slice::from_raw_parts(
             lwe_sk,
-            concrete_cpu_lwe_secret_key_size_u64(lwe_dimension),
+            torus_cpu_lwe_secret_key_size_u64(lwe_dimension),
         ));
         let lwe_ct_in = LweCiphertext::from_container(
             slice::from_raw_parts(
                 lwe_ct_in,
-                concrete_cpu_lwe_ciphertext_size_u64(lwe_dimension),
+                torus_cpu_lwe_ciphertext_size_u64(lwe_dimension),
             ),
             CiphertextModulus::new_native(),
         );
@@ -179,7 +179,7 @@ pub unsafe extern "C" fn concrete_cpu_decrypt_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_decompress_seeded_lwe_ciphertext_u64(
     // ciphertext
     lwe_out: *mut u64,
     // seeded ciphertext
@@ -191,7 +191,7 @@ pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_ciphertext_u64(
 ) {
     nounwind(|| {
         let mut lwe_out = LweCiphertext::from_container(
-            slice::from_raw_parts_mut(lwe_out, concrete_cpu_lwe_ciphertext_size_u64(lwe_dimension)),
+            slice::from_raw_parts_mut(lwe_out, torus_cpu_lwe_ciphertext_size_u64(lwe_dimension)),
             CiphertextModulus::new_native(),
         );
 
@@ -212,21 +212,21 @@ pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_serialize_lwe_secret_key_u64(
+pub unsafe extern "C" fn torus_cpu_serialize_lwe_secret_key_u64(
     lwe_sk: *const u64,
     lwe_dimension: usize,
     out_buffer: *mut u8,
     out_buffer_len: usize,
 ) -> usize {
     let lwe_sk: LweSecretKey<Vec<u64>> = LweSecretKey::from_container(
-        slice::from_raw_parts(lwe_sk, concrete_cpu_lwe_secret_key_size_u64(lwe_dimension)).to_vec(),
+        slice::from_raw_parts(lwe_sk, torus_cpu_lwe_secret_key_size_u64(lwe_dimension)).to_vec(),
     );
 
     super::utils::safe_serialize(&lwe_sk, out_buffer, out_buffer_len)
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_unserialize_lwe_secret_key_u64(
+pub unsafe extern "C" fn torus_cpu_unserialize_lwe_secret_key_u64(
     buffer: *const u8,
     buffer_len: usize,
     lwe_sk: *mut u64,
@@ -241,7 +241,7 @@ pub unsafe extern "C" fn concrete_cpu_unserialize_lwe_secret_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_serialize_glwe_secret_key_u64(
+pub unsafe extern "C" fn torus_cpu_serialize_glwe_secret_key_u64(
     glwe_sk: *const u64,
     glwe_dimension: usize,
     polynomial_size: usize,
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn concrete_cpu_serialize_glwe_secret_key_u64(
     let glwe_sk: GlweSecretKey<Vec<u64>> = GlweSecretKey::from_container(
         slice::from_raw_parts(
             glwe_sk,
-            concrete_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
+            torus_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
         )
         .to_vec(),
         PolynomialSize(polynomial_size),
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn concrete_cpu_serialize_glwe_secret_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_unserialize_glwe_secret_key_u64(
+pub unsafe extern "C" fn torus_cpu_unserialize_glwe_secret_key_u64(
     buffer: *const u8,
     buffer_len: usize,
     glwe_sk: *mut u64,
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn concrete_cpu_unserialize_glwe_secret_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_decrypt_glwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_decrypt_glwe_ciphertext_u64(
     glwe_sk: *const u64,
     output: *mut u64,
     glwe_ct_in: *const u64,
@@ -288,7 +288,7 @@ pub unsafe extern "C" fn concrete_cpu_decrypt_glwe_ciphertext_u64(
         let glwe_sk = GlweSecretKey::from_container(
             slice::from_raw_parts(
                 glwe_sk,
-                concrete_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
+                torus_cpu_glwe_secret_key_size_u64(glwe_dimension, polynomial_size),
             ),
             PolynomialSize(polynomial_size),
         );
@@ -296,7 +296,7 @@ pub unsafe extern "C" fn concrete_cpu_decrypt_glwe_ciphertext_u64(
         let glwe_ct_in = GlweCiphertext::from_container(
             slice::from_raw_parts(
                 glwe_ct_in,
-                concrete_cpu_glwe_ciphertext_size_u64(glwe_dimension, polynomial_size),
+                torus_cpu_glwe_ciphertext_size_u64(glwe_dimension, polynomial_size),
             ),
             PolynomialSize(polynomial_size),
             CiphertextModulus::new_native(),
@@ -310,12 +310,12 @@ pub unsafe extern "C" fn concrete_cpu_decrypt_glwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_lwe_secret_key_size_u64(lwe_dimension: usize) -> usize {
+pub extern "C" fn torus_cpu_lwe_secret_key_size_u64(lwe_dimension: usize) -> usize {
     lwe_dimension
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_glwe_secret_key_size_u64(
+pub unsafe extern "C" fn torus_cpu_glwe_secret_key_size_u64(
     lwe_dimension: usize,
     polynomial_size: usize,
 ) -> usize {
@@ -323,14 +323,14 @@ pub unsafe extern "C" fn concrete_cpu_glwe_secret_key_size_u64(
 }
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_lwe_secret_key_buffer_size_u64(lwe_dimension: usize) -> usize {
+pub extern "C" fn torus_cpu_lwe_secret_key_buffer_size_u64(lwe_dimension: usize) -> usize {
     let metadata = core::mem::size_of::<LweSecretKey<&[u64]>>();
-    metadata + concrete_cpu_lwe_secret_key_size_u64(lwe_dimension) * 8 /*u64*/
+    metadata + torus_cpu_lwe_secret_key_size_u64(lwe_dimension) * 8 /*u64*/
     + 100 /*serialization headers (fragile)*/
 }
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_glwe_secret_key_buffer_size_u64(
+pub extern "C" fn torus_cpu_glwe_secret_key_buffer_size_u64(
     glwe_dimension: usize,
     polynomial_size: usize,
 ) -> usize {
@@ -340,12 +340,12 @@ pub extern "C" fn concrete_cpu_glwe_secret_key_buffer_size_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_lwe_ciphertext_size_u64(lwe_dimension: usize) -> usize {
+pub unsafe extern "C" fn torus_cpu_lwe_ciphertext_size_u64(lwe_dimension: usize) -> usize {
     lwe_dimension + 1
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_glwe_ciphertext_size_u64(
+pub unsafe extern "C" fn torus_cpu_glwe_ciphertext_size_u64(
     glwe_dimension: usize,
     polynomial_size: usize,
 ) -> usize {
@@ -356,7 +356,7 @@ pub unsafe extern "C" fn concrete_cpu_glwe_ciphertext_size_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_ggsw_ciphertext_size_u64(
+pub unsafe extern "C" fn torus_cpu_ggsw_ciphertext_size_u64(
     glwe_dimension: usize,
     polynomial_size: usize,
     decomposition_level_count: usize,

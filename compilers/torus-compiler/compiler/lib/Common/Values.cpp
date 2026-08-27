@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -65,7 +65,7 @@ Value Value::fromRawTransportValue(const TransportValue &transportVal) {
 }
 
 TransportValue Value::intoRawTransportValue() const {
-  auto output = Message<concreteprotocol::Value>();
+  auto output = Message<torusprotocol::Value>();
   auto rawInfo = output.asBuilder().initRawInfo();
   rawInfo.setShape(intoProtoShape().asReader());
   rawInfo.setIntegerPrecision(getIntegerPrecision());
@@ -101,7 +101,7 @@ bool Value::isSigned() const {
   }
 }
 
-Message<concreteprotocol::Payload> Value::intoProtoPayload() const {
+Message<torusprotocol::Payload> Value::intoProtoPayload() const {
   if (hasElementType<uint8_t>()) {
     return vectorToProtoPayload(std::get<Tensor<uint8_t>>(inner).values);
   } else if (hasElementType<uint16_t>()) {
@@ -123,7 +123,7 @@ Message<concreteprotocol::Payload> Value::intoProtoPayload() const {
   }
 }
 
-Message<concreteprotocol::Shape> Value::intoProtoShape() const {
+Message<torusprotocol::Shape> Value::intoProtoShape() const {
   return dimensionsToProtoShape(getDimensions());
 }
 
@@ -178,12 +178,12 @@ size_t Value::getLength() const {
 }
 
 bool Value::isCompatibleWithShape(
-    const Message<concreteprotocol::Shape> &shape) const {
+    const Message<torusprotocol::Shape> &shape) const {
   return isCompatibleWithShape(shape.asReader());
 }
 
 bool Value::isCompatibleWithShape(
-    concreteprotocol::Shape::Reader reader) const {
+    torusprotocol::Shape::Reader reader) const {
   auto dimensions = getDimensions();
   if ((uint32_t)reader.getDimensions().size() != dimensions.size()) {
     return false;

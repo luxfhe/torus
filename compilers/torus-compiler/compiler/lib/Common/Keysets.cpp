@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -42,12 +42,12 @@ namespace toruslang {
 namespace keysets {
 
 ClientKeyset
-ClientKeyset::fromProto(const Message<concreteprotocol::ClientKeyset> &proto) {
+ClientKeyset::fromProto(const Message<torusprotocol::ClientKeyset> &proto) {
   return fromProto(proto.asReader());
 }
 
 ClientKeyset
-ClientKeyset::fromProto(concreteprotocol::ClientKeyset::Reader reader) {
+ClientKeyset::fromProto(torusprotocol::ClientKeyset::Reader reader) {
   auto output = ClientKeyset();
   for (auto skProto : reader.getLweSecretKeys()) {
     output.lweSecretKeys.push_back(LweSecretKey::fromProto(skProto));
@@ -56,8 +56,8 @@ ClientKeyset::fromProto(concreteprotocol::ClientKeyset::Reader reader) {
   return output;
 }
 
-Message<concreteprotocol::ClientKeyset> ClientKeyset::toProto() const {
-  auto output = Message<concreteprotocol::ClientKeyset>();
+Message<torusprotocol::ClientKeyset> ClientKeyset::toProto() const {
+  auto output = Message<torusprotocol::ClientKeyset>();
   output.asBuilder().initLweSecretKeys(lweSecretKeys.size());
   for (size_t i = 0; i < lweSecretKeys.size(); i++) {
     output.asBuilder().getLweSecretKeys().setWithCaveats(
@@ -68,12 +68,12 @@ Message<concreteprotocol::ClientKeyset> ClientKeyset::toProto() const {
 }
 
 ServerKeyset
-ServerKeyset::fromProto(const Message<concreteprotocol::ServerKeyset> &proto) {
+ServerKeyset::fromProto(const Message<torusprotocol::ServerKeyset> &proto) {
   return fromProto(proto.asReader());
 }
 
 ServerKeyset
-ServerKeyset::fromProto(concreteprotocol::ServerKeyset::Reader reader) {
+ServerKeyset::fromProto(torusprotocol::ServerKeyset::Reader reader) {
   auto output = ServerKeyset();
   for (auto bskProto : reader.getLweBootstrapKeys()) {
     output.lweBootstrapKeys.push_back(LweBootstrapKey::fromProto(bskProto));
@@ -91,8 +91,8 @@ ServerKeyset::fromProto(concreteprotocol::ServerKeyset::Reader reader) {
   return output;
 }
 
-Message<concreteprotocol::ServerKeyset> ServerKeyset::toProto() const {
-  auto output = Message<concreteprotocol::ServerKeyset>();
+Message<torusprotocol::ServerKeyset> ServerKeyset::toProto() const {
+  auto output = Message<torusprotocol::ServerKeyset>();
   output.asBuilder().initLweBootstrapKeys(lweBootstrapKeys.size());
   for (size_t i = 0; i < lweBootstrapKeys.size(); i++) {
     output.asBuilder().getLweBootstrapKeys().setWithCaveats(
@@ -114,7 +114,7 @@ Message<concreteprotocol::ServerKeyset> ServerKeyset::toProto() const {
   return output;
 }
 
-Keyset::Keyset(const Message<concreteprotocol::KeysetInfo> &info,
+Keyset::Keyset(const Message<torusprotocol::KeysetInfo> &info,
                SecretCSPRNG &secretCsprng, EncryptionCSPRNG &encryptionCsprng,
                std::map<uint32_t, LweSecretKey> lweSecretKeys) {
   for (auto keyInfo : info.asReader().getLweSecretKeys()) {
@@ -128,42 +128,42 @@ Keyset::Keyset(const Message<concreteprotocol::KeysetInfo> &info,
     } else {
       // generate new key
       client.lweSecretKeys.push_back(LweSecretKey(
-          (Message<concreteprotocol::LweSecretKeyInfo>)keyInfo, secretCsprng));
+          (Message<torusprotocol::LweSecretKeyInfo>)keyInfo, secretCsprng));
     }
   }
   for (auto keyInfo : info.asReader().getLweBootstrapKeys()) {
     server.lweBootstrapKeys.push_back(LweBootstrapKey(
-        (Message<concreteprotocol::LweBootstrapKeyInfo>)keyInfo,
+        (Message<torusprotocol::LweBootstrapKeyInfo>)keyInfo,
         client.lweSecretKeys[keyInfo.getInputId()],
         client.lweSecretKeys[keyInfo.getOutputId()], encryptionCsprng));
   }
   for (auto keyInfo : info.asReader().getLweKeyswitchKeys()) {
     server.lweKeyswitchKeys.push_back(LweKeyswitchKey(
-        (Message<concreteprotocol::LweKeyswitchKeyInfo>)keyInfo,
+        (Message<torusprotocol::LweKeyswitchKeyInfo>)keyInfo,
         client.lweSecretKeys[keyInfo.getInputId()],
         client.lweSecretKeys[keyInfo.getOutputId()], encryptionCsprng));
   }
   for (auto keyInfo : info.asReader().getPackingKeyswitchKeys()) {
     server.packingKeyswitchKeys.push_back(PackingKeyswitchKey(
-        (Message<concreteprotocol::PackingKeyswitchKeyInfo>)keyInfo,
+        (Message<torusprotocol::PackingKeyswitchKeyInfo>)keyInfo,
         client.lweSecretKeys[keyInfo.getInputId()],
         client.lweSecretKeys[keyInfo.getOutputId()], encryptionCsprng));
   }
 }
 
-Keyset Keyset::fromProto(const Message<concreteprotocol::Keyset> &proto) {
+Keyset Keyset::fromProto(const Message<torusprotocol::Keyset> &proto) {
   return fromProto(proto.asReader());
 }
 
-Keyset Keyset::fromProto(concreteprotocol::Keyset::Reader reader) {
+Keyset Keyset::fromProto(torusprotocol::Keyset::Reader reader) {
   auto server = ServerKeyset::fromProto(reader.getServer());
   auto client = ClientKeyset::fromProto(reader.getClient());
 
   return {server, client};
 }
 
-Message<concreteprotocol::Keyset> Keyset::toProto() const {
-  auto output = Message<concreteprotocol::Keyset>();
+Message<torusprotocol::Keyset> Keyset::toProto() const {
+  auto output = Message<torusprotocol::Keyset>();
   // we inlined call to server.toProto() to avoid a single big copy of the
   // server keyset. With this, we only do copies of individual keys.
   auto serverKeyset = output.asBuilder().initServer();
@@ -231,7 +231,7 @@ Result<void> saveKey(Key key, std::string path) {
 }
 
 Result<Keyset>
-loadKeysFromFiles(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
+loadKeysFromFiles(const Message<torusprotocol::KeysetInfo> &keysetInfo,
                   __uint128_t secret_seed, __uint128_t encryption_seed,
                   std::string folderPath) {
 #ifdef TORUSLANG_GENERATE_UNSECURE_SECRET_KEYS
@@ -254,7 +254,7 @@ loadKeysFromFiles(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
     llvm::SmallString<0> path(folderPath);
     llvm::sys::path::append(path,
                             "secretKey_" + std::to_string(keyInfo.getId()));
-    OUTCOME_TRY(auto key, loadKey<concreteprotocol::LweSecretKey, LweSecretKey>(
+    OUTCOME_TRY(auto key, loadKey<torusprotocol::LweSecretKey, LweSecretKey>(
                               (std::string)path));
     secretKeys.push_back(key);
   }
@@ -265,7 +265,7 @@ loadKeysFromFiles(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
     llvm::SmallString<0> path(folderPath);
     llvm::sys::path::append(path, "pbsKey_" + std::to_string(keyInfo.getId()));
     OUTCOME_TRY(auto key,
-                loadKey<concreteprotocol::LweBootstrapKey, LweBootstrapKey>(
+                loadKey<torusprotocol::LweBootstrapKey, LweBootstrapKey>(
                     (std::string)path));
     bootstrapKeys.push_back(key);
   }
@@ -276,7 +276,7 @@ loadKeysFromFiles(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
     llvm::SmallString<0> path(folderPath);
     llvm::sys::path::append(path, "ksKey_" + std::to_string(keyInfo.getId()));
     OUTCOME_TRY(auto key,
-                loadKey<concreteprotocol::LweKeyswitchKey, LweKeyswitchKey>(
+                loadKey<torusprotocol::LweKeyswitchKey, LweKeyswitchKey>(
                     (std::string)path));
     keyswitchKeys.push_back(key);
   }
@@ -288,7 +288,7 @@ loadKeysFromFiles(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
     llvm::sys::path::append(path, "pksKey_" + std::to_string(keyInfo.getId()));
     OUTCOME_TRY(
         auto key,
-        loadKey<concreteprotocol::PackingKeyswitchKey, PackingKeyswitchKey>(
+        loadKey<torusprotocol::PackingKeyswitchKey, PackingKeyswitchKey>(
             (std::string)path));
     packingKeyswitchKeys.push_back(key);
   }
@@ -323,7 +323,7 @@ Result<void> saveKeys(Keyset &keyset, llvm::SmallString<0> &folderPath) {
     llvm::SmallString<0> path = folderIncompletePath;
     llvm::sys::path::append(
         path, "secretKey_" + std::to_string(key.getInfo().asReader().getId()));
-    OUTCOME_TRYV(saveKey<concreteprotocol::LweSecretKey, LweSecretKey>(
+    OUTCOME_TRYV(saveKey<torusprotocol::LweSecretKey, LweSecretKey>(
         key, path.c_str()));
   }
   // Save bootstrap keys
@@ -331,7 +331,7 @@ Result<void> saveKeys(Keyset &keyset, llvm::SmallString<0> &folderPath) {
     llvm::SmallString<0> path = folderIncompletePath;
     llvm::sys::path::append(
         path, "pbsKey_" + std::to_string(key.getInfo().asReader().getId()));
-    OUTCOME_TRYV(saveKey<concreteprotocol::LweBootstrapKey, LweBootstrapKey>(
+    OUTCOME_TRYV(saveKey<torusprotocol::LweBootstrapKey, LweBootstrapKey>(
         key, path.c_str()));
   }
   // Save keyswitch keys
@@ -339,7 +339,7 @@ Result<void> saveKeys(Keyset &keyset, llvm::SmallString<0> &folderPath) {
     llvm::SmallString<0> path = folderIncompletePath;
     llvm::sys::path::append(
         path, "ksKey_" + std::to_string(key.getInfo().asReader().getId()));
-    OUTCOME_TRYV(saveKey<concreteprotocol::LweKeyswitchKey, LweKeyswitchKey>(
+    OUTCOME_TRYV(saveKey<torusprotocol::LweKeyswitchKey, LweKeyswitchKey>(
         key, path.c_str()));
   }
   // Save packing keyswitch keys
@@ -348,7 +348,7 @@ Result<void> saveKeys(Keyset &keyset, llvm::SmallString<0> &folderPath) {
     llvm::sys::path::append(
         path, "pksKey_" + std::to_string(key.getInfo().asReader().getId()));
     OUTCOME_TRYV(
-        saveKey<concreteprotocol::PackingKeyswitchKey, PackingKeyswitchKey>(
+        saveKey<torusprotocol::PackingKeyswitchKey, PackingKeyswitchKey>(
             key, path.c_str()));
   }
 
@@ -370,7 +370,7 @@ KeysetCache::KeysetCache(std::string backingDirectoryPath) {
 }
 
 Result<Keyset>
-KeysetCache::getKeyset(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
+KeysetCache::getKeyset(const Message<torusprotocol::KeysetInfo> &keysetInfo,
                        __uint128_t secret_seed, __uint128_t encryption_seed,
                        std::map<uint32_t, LweSecretKey> lweSecretKeys) {
   std::string hashString = keysetInfo.asReader().toString().flatten().cStr() +
@@ -456,30 +456,30 @@ KeysetCache::getKeyset(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
   return std::move(keyset);
 }
 
-Message<concreteprotocol::KeysetInfo>
+Message<torusprotocol::KeysetInfo>
 generateKeysetInfoFromParameters(CircuitKeys parameters,
-                                 concrete_optimizer::Options options) {
-  auto output = Message<concreteprotocol::KeysetInfo>{};
+                                 torus_optimizer::Options options) {
+  auto output = Message<torusprotocol::KeysetInfo>{};
   auto curve = ::toruslang::security::getSecurityCurve(
       options.security_level, ::toruslang::security::BINARY);
 
   auto skLen = (int)parameters.secret_keys.size();
   auto skBuilder = output.asBuilder().initLweSecretKeys(skLen);
   for (auto sk : llvm::enumerate(parameters.secret_keys)) {
-    auto output = Message<concreteprotocol::LweSecretKeyInfo>();
+    auto output = Message<torusprotocol::LweSecretKeyInfo>();
     output.asBuilder().setId(sk.value().identifier);
     output.asBuilder().getParams().setIntegerPrecision(64);
     output.asBuilder().getParams().setLweDimension(sk.value().polynomial_size *
                                                    sk.value().glwe_dimension);
     output.asBuilder().getParams().setKeyType(
-        ::concreteprotocol::KeyType::BINARY);
+        ::torusprotocol::KeyType::BINARY);
     skBuilder.setWithCaveats(sk.index(), output.asReader());
   }
 
   auto bskLen = (int)parameters.bootstrap_keys.size();
   auto bskBuilder = output.asBuilder().initLweBootstrapKeys(bskLen);
   for (auto bsk : llvm::enumerate(parameters.bootstrap_keys)) {
-    auto output = Message<concreteprotocol::LweBootstrapKeyInfo>();
+    auto output = Message<torusprotocol::LweBootstrapKeyInfo>();
     output.asBuilder().setId(bsk.value().identifier);
     output.asBuilder().setInputId(bsk.value().input_key.identifier);
     output.asBuilder().setOutputId(bsk.value().output_key.identifier);
@@ -495,7 +495,7 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
         bsk.value().input_key.polynomial_size);
     output.asBuilder().getParams().setIntegerPrecision(64);
     output.asBuilder().getParams().setKeyType(
-        concreteprotocol::KeyType::BINARY);
+        torusprotocol::KeyType::BINARY);
     output.asBuilder().getParams().setVariance(
         curve->getVariance(bsk.value().output_key.glwe_dimension,
                            bsk.value().output_key.polynomial_size, 64));
@@ -506,7 +506,7 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
   auto ckskLen = (int)parameters.conversion_keyswitch_keys.size();
   auto kskBuilder = output.asBuilder().initLweKeyswitchKeys(kskLen + ckskLen);
   for (auto ksk : llvm::enumerate(parameters.keyswitch_keys)) {
-    auto output = Message<concreteprotocol::LweKeyswitchKeyInfo>();
+    auto output = Message<torusprotocol::LweKeyswitchKeyInfo>();
     output.asBuilder().setId(ksk.value().identifier);
     output.asBuilder().setInputId(ksk.value().input_key.identifier);
     output.asBuilder().setOutputId(ksk.value().output_key.identifier);
@@ -522,7 +522,7 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
         ksk.value().output_key.glwe_dimension *
         ksk.value().output_key.polynomial_size);
     output.asBuilder().getParams().setKeyType(
-        concreteprotocol::KeyType::BINARY);
+        torusprotocol::KeyType::BINARY);
     output.asBuilder().getParams().setVariance(
         curve->getVariance(1,
                            ksk.value().output_key.glwe_dimension *
@@ -531,7 +531,7 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
     kskBuilder.setWithCaveats(ksk.index(), output.asReader());
   }
   for (auto ksk : llvm::enumerate(parameters.conversion_keyswitch_keys)) {
-    auto output = Message<concreteprotocol::LweKeyswitchKeyInfo>();
+    auto output = Message<torusprotocol::LweKeyswitchKeyInfo>();
     output.asBuilder().setId(ksk.value().identifier);
     output.asBuilder().setInputId(ksk.value().input_key.identifier);
     output.asBuilder().setOutputId(ksk.value().output_key.identifier);
@@ -547,7 +547,7 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
         ksk.value().output_key.glwe_dimension *
         ksk.value().output_key.polynomial_size);
     output.asBuilder().getParams().setKeyType(
-        concreteprotocol::KeyType::BINARY);
+        torusprotocol::KeyType::BINARY);
     output.asBuilder().getParams().setVariance(
         curve->getVariance(1,
                            ksk.value().output_key.glwe_dimension *
@@ -558,16 +558,16 @@ generateKeysetInfoFromParameters(CircuitKeys parameters,
   return output;
 }
 
-Message<concreteprotocol::KeysetInfo> keysetInfoFromVirtualCircuit(
-    std::vector<concrete_optimizer::utils::PartitionDefinition> partitionDefs,
-    bool generateFks, std::optional<concrete_optimizer::Options> options) {
+Message<torusprotocol::KeysetInfo> keysetInfoFromVirtualCircuit(
+    std::vector<torus_optimizer::utils::PartitionDefinition> partitionDefs,
+    bool generateFks, std::optional<torus_optimizer::Options> options) {
 
-  rust::Vec<concrete_optimizer::utils::PartitionDefinition> rustPartitionDefs{};
+  rust::Vec<torus_optimizer::utils::PartitionDefinition> rustPartitionDefs{};
   for (auto def : partitionDefs) {
     rustPartitionDefs.push_back(def);
   }
 
-  auto defaultOptions = concrete_optimizer::Options{};
+  auto defaultOptions = torus_optimizer::Options{};
   defaultOptions.security_level = 128;
   defaultOptions.maximum_acceptable_error_probability = 0.000063342483999973;
   defaultOptions.key_sharing = true;
@@ -576,7 +576,7 @@ Message<concreteprotocol::KeysetInfo> keysetInfoFromVirtualCircuit(
 
   auto opts = options.value_or(defaultOptions);
 
-  auto parameters = concrete_optimizer::utils::generate_virtual_keyset_info(
+  auto parameters = torus_optimizer::utils::generate_virtual_keyset_info(
       rustPartitionDefs, generateFks, opts);
 
   return generateKeysetInfoFromParameters(parameters, opts);

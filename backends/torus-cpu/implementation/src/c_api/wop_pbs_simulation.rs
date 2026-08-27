@@ -2,7 +2,7 @@ use crate::c_api::utils::nounwind;
 use crate::implementation::wop_simulation::{
     circuit_bootstrap_boolean_vertical_packing, extract_bits,
 };
-use concrete_csprng::generators::SoftwareRandomGenerator;
+use torus_csprng::generators::SoftwareRandomGenerator;
 use core::slice;
 use tfhe::core_crypto::commons::math::random::RandomGenerator;
 

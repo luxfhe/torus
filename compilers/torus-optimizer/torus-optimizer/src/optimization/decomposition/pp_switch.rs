@@ -7,7 +7,7 @@ use crate::parameters::{
 };
 use crate::utils::cache::ephemeral::{CacheHashMap, EphemeralCache};
 use crate::utils::cache::persistent::{default_cache_dir, PersistentCacheHashMap};
-use concrete_cpu_noise_model::gaussian_noise::noise::private_packing_keyswitch::estimate_packing_private_keyswitch;
+use torus_cpu_noise_model::gaussian_noise::noise::private_packing_keyswitch::estimate_packing_private_keyswitch;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 

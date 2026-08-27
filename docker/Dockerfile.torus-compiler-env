@@ -55,14 +55,14 @@ ENV PYTHON_EXEC=/opt/python/${python_tag}/bin/python
 # hadolint ignore=DL3013
 RUN pip install --no-cache-dir numpy pybind11==2.8 PyYAML pytest wheel auditwheel mypy
 # Setup and build compiler
-COPY / /concrete
-WORKDIR /concrete/compilers/torus-compiler/compiler
+COPY / /torus
+WORKDIR /torus/compilers/torus-compiler/compiler
 # We build the compiler to have the cache but we try to delete any other build artifact
 RUN mkdir /build && \
     make DATAFLOW_EXECUTION_ENABLED=ON BUILD_DIR=/build CCACHE=ON \
     Python3_EXECUTABLE=${PYTHON_EXEC} \
-    concretecompiler python-bindings && \
-    rm -rf /build /root/.cargo/registry /concrete/tools/rust_deps_bundle/target/
+    toruscompiler python-bindings && \
+    rm -rf /build /root/.cargo/registry /torus/tools/rust_deps_bundle/target/
 ENV PYTHONPATH="/build/tools/toruslang/python_packages/toruslang_core"
 ENV PATH="$PATH:/build/bin"
 # clear stats so that we have clear stats in the next build

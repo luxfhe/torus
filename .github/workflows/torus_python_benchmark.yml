@@ -1,0 +1,136 @@
+name: torus-python benchmark linux-cpu
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * SAT"
+  pull_request:
+    paths:
+      - .github/workflows/torus_pyhon_benchmark.yml
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+env:
+  DOCKER_IMAGE: ghcr.io/luxfhe/torus/compiler-ci
+
+concurrency:
+  group: torus_fhe_benchmark_${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  setup-instance:
+    runs-on: ubuntu-latest
+    outputs:
+      runner-name: ${{ steps.start-instance.outputs.label }}
+    steps:
+      - name: Start instance
+        id: start-instance
+        uses: luxfhe.com/slab-github-runner@f26b8d611b2e695158fb0a6980834f0612f65ef8
+        with:
+          mode: start
+          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
+          slab-url: ${{ secrets.SLAB_BASE_URL }}
+          job-secret: ${{ secrets.JOB_SECRET }}
+          backend: aws
+          profile: cpu-bench
+
+  torus-python-benchmarks:
+    needs: setup-instance
+    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: 'false'
+
+      - name: Benchmark
+        uses: addnab/docker-run-action@4f65fabd2431ebc8d299f8e5a018d79a769ae185 # v3
+        id: build-compiler-bindings
+        with:
+          registry: ghcr.io
+          image: ${{ env.DOCKER_IMAGE }}
+          username: ${{ secrets.GHCR_LOGIN }}
+          password: ${{ secrets.GHCR_PASSWORD }}
+          options: >-
+            -v ${{ github.workspace }}:/torus
+            -v ${{ github.workspace }}/build:/build
+          shell: bash
+          run: |
+            set -e
+
+            export PYTHON=python3.10
+
+            cd /torus/frontends/torus-python
+            make PYTHON=$PYTHON venv
+            source .venv/bin/activate
+
+            cd /torus/compilers/torus-compiler/compiler
+            make BUILD_DIR=/build CCACHE=ON DATAFLOW_EXECUTION_ENABLED=ON Python3_EXECUTABLE=$(which python) python-bindings
+
+            cd /torus/frontends/torus-python
+
+            export COMPILER_BUILD_DIRECTORY="/build"
+            # TODO output setup-instance (https://github.com/luxfhe.com/slab-github-runner/issues/38)
+            export PROGRESS_MACHINE_NAME="hpc7a.96xlarge"
+
+            make benchmark
+            make process-benchmark-results-for-grafana
+
+            deactivate
+
+      - name: Checkout Slab repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: luxfhe.com/slab
+          path: slab
+          token: ${{ secrets.TORUS_ACTIONS_TOKEN }}
+          persist-credentials: 'false'
+
+      - name: Send data to Slab
+        shell: bash
+        run: |
+          echo "Computing HMac on results file"
+          SIGNATURE="$(slab/scripts/hmac_calculator.sh frontends/torus-python/progress.processed.json '${{ secrets.JOB_SECRET }}')"
+
+          cd frontends/torus-python
+
+          echo "Sending results to Slab..."
+          curl -v -k \
+            -H "Content-Type: application/json" \
+            -H "X-Slab-Repository: ${{ github.repository }}" \
+            -H "X-Slab-Command: store_data_v2" \
+            -H "X-Hub-Signature-256: sha256=${SIGNATURE}" \
+            -d @progress.processed.json \
+            ${{ secrets.SLAB_URL }}
+      - name: Slack Notification
+        if: ${{ failure() && github.ref == 'refs/heads/main' }}
+        continue-on-error: true
+        uses: rtCamp/action-slack-notify@c33737706dea87cd7784c687dadc9adf1be59990
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: "torus-python-benchmarks finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+
+  teardown-instance:
+    if: ${{ always() && needs.setup-instance.result != 'skipped' }}
+    needs: [ setup-instance, torus-python-benchmarks ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stop instance
+        id: stop-instance
+        uses: luxfhe.com/slab-github-runner@f26b8d611b2e695158fb0a6980834f0612f65ef8
+        with:
+          mode: stop
+          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
+          slab-url: ${{ secrets.SLAB_BASE_URL }}
+          job-secret: ${{ secrets.JOB_SECRET }}
+          label: ${{ needs.setup-instance.outputs.runner-name }}
+      - name: Slack Notification
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: rtCamp/action-slack-notify@c33737706dea87cd7784c687dadc9adf1be59990
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: "Instance teardown finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"

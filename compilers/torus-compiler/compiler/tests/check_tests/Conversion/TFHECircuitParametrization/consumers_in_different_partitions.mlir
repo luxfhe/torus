@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-parametrized-tfhe --optimizer-strategy=dag-multi %s
+// RUN: toruscompiler --action=dump-parametrized-tfhe --optimizer-strategy=dag-multi %s
 
 // CHECK: module {
 // CHECK-NEXT:   func.func @main(%[[Varg0:.*]]: tensor<2x!TFHE.glwe<sk<0,1,1536>>>, %[[Varg1:.*]]: tensor<2x!TFHE.glwe<sk<1,1,8192>>>) -> (tensor<2x!TFHE.glwe<sk<0,1,1536>>>, tensor<2x!TFHE.glwe<sk<1,1,8192>>>) {

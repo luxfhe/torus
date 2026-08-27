@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -260,8 +260,8 @@ void populateWithTFHEOpTypeConversionPattern(
       [&](Op op) { return typeConverter.isLegal(op->getResultTypes()); });
 }
 
-/// Populate the RewritePatternSet with all patterns that rewrite Concrete
-/// operators to the corresponding function call to the `Concrete C API`.
+/// Populate the RewritePatternSet with all patterns that rewrite Torus
+/// operators to the corresponding function call to the `Torus C API`.
 void populateWithTFHEOpTypeConversionPatterns(
     mlir::RewritePatternSet &patterns, mlir::ConversionTarget &target,
     mlir::TypeConverter &typeConverter) {

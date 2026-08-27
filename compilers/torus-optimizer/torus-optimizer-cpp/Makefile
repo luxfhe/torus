@@ -8,12 +8,12 @@ ROOT = $(realpath $(MAKEFILE_DIR)/..)
 CXXBRIDGE_DIR = $(ROOT)/target/cxxbridge/torus-optimizer-cpp/src
 
 # In target intermediate files
-INTERFACE_LIB_ORIG = $(ROOT)/target/$(PROFILE_SUBDIR)/libconcrete_optimizer_cpp.a
+INTERFACE_LIB_ORIG = $(ROOT)/target/$(PROFILE_SUBDIR)/libtorus_optimizer_cpp.a
 INTERFACE_HEADER_ORIG = $(CXXBRIDGE_DIR)/torus-optimizer.rs.h
 INTERFACE_CPP_ORIG = $(CXXBRIDGE_DIR)/torus-optimizer.rs.cc
 
 # Final files
-INTERFACE_LIB = $(ROOT)/target/libconcrete_optimizer_cpp.a
+INTERFACE_LIB = $(ROOT)/target/libtorus_optimizer_cpp.a
 INTERFACE_HEADER = src/cpp/torus-optimizer.hpp
 INTERFACE_CPP =  src/cpp/torus-optimizer.cpp
 

@@ -1,11 +1,11 @@
 use std::io::{Read, Write};
 
 use clap::{Arg, Command};
-use concrete_keygen::generate_keyset_from_buffers;
+use torus_keygen::generate_keyset_from_buffers;
 
 pub fn main() {
     let matches = Command::new("torus-keygen")
-        .about("Concrete Keygen: generate keys for Concrete using a keyset info.")
+        .about("Torus Keygen: generate keys for Torus using a keyset info.")
         .arg_required_else_help(true)
         .arg(
             Arg::new("keyset-info")

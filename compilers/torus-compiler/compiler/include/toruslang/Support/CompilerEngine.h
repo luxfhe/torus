@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -99,7 +99,7 @@ struct CompilationOptions {
 
   /// When compiling from a dialect lower than FHE, one needs to provide
   /// encodings info manually to allow the client lib to be generated.
-  std::optional<Message<concreteprotocol::ProgramEncodingInfo>> encodings;
+  std::optional<Message<torusprotocol::ProgramEncodingInfo>> encodings;
 
   bool skipProgramInfo;
 
@@ -167,7 +167,7 @@ public:
       : compilationContext(compilationContext) {}
 
   std::optional<mlir::OwningOpRef<mlir::ModuleOp>> mlirModuleRef;
-  std::optional<Message<concreteprotocol::ProgramInfo>> programInfo;
+  std::optional<Message<torusprotocol::ProgramInfo>> programInfo;
   std::optional<ProgramCompilationFeedback> feedback;
   std::unique_ptr<llvm::Module> llvmModule;
   std::optional<mlir::toruslang::V0FHEContext> fheContext;
@@ -185,7 +185,7 @@ class Library {
   mlir::toruslang::ProgramCompilationFeedback compilationFeedback;
 
 public:
-  std::optional<Message<concreteprotocol::ProgramInfo>> programInfo;
+  std::optional<Message<torusprotocol::ProgramInfo>> programInfo;
 
 public:
   /// Create a library instance on which you can add compilation results.
@@ -207,7 +207,7 @@ public:
   std::string staticLibraryPath;
 
   /// Returns the program info of the library.
-  Result<Message<concreteprotocol::ProgramInfo>> getProgramInfo();
+  Result<Message<torusprotocol::ProgramInfo>> getProgramInfo();
 
   /// Returns the path to the output dir.
   const std::string &getOutputDirPath() const;
@@ -282,22 +282,22 @@ enum class Target {
   /// Read sources and lower all FHE operations to simulated TFHE
   SIMULATED_TFHE,
 
-  /// Read sources and lower all FHE and TFHE operations to Concrete
+  /// Read sources and lower all FHE and TFHE operations to Torus
   /// operations
-  CONCRETE,
+  TORUS,
 
-  /// Read sources and lower all FHE and TFHE operations to Concrete
+  /// Read sources and lower all FHE and TFHE operations to Torus
   /// then extract SDFG operations
   SDFG,
 
-  /// Read sources and lower all FHE, TFHE and Concrete
+  /// Read sources and lower all FHE, TFHE and Torus
   /// operations to canonical MLIR dialects. Cryptographic operations
-  /// are lowered to invocations of the concrete library.
+  /// are lowered to invocations of the torus library.
   STD,
 
-  /// Read sources and lower all FHE, TFHE and Concrete
+  /// Read sources and lower all FHE, TFHE and Torus
   /// operations to operations from the LLVM dialect. Cryptographic
-  /// operations are lowered to invocations of the concrete library.
+  /// operations are lowered to invocations of the torus library.
   LLVM,
 
   /// Same as `LLVM`, but lowers to actual LLVM IR instead of the
@@ -384,7 +384,7 @@ protected:
 
 private:
   llvm::Expected<std::optional<optimizer::Description>>
-  getConcreteOptimizerDescription(CompilationResult &res);
+  getTorusOptimizerDescription(CompilationResult &res);
   llvm::Error determineFHEParameters(CompilationResult &res);
   mlir::LogicalResult
   materializeOptimizerPartitionFrontiers(CompilationResult &res);

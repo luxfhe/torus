@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=roundtrip %s 2>&1| FileCheck %s
+// RUN: toruscompiler --action=roundtrip %s 2>&1| FileCheck %s
 
 // CHECK-LABEL: func.func @neg_glwe(%arg0: !TFHE.glwe<sk[1]<12,1024>>) -> !TFHE.glwe<sk[1]<12,1024>>
 func.func @neg_glwe(%arg0: !TFHE.glwe<sk[1]<12,1024>>) -> !TFHE.glwe<sk[1]<12,1024>> {

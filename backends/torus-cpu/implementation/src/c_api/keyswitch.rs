@@ -1,4 +1,4 @@
-use concrete_csprng::generators::SoftwareRandomGenerator;
+use torus_csprng::generators::SoftwareRandomGenerator;
 use tfhe::core_crypto::commons::math::random::{CompressionSeed, Seed};
 use tfhe::core_crypto::prelude::*;
 
@@ -8,7 +8,7 @@ use super::utils::nounwind;
 use crate::c_api::types::Parallelism;
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_init_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn torus_cpu_init_lwe_keyswitch_key_u64(
     // keyswitch key
     lwe_ksk: *mut u64,
     // secret keys
@@ -37,7 +37,7 @@ pub unsafe extern "C" fn concrete_cpu_init_lwe_keyswitch_key_u64(
         let mut ksk = LweKeyswitchKey::from_container(
             core::slice::from_raw_parts_mut(
                 lwe_ksk,
-                concrete_cpu_keyswitch_key_size_u64(
+                torus_cpu_keyswitch_key_size_u64(
                     decomposition_level_count,
                     input_lwe_dimension,
                     output_lwe_dimension,
@@ -60,7 +60,7 @@ pub unsafe extern "C" fn concrete_cpu_init_lwe_keyswitch_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_init_seeded_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn torus_cpu_init_seeded_lwe_keyswitch_key_u64(
     // keyswitch key
     seeded_lwe_ksk: *mut u64,
     // secret keys
@@ -91,7 +91,7 @@ pub unsafe extern "C" fn concrete_cpu_init_seeded_lwe_keyswitch_key_u64(
         let mut seeded_ksk = SeededLweKeyswitchKey::from_container(
             core::slice::from_raw_parts_mut(
                 seeded_lwe_ksk,
-                concrete_cpu_seeded_keyswitch_key_size_u64(
+                torus_cpu_seeded_keyswitch_key_size_u64(
                     decomposition_level_count,
                     input_lwe_dimension,
                 ),
@@ -117,7 +117,7 @@ pub unsafe extern "C" fn concrete_cpu_init_seeded_lwe_keyswitch_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_keyswitch_key_u64(
+pub unsafe extern "C" fn torus_cpu_decompress_seeded_lwe_keyswitch_key_u64(
     // keyswitch key
     lwe_ksk: *mut u64,
     // seeded keyswitch key
@@ -136,7 +136,7 @@ pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_keyswitch_key_u64(
         let mut output_ksk = LweKeyswitchKey::from_container(
             core::slice::from_raw_parts_mut(
                 lwe_ksk,
-                concrete_cpu_keyswitch_key_size_u64(
+                torus_cpu_keyswitch_key_size_u64(
                     decomposition_level_count,
                     input_lwe_dimension,
                     output_lwe_dimension,
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_keyswitch_key_u64(
         let input_ksk = SeededLweKeyswitchKey::from_container(
             core::slice::from_raw_parts(
                 seeded_lwe_ksk,
-                concrete_cpu_seeded_keyswitch_key_size_u64(
+                torus_cpu_seeded_keyswitch_key_size_u64(
                     decomposition_level_count,
                     input_lwe_dimension,
                 ),
@@ -182,7 +182,7 @@ pub unsafe extern "C" fn concrete_cpu_decompress_seeded_lwe_keyswitch_key_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_keyswitch_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_keyswitch_lwe_ciphertext_u64(
     // ciphertexts
     ct_out: *mut u64,
     ct_in: *const u64,
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn concrete_cpu_keyswitch_lwe_ciphertext_u64(
         let keyswitch_key = LweKeyswitchKey::from_container(
             core::slice::from_raw_parts(
                 keyswitch_key,
-                concrete_cpu_keyswitch_key_size_u64(
+                torus_cpu_keyswitch_key_size_u64(
                     decomposition_level_count,
                     input_dimension,
                     output_dimension,
@@ -223,7 +223,7 @@ pub unsafe extern "C" fn concrete_cpu_keyswitch_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_keyswitch_key_size_u64(
+pub unsafe extern "C" fn torus_cpu_keyswitch_key_size_u64(
     decomposition_level_count: usize,
     input_dimension: usize,
     output_dimension: usize,
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn concrete_cpu_keyswitch_key_size_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_seeded_keyswitch_key_size_u64(
+pub unsafe extern "C" fn torus_cpu_seeded_keyswitch_key_size_u64(
     decomposition_level_count: usize,
     input_dimension: usize,
 ) -> usize {

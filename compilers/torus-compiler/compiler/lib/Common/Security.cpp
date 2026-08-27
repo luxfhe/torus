@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -26,7 +26,7 @@ double SecurityCurve::getVariance(int glweDimension, int polynomialSize,
   return a > b ? a : b;
 }
 
-#include "concrete/curves.gen.h"
+#include "torus/curves.gen.h"
 
 SecurityCurve *getSecurityCurve(int bitsOfSecurity, KeyFormat keyFormat) {
   for (size_t i = 0; i < curvesLen; i++) {

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --verify-diagnostics --action=roundtrip %s
+// RUN: toruscompiler --split-input-file --verify-diagnostics --action=roundtrip %s
 
 // Incompatible types
 func.func @transpose_eint(%arg0: tensor<3x4x5x!FHE.eint<6>>) -> tensor<5x4x3x!FHE.eint<7>> {

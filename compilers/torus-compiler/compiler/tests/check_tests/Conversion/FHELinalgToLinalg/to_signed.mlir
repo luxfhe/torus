@@ -1,4 +1,4 @@
-// RUN: concretecompiler %s --action=dump-tfhe --passes fhe-tensor-ops-to-linalg 2>&1 | FileCheck %s
+// RUN: toruscompiler %s --action=dump-tfhe --passes fhe-tensor-ops-to-linalg 2>&1 | FileCheck %s
 
 // CHECK:      #map = affine_map<(d0, d1, d2) -> (d0, d1, d2)>
 // CHECK-NEXT: module  {

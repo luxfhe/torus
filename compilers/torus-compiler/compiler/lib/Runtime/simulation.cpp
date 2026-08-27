@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -33,7 +33,7 @@ uint64_t gaussian_noise(double variance, Csprng *csprng = default_csprng.ptr) {
   uint64_t random_gaussian_buff[2];
 
   double std_dev = std::sqrt(variance);
-  concrete_cpu_fill_with_random_gaussian(random_gaussian_buff, 2, std_dev,
+  torus_cpu_fill_with_random_gaussian(random_gaussian_buff, 2, std_dev,
                                          csprng);
   return random_gaussian_buff[0];
 }
@@ -42,7 +42,7 @@ uint64_t sim_keyswitch_lwe_u64(uint64_t plaintext, uint32_t level,
                                uint32_t base_log, uint32_t input_lwe_dim,
                                uint32_t output_lwe_dim) {
   double variance_ksk = security_curve()->getVariance(1, output_lwe_dim, 64);
-  double variance = concrete_cpu_variance_keyswitch(input_lwe_dim, base_log,
+  double variance = torus_cpu_variance_keyswitch(input_lwe_dim, base_log,
                                                     level, 64, variance_ksk);
   uint64_t ks_noise = gaussian_noise(variance);
   return plaintext + ks_noise;
@@ -59,7 +59,7 @@ uint64_t sim_bootstrap_lwe_u64(uint64_t plaintext, uint64_t *tlu_allocated,
 
   // modulus switching
   double variance_ms =
-      concrete_cpu_estimate_modulus_switching_noise_with_binary_key(
+      torus_cpu_estimate_modulus_switching_noise_with_binary_key(
           input_lwe_dim, log2(poly_size), 64);
   uint64_t shift = (64 - log2(poly_size) - 2);
   // mod_switch noise
@@ -105,7 +105,7 @@ uint64_t sim_bootstrap_lwe_u64(uint64_t plaintext, uint64_t *tlu_allocated,
   }
 
   double variance_bsk = security_curve()->getVariance(glwe_dim, poly_size, 64);
-  double variance = concrete_cpu_variance_blind_rotate(
+  double variance = torus_cpu_variance_blind_rotate(
       input_lwe_dim, glwe_dim, poly_size, base_log, level, 64,
       mlir::toruslang::optimizer::DEFAULT_FFT_PRECISION, variance_bsk);
   out = out + gaussian_noise(variance);

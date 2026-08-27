@@ -14,7 +14,7 @@ fn main() {
         }
         let dest = cmake::build("../implementation");
         println!("cargo:rustc-link-search=native={}", dest.display());
-        println!("cargo:rustc-link-lib=static=concrete_cuda");
+        println!("cargo:rustc-link-lib=static=torus_cuda");
         println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
         println!("cargo:rustc-link-lib=cudart");
         println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu/");

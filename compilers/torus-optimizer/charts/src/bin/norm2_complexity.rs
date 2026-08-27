@@ -1,11 +1,11 @@
 use charts::{draw, Serie};
-use concrete_optimizer::computing_cost::cpu::CpuComplexity;
-use concrete_optimizer::config;
-use concrete_optimizer::global_parameters::DEFAULT_DOMAINS;
-use concrete_optimizer::optimization::atomic_pattern::{self as optimize_atomic_pattern};
-use concrete_optimizer::optimization::config::{Config, SearchSpace};
-use concrete_optimizer::optimization::decomposition;
-use concrete_optimizer::optimization::wop_atomic_pattern::optimize as optimize_wop_atomic_pattern;
+use torus_optimizer::computing_cost::cpu::CpuComplexity;
+use torus_optimizer::config;
+use torus_optimizer::global_parameters::DEFAULT_DOMAINS;
+use torus_optimizer::optimization::atomic_pattern::{self as optimize_atomic_pattern};
+use torus_optimizer::optimization::config::{Config, SearchSpace};
+use torus_optimizer::optimization::decomposition;
+use torus_optimizer::optimization::wop_atomic_pattern::optimize as optimize_wop_atomic_pattern;
 
 pub const _4_SIGMA: f64 = 1.0 - 0.999_936_657_516;
 const MIN_LOG_POLY_SIZE: u64 = DEFAULT_DOMAINS

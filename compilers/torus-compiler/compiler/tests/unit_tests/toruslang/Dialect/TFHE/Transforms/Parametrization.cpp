@@ -14,7 +14,7 @@
 #include "toruslang/Dialect/TFHE/Transforms/Transforms.h"
 
 std::string transform(std::string source,
-                      concrete_optimizer::dag::CircuitSolution solution) {
+                      torus_optimizer::dag::CircuitSolution solution) {
   // Register dialect
   mlir::DialectRegistry registry;
   registry
@@ -49,9 +49,9 @@ std::string transform(std::string source,
 }
 
 // Returns the secret key id
-int addSecretKey(concrete_optimizer::dag::CircuitSolution &solution,
+int addSecretKey(torus_optimizer::dag::CircuitSolution &solution,
                  int glwe_dimension, int polynomial_size) {
-  concrete_optimizer::dag::SecretLweKey secretLweKey;
+  torus_optimizer::dag::SecretLweKey secretLweKey;
   secretLweKey.description = "single_key";
   secretLweKey.identifier = 0;
   secretLweKey.glwe_dimension = glwe_dimension;
@@ -62,9 +62,9 @@ int addSecretKey(concrete_optimizer::dag::CircuitSolution &solution,
 }
 
 // Returns the keyswitch key id
-int addKeyswitchKey(concrete_optimizer::dag::CircuitSolution &solution,
+int addKeyswitchKey(torus_optimizer::dag::CircuitSolution &solution,
                     int input_sk, int output_sk, int level, int base_log) {
-  concrete_optimizer::dag::KeySwitchKey keySwitchKey;
+  torus_optimizer::dag::KeySwitchKey keySwitchKey;
   keySwitchKey.input_key = solution.circuit_keys.secret_keys[input_sk];
   keySwitchKey.output_key = solution.circuit_keys.secret_keys[output_sk];
 
@@ -75,9 +75,9 @@ int addKeyswitchKey(concrete_optimizer::dag::CircuitSolution &solution,
   return keySwitchKey.identifier;
 }
 
-int addExtraKeyswitchKey(concrete_optimizer::dag::CircuitSolution &solution,
+int addExtraKeyswitchKey(torus_optimizer::dag::CircuitSolution &solution,
                          int input_sk, int output_sk, int level, int base_log) {
-  concrete_optimizer::dag::ConversionKeySwitchKey keySwitchKey;
+  torus_optimizer::dag::ConversionKeySwitchKey keySwitchKey;
   keySwitchKey.input_key = solution.circuit_keys.secret_keys[input_sk];
   keySwitchKey.output_key = solution.circuit_keys.secret_keys[output_sk];
 
@@ -89,9 +89,9 @@ int addExtraKeyswitchKey(concrete_optimizer::dag::CircuitSolution &solution,
 }
 
 // Returns the bootstrap key id
-int addBootstrapKey(concrete_optimizer::dag::CircuitSolution &solution,
+int addBootstrapKey(torus_optimizer::dag::CircuitSolution &solution,
                     int input_sk, int output_sk, int level, int base_log) {
-  concrete_optimizer::dag::BootstrapKey bootstrapKey;
+  torus_optimizer::dag::BootstrapKey bootstrapKey;
   // TODO: Interface design identifier or key
   bootstrapKey.input_key = solution.circuit_keys.secret_keys[input_sk];
   bootstrapKey.output_key = solution.circuit_keys.secret_keys[output_sk];
@@ -102,11 +102,11 @@ int addBootstrapKey(concrete_optimizer::dag::CircuitSolution &solution,
   return bootstrapKey.identifier;
 }
 
-void addInstructionKey(concrete_optimizer::dag::CircuitSolution &solution,
+void addInstructionKey(torus_optimizer::dag::CircuitSolution &solution,
                        int input_key, int output_key, int ksk = -1,
                        int bsk = -1,
                        std::vector<uint64_t> extra_conversion_keys = {}) {
-  concrete_optimizer::dag::InstructionKeys instrKey;
+  torus_optimizer::dag::InstructionKeys instrKey;
   instrKey.input_key = input_key;
   instrKey.output_key = output_key;
   instrKey.tlu_bootstrap_key = bsk;
@@ -133,10 +133,10 @@ TEST(TFHECircuitParametrization, single_sk) {
   }
 }
 )";
-  // TODO: concrete_optimizer::dag::CircuitSolution
-  concrete_optimizer::dag::CircuitSolution solution;
+  // TODO: torus_optimizer::dag::CircuitSolution
+  torus_optimizer::dag::CircuitSolution solution;
   auto keyId = addSecretKey(solution, 1, 1024);
-  concrete_optimizer::dag::InstructionKeys instr0;
+  torus_optimizer::dag::InstructionKeys instr0;
   // %arg0
   addInstructionKey(solution, keyId, keyId);
   // %arg1
@@ -163,7 +163,7 @@ TEST(TFHECircuitParametrization, keyswitch) {
   }
 }
 )";
-  concrete_optimizer::dag::CircuitSolution solution;
+  torus_optimizer::dag::CircuitSolution solution;
   // Add a first secret key
   auto sk0 = addSecretKey(solution, 1, 1024);
   auto sk1 = addSecretKey(solution, 3, 567);
@@ -192,7 +192,7 @@ TEST(TFHECircuitParametrization, boostrap) {
   }
 }
 )";
-  concrete_optimizer::dag::CircuitSolution solution;
+  torus_optimizer::dag::CircuitSolution solution;
   // Add a first secret key
   auto sk0 = addSecretKey(solution, 3, 567);
   auto sk1 = addSecretKey(solution, 1, 1024);
@@ -227,7 +227,7 @@ TEST(TFHECircuitParametrization, extra_conversion_key) {
   }
 }
 )";
-  concrete_optimizer::dag::CircuitSolution solution;
+  torus_optimizer::dag::CircuitSolution solution;
   // Add secret key for partition 0
   auto sk0 = addSecretKey(solution, 3, 2048);
   // Add secret key for partition 1

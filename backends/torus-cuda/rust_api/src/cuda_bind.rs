@@ -1,6 +1,6 @@
 use std::ffi::c_void;
 
-#[link(name = "concrete_cuda", kind = "static")]
+#[link(name = "torus_cuda", kind = "static")]
 extern "C" {
 
     /// Create a new Cuda stream on GPU `gpu_index`

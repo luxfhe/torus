@@ -14,4 +14,4 @@ pub mod parameters;
 pub mod utils;
 pub mod weight;
 
-pub use concrete_security_curves::gaussian::security::supported_security_levels;
+pub use torus_security_curves::gaussian::security::supported_security_levels;

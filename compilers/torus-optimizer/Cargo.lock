@@ -139,9 +139,9 @@ checksum = "8f68f53c83ab957f72c32642f3868eec03eb974d1fb82e453128456482613d36"
 name = "brute-force-optimizer"
 version = "0.1.0"
 dependencies = [
- "concrete-cpu-noise-model",
- "concrete-optimizer",
- "concrete-security-curves",
+ "torus-cpu-noise-model",
+ "torus-optimizer",
+ "torus-security-curves",
  "rayon",
 ]
 
@@ -207,7 +207,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "charts"
 version = "0.1.0"
 dependencies = [
- "concrete-optimizer",
+ "torus-optimizer",
  "plotters",
 ]
 
@@ -339,21 +339,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 
 [[package]]
-name = "concrete-cpu-noise-model"
+name = "torus-cpu-noise-model"
 version = "0.1.0"
 dependencies = [
  "cbindgen",
- "concrete-security-curves",
+ "torus-security-curves",
 ]
 
 [[package]]
-name = "concrete-optimizer"
+name = "torus-optimizer"
 version = "0.1.0"
 dependencies = [
  "approx",
  "bincode",
- "concrete-cpu-noise-model",
- "concrete-security-curves",
+ "torus-cpu-noise-model",
+ "torus-security-curves",
  "file-lock",
  "once_cell",
  "ordered-float",
@@ -365,10 +365,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-optimizer-cpp"
+name = "torus-optimizer-cpp"
 version = "0.1.0"
 dependencies = [
- "concrete-optimizer",
+ "torus-optimizer",
  "cxx",
  "cxx-build",
  "serde",
@@ -376,7 +376,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-security-curves"
+name = "torus-security-curves"
 version = "0.1.0"
 
 [[package]]
@@ -1510,7 +1510,7 @@ dependencies = [
  "brute-force-optimizer",
  "chrono",
  "clap 4.5.28",
- "concrete-optimizer",
+ "torus-optimizer",
  "criterion",
  "rayon",
  "rayon-cond",

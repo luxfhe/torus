@@ -1,5 +1,5 @@
 add_mlir_library(
-  ConcretelangTransforms
+  ToruslangTransforms
   Batching.cpp
   CollapseParallelLoops.cpp
   ForLoopToParallel.cpp
@@ -9,12 +9,12 @@ add_mlir_library(
   ${PROJECT_SOURCE_DIR}/include/toruslang/Transforms
   DEPENDS
   MLIRTransforms
-  ConcretelangTransformsBufferizePassIncGen
-  ConcretelangInterfaces
+  ToruslangTransformsBufferizePassIncGen
+  ToruslangInterfaces
   mlir-headers
   LINK_LIBS
   PUBLIC
   MLIRIR
   MLIRMemRefDialect
   MLIRTransforms
-  ConcretelangInterfaces)
+  ToruslangInterfaces)

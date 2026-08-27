@@ -106,7 +106,7 @@ parseEndToEndCommandLine(int argc, char **argv) {
       llvm::cl::init(false));
   llvm::cl::opt<optimizer::Strategy> optimizerStrategy(
       "optimizer-strategy",
-      llvm::cl::desc("Select the concrete optimizer strategy"),
+      llvm::cl::desc("Select the torus optimizer strategy"),
       llvm::cl::init(optimizer::DEFAULT_CONFIG.strategy),
       llvm::cl::values(clEnumValN(optimizer::Strategy::V0, "V0",
                                   "Use the V0 optimizer strategy that use the "

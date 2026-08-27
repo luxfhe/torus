@@ -1,10 +1,10 @@
 use crate::c_api::types::Csprng;
-use concrete_csprng::generators::SoftwareRandomGenerator;
+use torus_csprng::generators::SoftwareRandomGenerator;
 use std::slice;
 use tfhe::core_crypto::commons::math::random::RandomGenerator;
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_fill_with_random_gaussian(
+pub unsafe extern "C" fn torus_cpu_fill_with_random_gaussian(
     buffer: *mut u64,
     size: usize,
     variance: f64,

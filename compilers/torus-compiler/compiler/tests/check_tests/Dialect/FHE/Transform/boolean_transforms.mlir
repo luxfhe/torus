@@ -1,4 +1,4 @@
-// RUN: concretecompiler --passes fhe-boolean-transform --action=dump-fhe --split-input-file %s 2>&1| FileCheck %s
+// RUN: toruscompiler --passes fhe-boolean-transform --action=dump-fhe --split-input-file %s 2>&1| FileCheck %s
 
 // CHECK-LABEL: func.func @gen_gate(%arg0: !FHE.ebool, %arg1: !FHE.ebool, %arg2: tensor<4xi64>) -> !FHE.ebool
 func.func @gen_gate(%arg0: !FHE.ebool, %arg1: !FHE.ebool, %arg2: tensor<4xi64>) -> !FHE.ebool {

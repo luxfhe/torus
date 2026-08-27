@@ -1,4 +1,4 @@
-# Concrete Cpu
+# Torus Cpu
 
 The `torus-cpu` project is a Rust cpu-based implementation of the cryptographic primitives of the Lux Industries variant of TFHE. This implementation aims to use moderns cpu features to run as fast as possible on recent CPUs.
 
@@ -38,7 +38,7 @@ Or to enable avx512 support which will detected at runtime you can build with th
 cargo +nightly build --release --features=nightly
 ```
 
-Once the build is done you can link your project with the static library located at `target/release/libconcrete_cpu.a` with the corresponding C header that is located at `include/torus-cpu.h`.
+Once the build is done you can link your project with the static library located at `target/release/libtorus_cpu.a` with the corresponding C header that is located at `include/torus-cpu.h`.
 
 ## Testing
 

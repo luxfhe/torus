@@ -236,11 +236,11 @@ template <> struct llvm::yaml::MappingTraits<EndToEndDesc> {
     std::string str_encoding = "auto";
     io.mapOptional("encoding", str_encoding);
     if (str_encoding == "auto") {
-      desc.encoding = concrete_optimizer::Encoding::Auto;
+      desc.encoding = torus_optimizer::Encoding::Auto;
     } else if (str_encoding == "native") {
-      desc.encoding = concrete_optimizer::Encoding::Native;
+      desc.encoding = torus_optimizer::Encoding::Native;
     } else if (str_encoding == "crt") {
-      desc.encoding = concrete_optimizer::Encoding::Crt;
+      desc.encoding = torus_optimizer::Encoding::Crt;
     } else {
       io.setError("encoding can only be native or crt");
     }

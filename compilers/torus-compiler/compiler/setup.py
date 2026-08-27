@@ -25,7 +25,7 @@ class MakeExtension(Extension):
 
 
 def build_dir():
-    path = os.environ.get("CONCRETE_COMPILER_BUILD_DIR", "build/")
+    path = os.environ.get("TORUS_COMPILER_BUILD_DIR", "build/")
     return os.path.relpath(path)
 
 
@@ -37,12 +37,12 @@ class MakeBuild(build_ext):
     def build_extension(self, ext):
         cmd = ["make", "CCACHE=ON"]
         # default to dataflow_exec to ON
-        dataflow_build = os.environ.get("CONCRETE_COMPILER_DATAFLOW_EXECUTION_ENABLED", "ON")
+        dataflow_build = os.environ.get("TORUS_COMPILER_DATAFLOW_EXECUTION_ENABLED", "ON")
         cmd.append(f"DATAFLOW_EXECUTION_ENABLED={dataflow_build}")
-        py_exec = os.environ.get("CONCRETE_COMPILER_Python3_EXECUTABLE")
+        py_exec = os.environ.get("TORUS_COMPILER_Python3_EXECUTABLE")
         if py_exec:
             cmd.append(f"Python3_EXECUTABLE={py_exec}")
-        cuda_support = os.environ.get("CONCRETE_COMPILER_CUDA_SUPPORT")
+        cuda_support = os.environ.get("TORUS_COMPILER_CUDA_SUPPORT")
         if cuda_support:
             cmd.append(f"CUDA_SUPPORT={cuda_support}")
         cmd.append(f"BUILD_DIR={build_dir()}")
@@ -55,7 +55,7 @@ setuptools.setup(
     version=find_version(),
     author="Lux Industries",
     author_email="hello@luxfhe.com",
-    description="Concrete Compiler",
+    description="Torus Compiler",
     license="BSD-3",
     keywords="homomorphic encryption compiler",
     long_description=read("RELEASE_README.md"),
@@ -63,7 +63,7 @@ setuptools.setup(
     url="https://github.com/luxfhe.com/torus-compiler",
     packages=setuptools.find_namespace_packages(
         where=build_dir() + "/tools/toruslang/python_packages/toruslang_core",
-        include=["concrete", "concrete.*"],
+        include=["torus", "torus.*"],
     )
     + setuptools.find_namespace_packages(
         where=build_dir() + "/tools/toruslang/python_packages/toruslang_core",

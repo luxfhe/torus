@@ -9,17 +9,17 @@
 #![allow(clippy::missing_errors_doc)]
 
 use clap::Parser;
-use concrete_optimizer::computing_cost::cpu::CpuComplexity;
-use concrete_optimizer::config;
-use concrete_optimizer::global_parameters::DEFAULT_DOMAINS;
-use concrete_optimizer::optimization::config::{Config, SearchSpace};
-use concrete_optimizer::optimization::dag::solo_key::optimize::{self as optimize_dag};
-use concrete_optimizer::optimization::dag::solo_key::optimize_generic::Solution;
-use concrete_optimizer::optimization::dag::solo_key::optimize_generic::Solution::{
+use torus_optimizer::computing_cost::cpu::CpuComplexity;
+use torus_optimizer::config;
+use torus_optimizer::global_parameters::DEFAULT_DOMAINS;
+use torus_optimizer::optimization::config::{Config, SearchSpace};
+use torus_optimizer::optimization::dag::solo_key::optimize::{self as optimize_dag};
+use torus_optimizer::optimization::dag::solo_key::optimize_generic::Solution;
+use torus_optimizer::optimization::dag::solo_key::optimize_generic::Solution::{
     WopSolution, WpSolution,
 };
-use concrete_optimizer::optimization::wop_atomic_pattern::optimize as optimize_wop_atomic_pattern;
-use concrete_optimizer::optimization::{atomic_pattern as optimize_atomic_pattern, decomposition};
+use torus_optimizer::optimization::wop_atomic_pattern::optimize as optimize_wop_atomic_pattern;
+use torus_optimizer::optimization::{atomic_pattern as optimize_atomic_pattern, decomposition};
 use rayon_cond::CondIterator;
 use std::io::Write;
 
@@ -261,7 +261,7 @@ pub fn compute_print_results(mut writer: impl Write, args: &Args) -> Result<(), 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use concrete_optimizer::supported_security_levels;
+    use torus_optimizer::supported_security_levels;
 
     #[test]
     fn test_reference_output() {

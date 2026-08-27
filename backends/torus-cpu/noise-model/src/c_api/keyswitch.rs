@@ -1,7 +1,7 @@
 use crate::gaussian_noise::noise::keyswitch::variance_keyswitch;
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_variance_keyswitch(
+pub extern "C" fn torus_cpu_variance_keyswitch(
     input_lwe_dimension: u64,
     log2_base: u64,
     level: u64,

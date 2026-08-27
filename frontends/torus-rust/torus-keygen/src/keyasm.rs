@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use concrete_keygen::concrete_protocol_capnp;
+use torus_keygen::torus_protocol_capnp;
 use tfhe::core_crypto::prelude::{
     allocate_and_assemble_lwe_bootstrap_key_from_chunks, LweBootstrapKeyChunk,
 };
@@ -34,9 +34,9 @@ fn assemble_keyset_from_zip(
         .read_to_end(&mut keyset_info_buffer)
         .unwrap();
     let keyset_info_message =
-        concrete_protocol_capnp::read_capnp_from_buffer(&keyset_info_buffer).unwrap();
-    let keyset_info_proto: concrete_protocol_capnp::keyset_info::Reader<'_> =
-        concrete_protocol_capnp::get_reader_from_message(&keyset_info_message).unwrap();
+        torus_protocol_capnp::read_capnp_from_buffer(&keyset_info_buffer).unwrap();
+    let keyset_info_proto: torus_protocol_capnp::keyset_info::Reader<'_> =
+        torus_protocol_capnp::get_reader_from_message(&keyset_info_message).unwrap();
 
     // Read and assemble bootstrap keys
     let bsk_ids: Vec<u32> = keyset_info_proto
@@ -67,14 +67,14 @@ fn assemble_keyset_from_zip(
         }
 
         let bsk = allocate_and_assemble_lwe_bootstrap_key_from_chunks(&chunks);
-        let bsk_proto = concrete_keygen::build_bsk_proto(keyset_info_proto, bsk_id, &bsk);
+        let bsk_proto = torus_keygen::build_bsk_proto(keyset_info_proto, bsk_id, &bsk);
         bsk_protos.push(bsk_proto);
     }
 
     let bsk_readers = bsk_protos
         .iter_mut()
         .map(|bsk_proto| {
-            concrete_protocol_capnp::get_reader_from_builder(bsk_proto)
+            torus_protocol_capnp::get_reader_from_builder(bsk_proto)
                 .expect("Failed to get bsk reader")
         })
         .collect();
@@ -86,11 +86,11 @@ fn assemble_keyset_from_zip(
     keyset_file.read_to_end(&mut keyset_buffer).unwrap();
     let mut reader_options = capnp::message::ReaderOptions::new();
     reader_options.traversal_limit_in_words(Some(10_000_000_000));
-    let keyset_message = concrete_protocol_capnp::read_capnp_from_buffer(&keyset_buffer).unwrap();
-    let keyset = concrete_protocol_capnp::get_reader_from_message(&keyset_message).unwrap();
+    let keyset_message = torus_protocol_capnp::read_capnp_from_buffer(&keyset_buffer).unwrap();
+    let keyset = torus_protocol_capnp::get_reader_from_message(&keyset_message).unwrap();
 
     // Add BSks to keyset
-    let keyset_with_bsks = concrete_keygen::add_bsk_keys_to_keyset(keyset, bsk_readers);
+    let keyset_with_bsks = torus_keygen::add_bsk_keys_to_keyset(keyset, bsk_readers);
 
     // Write the final keyset to the output file
     let mut output_file = std::fs::File::create(output_keyset_path).unwrap();
@@ -100,8 +100,8 @@ fn assemble_keyset_from_zip(
 }
 
 pub fn main() {
-    let matches = Command::new("concrete-keyasm")
-        .about("Concrete Key Assembler: assemble a keyset generated in a chunked way.")
+    let matches = Command::new("torus-keyasm")
+        .about("Torus Key Assembler: assemble a keyset generated in a chunked way.")
         .arg_required_else_help(true)
         .arg(
             Arg::new("chunked_keyset_zip")

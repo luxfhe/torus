@@ -4,20 +4,20 @@ PIP=$(PYTHON) -m pip
 COMPILER_BUILD_DIRECTORY ?= $(PWD)/../../compilers/torus-compiler/compiler/build
 BINDINGS_DIRECTORY=${COMPILER_BUILD_DIRECTORY}/tools/toruslang/python_packages/toruslang_core/
 TFHERS_UTILS_DIRECTORY ?= $(PWD)/tests/tfhers-utils/
-CONCRETE_KEYGEN_DIRECTORY ?= $(PWD)/../torus-rust/torus-keygen/
+TORUS_KEYGEN_DIRECTORY ?= $(PWD)/../torus-rust/torus-keygen/
 
 OS=undefined
 ifeq ($(shell uname), Linux)
 	OS=linux
-	RUNTIME_LIBRARY?=${COMPILER_BUILD_DIRECTORY}/lib/libConcretelangRuntime.so
+	RUNTIME_LIBRARY?=${COMPILER_BUILD_DIRECTORY}/lib/libToruslangRuntime.so
 else ifeq ($(shell uname), Darwin)
 	OS=darwin
-	RUNTIME_LIBRARY?=${COMPILER_BUILD_DIRECTORY}/lib/libConcretelangRuntime.dylib
+	RUNTIME_LIBRARY?=${COMPILER_BUILD_DIRECTORY}/lib/libToruslangRuntime.dylib
 endif
 
-CONCRETE_VERSION?="" # empty mean latest
-# E.g. to use a previous version: `make CONCRETE_VERSION="<2.7.0" venv`
-# E.g. to use a nightly: `make CONCRETE_VERSION="==2.7.0dev20240801`
+TORUS_VERSION?="" # empty mean latest
+# E.g. to use a previous version: `make TORUS_VERSION="<2.7.0" venv`
+# E.g. to use a nightly: `make TORUS_VERSION="==2.7.0dev20240801`
 # see https://pypi.luxfhe.com/cpu/torus-python/index.html for available versions
 
 .ONESHELL:
@@ -64,7 +64,7 @@ tfhers-utils:
 	cd ${TFHERS_UTILS_DIRECTORY} && $(MAKE) build
 
 torus-rust-keygen:
-	cd ${CONCRETE_KEYGEN_DIRECTORY} && $(MAKE) build
+	cd ${TORUS_KEYGEN_DIRECTORY} && $(MAKE) build
 
 pytest: pytest-default
 
@@ -145,7 +145,7 @@ test-notebooks:
 format:
 	eval $(shell make silent_cp_activate)
 	bash scripts/format/formatter.sh \
-		--dir concrete \
+		--dir torus \
 		--dir examples \
 		--dir scripts \
 		--dir tests \
@@ -164,7 +164,7 @@ conformance: format sanitize-notebooks
 check-format:
 	eval $(shell make silent_cp_activate)
 	bash scripts/format/formatter.sh --check \
-		--dir concrete \
+		--dir torus \
 		--dir examples \
 		--dir scripts \
 		--dir tests \
@@ -176,15 +176,15 @@ check-sanitize-notebooks:
 
 mypy:
 	eval $(shell make silent_cp_activate)
-	mypy concrete examples scripts tests benchmarks --ignore-missing-imports --explicit-package-bases
+	mypy torus examples scripts tests benchmarks --ignore-missing-imports --explicit-package-bases
 
 pydocstyle:
 	eval $(shell make silent_cp_activate)
-	pydocstyle concrete --convention google --add-ignore=D1,D200,D202,D212,D402 --add-select=D401
+	pydocstyle torus --convention google --add-ignore=D1,D200,D202,D212,D402 --add-select=D401
 
 pylint:
 	eval $(shell make silent_cp_activate)
-	pylint --rcfile=.pylintrc concrete
+	pylint --rcfile=.pylintrc torus
 	pylint --rcfile=.pylintrc examples --disable=C0103,C0114,C0115,C0116,E0401,R1721
 	pylint --rcfile=.pylintrc scripts
 	pylint --rcfile=.pylintrc tests --disable=C0301,W0108
@@ -193,14 +193,14 @@ pylint:
 ruff:
 	eval $(shell make silent_cp_activate)
 
-	ruff check concrete/
+	ruff check torus/
 	ruff check examples/
 	ruff check scripts/
 	ruff check tests/
 	ruff check benchmarks/
 
 check-links:
-	@# Check that no links target the main branch, some internal repositories (TorusML or Concrete) or our internal GitBook
+	@# Check that no links target the main branch, some internal repositories (TorusML or Torus) or our internal GitBook
 	bash ./scripts/links/check_internal_links.sh
 
 	@# To avoid some issues with priviledges and linkcheckmd

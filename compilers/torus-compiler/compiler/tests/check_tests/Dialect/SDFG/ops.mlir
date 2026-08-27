@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=roundtrip --split-input-file %s 2>&1| FileCheck %s
+// RUN: toruscompiler --action=roundtrip --split-input-file %s 2>&1| FileCheck %s
 
 // CHECK: func.func @init_shutdown
 func.func @init_shutdown() -> () {

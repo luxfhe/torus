@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -32,7 +32,7 @@
 
 #include "toruslang/Conversion/Passes.h"
 #include "toruslang/Conversion/Tools.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteTypes.h"
+#include "toruslang/Dialect/Torus/IR/TorusTypes.h"
 #include "toruslang/Dialect/RT/Analysis/Autopar.h"
 #include "toruslang/Dialect/RT/IR/RTTypes.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGTypes.h"
@@ -150,7 +150,7 @@ void MLIRLowerableDialectsToLLVMPass::runOnOperation() {
 
 std::optional<mlir::Type>
 MLIRLowerableDialectsToLLVMPass::convertTypes(mlir::Type type) {
-  if (type.isa<mlir::toruslang::Concrete::ContextType>() ||
+  if (type.isa<mlir::toruslang::Torus::ContextType>() ||
       type.isa<mlir::toruslang::RT::FutureType>() ||
       type.isa<mlir::toruslang::SDFG::DFGType>() ||
       type.isa<mlir::toruslang::SDFG::StreamType>()) {

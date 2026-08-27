@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -77,14 +77,14 @@ const uint DEFAULT_SECURITY = 128;
 const uint DEFAULT_FALLBACK_LOG_NORM_WOPPBS = 8;
 const bool DEFAULT_DISPLAY = false;
 const bool DEFAULT_USE_GPU_CONSTRAINTS = false;
-const concrete_optimizer::Encoding DEFAULT_ENCODING =
-    concrete_optimizer::Encoding::Auto;
+const torus_optimizer::Encoding DEFAULT_ENCODING =
+    torus_optimizer::Encoding::Auto;
 const bool DEFAULT_CACHE_ON_DISK = true;
 const uint32_t DEFAULT_CIPHERTEXT_MODULUS_LOG = 64;
 const uint32_t DEFAULT_FFT_PRECISION = 53;
-const std::shared_ptr<concrete_optimizer::restriction::RangeRestriction>
+const std::shared_ptr<torus_optimizer::restriction::RangeRestriction>
     DEFAULT_RANGE_RESTRICTION = {};
-const std::shared_ptr<concrete_optimizer::restriction::KeysetRestriction>
+const std::shared_ptr<torus_optimizer::restriction::KeysetRestriction>
     DEFAULT_KEYSET_RESTRICTION = {};
 
 /// The strategy of the crypto optimization
@@ -102,8 +102,8 @@ enum Strategy {
 std::string const StrategyLabel[] = {"V0", "dag-mono", "dag-multi"};
 
 const Strategy DEFAULT_STRATEGY = Strategy::DAG_MULTI;
-const concrete_optimizer::MultiParamStrategy DEFAULT_MULTI_PARAM_STRATEGY =
-    concrete_optimizer::MultiParamStrategy::ByPrecision;
+const torus_optimizer::MultiParamStrategy DEFAULT_MULTI_PARAM_STRATEGY =
+    torus_optimizer::MultiParamStrategy::ByPrecision;
 const bool DEFAULT_KEY_SHARING = true;
 
 struct CompositionRule {
@@ -122,17 +122,17 @@ struct Config {
   bool display;
   Strategy strategy;
   bool key_sharing;
-  concrete_optimizer::MultiParamStrategy multi_param_strategy;
+  torus_optimizer::MultiParamStrategy multi_param_strategy;
   std::uint64_t security;
   double fallback_log_norm_woppbs;
   bool use_gpu_constraints;
-  concrete_optimizer::Encoding encoding;
+  torus_optimizer::Encoding encoding;
   bool cache_on_disk;
   uint32_t ciphertext_modulus_log;
   uint32_t fft_precision;
-  std::shared_ptr<concrete_optimizer::restriction::RangeRestriction>
+  std::shared_ptr<torus_optimizer::restriction::RangeRestriction>
       range_restriction;
-  std::shared_ptr<concrete_optimizer::restriction::KeysetRestriction>
+  std::shared_ptr<torus_optimizer::restriction::KeysetRestriction>
       keyset_restriction;
   std::vector<CompositionRule> composition_rules;
   bool composable;
@@ -156,10 +156,10 @@ const Config DEFAULT_CONFIG = {UNSPECIFIED_P_ERROR,
                                DEFAULT_COMPOSITION_RULES,
                                DEFAULT_COMPOSABLE};
 
-using Dag = rust::Box<concrete_optimizer::Dag>;
-using DagBuilder = rust::Box<concrete_optimizer::DagBuilder>;
-using DagSolution = concrete_optimizer::dag::DagSolution;
-using CircuitSolution = concrete_optimizer::dag::CircuitSolution;
+using Dag = rust::Box<torus_optimizer::Dag>;
+using DagBuilder = rust::Box<torus_optimizer::DagBuilder>;
+using DagSolution = torus_optimizer::dag::DagSolution;
+using CircuitSolution = torus_optimizer::dag::CircuitSolution;
 
 /* Contains any circuit description usable by the torus-optimizer */
 struct Description {
@@ -202,7 +202,7 @@ inline size_t getPolynomialSizeFromSolution(optimizer::Solution solution) {
   return 42;
 }
 
-concrete_optimizer::Options options_from_config(optimizer::Config config);
+torus_optimizer::Options options_from_config(optimizer::Config config);
 
 } // namespace toruslang
 } // namespace mlir

@@ -1,15 +1,15 @@
 [package]
-name = "concrete"
+name = "torus"
 version = "0.0.0"
 edition = "2021"
-links = "concrete"
+links = "torus"
 readme = "../../../../../../../README.md"
 keywords = ["fully", "homomorphic", "encryption", "fhe", "cryptography"]
 homepage = "https://luxfhe.com/"
 documentation = "https://docs.luxfhe.com/torus"
 repository = "https://github.com/luxfhe/torus"
 license = "BSD-3-Clause-Clear"
-description = "Concrete is an open-source FHE Compiler that simplifies the use of fully homomorphic encryption (FHE)."
+description = "Torus is an open-source FHE Compiler that simplifies the use of fully homomorphic encryption (FHE)."
 build = "build.rs"
 
 [dependencies]

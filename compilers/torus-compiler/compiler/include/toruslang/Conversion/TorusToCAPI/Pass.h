@@ -1,0 +1,19 @@
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
+// Exceptions. See
+// https://github.com/luxfhe/torus/blob/main/LICENSE.txt
+// for license information.
+
+#ifndef LUXLANG_CONVERSION_TORUSTOCAPI_PASS_H_
+#define LUXLANG_CONVERSION_TORUSTOCAPI_PASS_H_
+
+#include "mlir/Pass/Pass.h"
+
+namespace mlir {
+namespace toruslang {
+/// Create a pass to convert `Torus` dialect to CAPI calls.
+std::unique_ptr<OperationPass<ModuleOp>>
+createConvertTorusToCAPIPass(bool gpu);
+} // namespace toruslang
+} // namespace mlir
+
+#endif

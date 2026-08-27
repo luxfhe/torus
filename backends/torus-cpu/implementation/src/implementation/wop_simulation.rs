@@ -3,12 +3,12 @@
 use std::cmp::Ordering;
 
 use crate::implementation::{from_torus, zip_eq};
-use concrete_cpu_noise_model::gaussian_noise::noise::blind_rotate::variance_blind_rotate;
-use concrete_cpu_noise_model::gaussian_noise::noise::keyswitch::variance_keyswitch;
-use concrete_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
-use concrete_cpu_noise_model::gaussian_noise::noise::private_packing_keyswitch::estimate_packing_private_keyswitch;
-use concrete_csprng::generators::SoftwareRandomGenerator;
-use concrete_security_curves::gaussian::security::{minimal_variance_glwe, minimal_variance_lwe};
+use torus_cpu_noise_model::gaussian_noise::noise::blind_rotate::variance_blind_rotate;
+use torus_cpu_noise_model::gaussian_noise::noise::keyswitch::variance_keyswitch;
+use torus_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
+use torus_cpu_noise_model::gaussian_noise::noise::private_packing_keyswitch::estimate_packing_private_keyswitch;
+use torus_csprng::generators::SoftwareRandomGenerator;
+use torus_security_curves::gaussian::security::{minimal_variance_glwe, minimal_variance_lwe};
 use tfhe::core_crypto::commons::math::random::RandomGenerator;
 use tfhe::core_crypto::commons::parameters::*;
 

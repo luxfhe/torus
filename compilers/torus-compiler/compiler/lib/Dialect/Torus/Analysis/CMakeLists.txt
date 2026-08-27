@@ -1,0 +1,13 @@
+add_mlir_library(
+  TorusDialectAnalysis
+  MemoryUsage.cpp
+  ADDITIONAL_HEADER_DIRS
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Torus
+  DEPENDS
+  TorusDialect
+  mlir-headers
+  LINK_LIBS
+  PUBLIC
+  MLIRIR
+  TorusDialect
+  AnalysisUtils)

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --verify-diagnostics --action=roundtrip %s
+// RUN: toruscompiler --split-input-file --verify-diagnostics --action=roundtrip %s
 
 /////////////////////////////////////////////////
 // FHELinalg.add_eint_int

@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -24,8 +24,8 @@
 namespace mlir {
 namespace toruslang {
 
-concrete_optimizer::Options options_from_config(optimizer::Config config) {
-  concrete_optimizer::Options options = {
+torus_optimizer::Options options_from_config(optimizer::Config config) {
+  torus_optimizer::Options options = {
       /* .security_level = */ config.security,
       /* .maximum_acceptable_error_probability = */ config.p_error,
       /* .key_sharing = */ config.key_sharing,
@@ -37,9 +37,9 @@ concrete_optimizer::Options options_from_config(optimizer::Config config) {
       /* .ciphertext_modulus_log = */ config.ciphertext_modulus_log,
       /* .fft_precision = */ config.fft_precision,
       /* .range_restriction = */
-      std::shared_ptr<concrete_optimizer::restriction::RangeRestriction>(),
+      std::shared_ptr<torus_optimizer::restriction::RangeRestriction>(),
       /* .keyset_restriction = */
-      std::shared_ptr<concrete_optimizer::restriction::KeysetRestriction>(),
+      std::shared_ptr<torus_optimizer::restriction::KeysetRestriction>(),
   };
   if (config.range_restriction) {
     options.range_restriction = config.range_restriction;
@@ -59,9 +59,9 @@ optimizer::DagSolution getV0Solution(V0FHEConstraint constraint,
 
   auto options = options_from_config(config);
 
-  auto solution = concrete_optimizer::v0::optimize_bootstrap(
+  auto solution = torus_optimizer::v0::optimize_bootstrap(
       constraint.p, noise_factor, options);
-  return concrete_optimizer::utils::convert_to_dag_solution(solution);
+  return torus_optimizer::utils::convert_to_dag_solution(solution);
 }
 
 const int MAXIMUM_OPTIMIZER_CALL = 10;
@@ -121,7 +121,7 @@ Solution getSolutionWithGlobalPError(optimizer::Config config,
 optimizer::DagSolution getDagMonoSolution(optimizer::Dag &dag,
                                           optimizer::Config config) {
   auto optimize =
-      [&](concrete_optimizer::Options options) -> optimizer::DagSolution {
+      [&](torus_optimizer::Options options) -> optimizer::DagSolution {
     return dag->optimize(options);
   };
   if (!std::isnan(config.global_p_error)) {
@@ -135,7 +135,7 @@ optimizer::CircuitSolution getDagMultiSolution(optimizer::Dag &dag,
                                                optimizer::Config config) {
 
   auto optimize =
-      [&](concrete_optimizer::Options options) -> optimizer::CircuitSolution {
+      [&](torus_optimizer::Options options) -> optimizer::CircuitSolution {
     return dag->optimize_multi(options);
   };
   if (!std::isnan(config.global_p_error)) {
@@ -385,8 +385,8 @@ getSolution(optimizer::Description &descr, ProgramCompilationFeedback &feedback,
   case optimizer::Strategy::DAG_MULTI: {
     assert(descr.dag.has_value());
     auto encoding = config.encoding;
-    if (encoding != concrete_optimizer::Encoding::Crt) {
-      config.encoding = concrete_optimizer::Encoding::Native;
+    if (encoding != torus_optimizer::Encoding::Crt) {
+      config.encoding = torus_optimizer::Encoding::Native;
       auto sol = getDagMultiSolution(descr.dag.value(), config);
       if (sol.is_feasible || !config.composition_rules.empty()) {
         displayOptimizer(sol, descr, config);

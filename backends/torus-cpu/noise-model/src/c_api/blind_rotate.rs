@@ -1,7 +1,7 @@
 use crate::gaussian_noise::noise::blind_rotate::variance_blind_rotate;
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_variance_blind_rotate(
+pub extern "C" fn torus_cpu_variance_blind_rotate(
     in_lwe_dimension: u64,
     out_glwe_dimension: u64,
     out_polynomial_size: u64,

@@ -102,7 +102,7 @@ mod to_tokens {
                 .collect::<Vec<_>>();
 
             tokens.extend(quote! {
-                    ::concrete::tfhe::ModuleSpec {
+                    ::torus::tfhe::ModuleSpec {
                         input_types_per_func: vec![#(#input_types_per_func),*].into_iter().collect(),
                         output_types_per_func: vec![#(#output_types_per_func),*].into_iter().collect(),
                         input_shapes_per_func: vec![#(#input_shapes_per_func),*].into_iter().collect(),

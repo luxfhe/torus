@@ -1,4 +1,4 @@
-"""Import and export TFHErs integers into Concrete."""
+"""Import and export TFHErs integers into Torus."""
 
 from typing import Tuple
 
@@ -19,7 +19,7 @@ class TfhersExporter:
 
     @staticmethod
     def export_int(value: TransportValue, info: TfhersFheIntDescription) -> bytes:
-        """Convert Concrete value to TFHErs and serialize it.
+        """Convert Torus value to TFHErs and serialize it.
 
         Args:
 
@@ -48,7 +48,7 @@ class TfhersExporter:
         variance: float,
         shape: Tuple[int, ...],
     ) -> TransportValue:
-        """Unserialize and convert from TFHErs to Concrete value.
+        """Unserialize and convert from TFHErs to Torus value.
 
         Args:
             buffer (bytes): serialized TFHErs integer

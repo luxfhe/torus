@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -16,12 +16,12 @@ namespace protocol {
 /// Helper function turning a protocol `Shape` object into a vector of
 /// dimensions.
 std::vector<size_t>
-protoShapeToDimensions(const Message<concreteprotocol::Shape> &shape) {
+protoShapeToDimensions(const Message<torusprotocol::Shape> &shape) {
   return protoShapeToDimensions(shape.asReader());
 }
 
 std::vector<size_t>
-protoShapeToDimensions(concreteprotocol::Shape::Reader reader) {
+protoShapeToDimensions(torusprotocol::Shape::Reader reader) {
   auto output = std::vector<size_t>();
   for (auto dim : reader.getDimensions()) {
     output.push_back(dim);
@@ -31,9 +31,9 @@ protoShapeToDimensions(concreteprotocol::Shape::Reader reader) {
 
 /// Helper function turning a protocol `Shape` object into a vector of
 /// dimensions.
-Message<concreteprotocol::Shape>
+Message<torusprotocol::Shape>
 dimensionsToProtoShape(const std::vector<size_t> &input) {
-  auto output = Message<concreteprotocol::Shape>();
+  auto output = Message<torusprotocol::Shape>();
   auto dimensions = output.asBuilder().initDimensions(input.size());
   for (size_t i = 0; i < input.size(); i++) {
     dimensions.set(i, input[i]);

@@ -1,4 +1,4 @@
-add_custom_target(ConcretelangUnitTests)
+add_custom_target(ToruslangUnitTests)
 
 add_compile_options(-fexceptions)
 

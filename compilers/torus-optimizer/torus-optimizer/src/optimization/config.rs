@@ -57,7 +57,7 @@ impl SearchSpace {
     }
 
     pub fn default_gpu_lowlat() -> Self {
-        // See backends/concrete_cuda/implementation/src/bootstrap_low_latency.cu
+        // See backends/torus_cuda/implementation/src/bootstrap_low_latency.cu
         let glwe_log_polynomial_sizes: Vec<u64> = (8..=14).collect();
 
         let glwe_dimensions: Vec<u64> = DEFAULT_DOMAINS
@@ -76,7 +76,7 @@ impl SearchSpace {
     }
 
     pub fn default_gpu_amortized() -> Self {
-        // See backends/concrete_cuda/implementation/src/bootstrap_amortized.cu
+        // See backends/torus_cuda/implementation/src/bootstrap_amortized.cu
         let glwe_log_polynomial_sizes: Vec<u64> = (8..=14).collect();
 
         let glwe_dimensions: Vec<u64> = DEFAULT_DOMAINS

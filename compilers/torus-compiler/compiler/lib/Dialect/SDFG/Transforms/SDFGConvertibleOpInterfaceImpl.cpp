@@ -1,10 +1,10 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
 
-#include "toruslang/Dialect/Concrete/IR/ConcreteDialect.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteOps.h"
+#include "toruslang/Dialect/Torus/IR/TorusDialect.h"
+#include "toruslang/Dialect/Torus/IR/TorusOps.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGDialect.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGOps.h"
 #include "toruslang/Dialect/SDFG/Interfaces/SDFGConvertibleInterface.h"
@@ -69,70 +69,70 @@ struct ReplaceWithProcessSDFGConversionInterface
 void registerSDFGConvertibleOpInterfaceExternalModels(
     DialectRegistry &registry) {
   registry.addExtension(+[](MLIRContext *ctx,
-                            Concrete::ConcreteDialect *dialect) {
-    mlir::toruslang::Concrete::AddLweTensorOp::attachInterface<
+                            Torus::TorusDialect *dialect) {
+    mlir::toruslang::Torus::AddLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::AddLweTensorOp, add_eint>>(*ctx);
+            mlir::toruslang::Torus::AddLweTensorOp, add_eint>>(*ctx);
 
-    mlir::toruslang::Concrete::AddPlaintextLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::AddPlaintextLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::AddPlaintextLweTensorOp,
+            mlir::toruslang::Torus::AddPlaintextLweTensorOp,
             add_eint_int>>(*ctx);
 
-    mlir::toruslang::Concrete::MulCleartextLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::MulCleartextLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::MulCleartextLweTensorOp,
+            mlir::toruslang::Torus::MulCleartextLweTensorOp,
             mul_eint_int>>(*ctx);
 
-    mlir::toruslang::Concrete::NegateLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::NegateLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::NegateLweTensorOp, neg_eint>>(*ctx);
+            mlir::toruslang::Torus::NegateLweTensorOp, neg_eint>>(*ctx);
 
-    mlir::toruslang::Concrete::KeySwitchLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::KeySwitchLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::KeySwitchLweTensorOp, keyswitch,
+            mlir::toruslang::Torus::KeySwitchLweTensorOp, keyswitch,
             true>>(*ctx);
 
-    mlir::toruslang::Concrete::BootstrapLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::BootstrapLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BootstrapLweTensorOp, bootstrap,
+            mlir::toruslang::Torus::BootstrapLweTensorOp, bootstrap,
             true>>(*ctx);
 
-    mlir::toruslang::Concrete::BatchedAddLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::BatchedAddLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedAddLweTensorOp,
+            mlir::toruslang::Torus::BatchedAddLweTensorOp,
             batched_add_eint>>(*ctx);
-    mlir::toruslang::Concrete::BatchedAddPlaintextLweTensorOp::
+    mlir::toruslang::Torus::BatchedAddPlaintextLweTensorOp::
         attachInterface<ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedAddPlaintextLweTensorOp,
+            mlir::toruslang::Torus::BatchedAddPlaintextLweTensorOp,
             batched_add_eint_int>>(*ctx);
-    mlir::toruslang::Concrete::BatchedAddPlaintextCstLweTensorOp::
+    mlir::toruslang::Torus::BatchedAddPlaintextCstLweTensorOp::
         attachInterface<ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedAddPlaintextCstLweTensorOp,
+            mlir::toruslang::Torus::BatchedAddPlaintextCstLweTensorOp,
             batched_add_eint_int_cst>>(*ctx);
-    mlir::toruslang::Concrete::BatchedMulCleartextLweTensorOp::
+    mlir::toruslang::Torus::BatchedMulCleartextLweTensorOp::
         attachInterface<ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedMulCleartextLweTensorOp,
+            mlir::toruslang::Torus::BatchedMulCleartextLweTensorOp,
             batched_mul_eint_int>>(*ctx);
-    mlir::toruslang::Concrete::BatchedMulCleartextCstLweTensorOp::
+    mlir::toruslang::Torus::BatchedMulCleartextCstLweTensorOp::
         attachInterface<ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedMulCleartextCstLweTensorOp,
+            mlir::toruslang::Torus::BatchedMulCleartextCstLweTensorOp,
             batched_mul_eint_int_cst>>(*ctx);
-    mlir::toruslang::Concrete::BatchedNegateLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::BatchedNegateLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedNegateLweTensorOp,
+            mlir::toruslang::Torus::BatchedNegateLweTensorOp,
             batched_neg_eint>>(*ctx);
-    mlir::toruslang::Concrete::BatchedKeySwitchLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::BatchedKeySwitchLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedKeySwitchLweTensorOp,
+            mlir::toruslang::Torus::BatchedKeySwitchLweTensorOp,
             batched_keyswitch, true>>(*ctx);
-    mlir::toruslang::Concrete::BatchedBootstrapLweTensorOp::attachInterface<
+    mlir::toruslang::Torus::BatchedBootstrapLweTensorOp::attachInterface<
         ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedBootstrapLweTensorOp,
+            mlir::toruslang::Torus::BatchedBootstrapLweTensorOp,
             batched_bootstrap, true>>(*ctx);
-    mlir::toruslang::Concrete::BatchedMappedBootstrapLweTensorOp::
+    mlir::toruslang::Torus::BatchedMappedBootstrapLweTensorOp::
         attachInterface<ReplaceWithProcessSDFGConversionInterface<
-            mlir::toruslang::Concrete::BatchedMappedBootstrapLweTensorOp,
+            mlir::toruslang::Torus::BatchedMappedBootstrapLweTensorOp,
             batched_mapped_bootstrap, true>>(*ctx);
   });
 }

@@ -27,13 +27,13 @@ Then we can generate keys in two different ways. You only need to run one of the
 We start by doing keygen in Torus:
 
 ```sh
-python example.py keygen -o $TDIR/concrete_sk -k $TDIR/concrete_keyset
+python example.py keygen -o $TDIR/torus_sk -k $TDIR/torus_keyset
 ```
 
 Then we do a partial keygen in Lux-FHE:
 
 ```sh
-../../tests/tfhers-utils/target/release/tfhers_utils keygen --lwe-sk $TDIR/concrete_sk --output-lwe-sk $TDIR/tfhers_sk -c $TDIR/tfhers_client_key -s $TDIR/tfhers_server_key
+../../tests/tfhers-utils/target/release/tfhers_utils keygen --lwe-sk $TDIR/torus_sk --output-lwe-sk $TDIR/tfhers_sk -c $TDIR/tfhers_client_key -s $TDIR/tfhers_server_key
 ```
 
 #### Generate the Secret Key in Lux-FHE
@@ -47,7 +47,7 @@ We start by doing keygen in Lux-FHE:
 Then we do a partial keygen in Torus:
 
 ```sh
-python example.py keygen -s $TDIR/tfhers_sk -o $TDIR/concrete_sk -k $TDIR/concrete_keyset
+python example.py keygen -s $TDIR/tfhers_sk -o $TDIR/torus_sk -k $TDIR/torus_keyset
 ```
 
 ## Encrypt in Lux-FHE
@@ -75,7 +75,7 @@ If you have tensor inputs, then you can encrypt by passing your flat tensor in `
 ## Run in Torus
 
 ```sh
-python example.py run -k $TDIR/concrete_keyset -c1 $TDIR/tfhers_ct_1 -c2 $TDIR/tfhers_ct_2 -o $TDIR/tfhers_ct_out
+python example.py run -k $TDIR/torus_keyset -c1 $TDIR/tfhers_ct_1 -c2 $TDIR/tfhers_ct_2 -o $TDIR/tfhers_ct_out
 ```
 
 ## Decrypt in Lux-FHE

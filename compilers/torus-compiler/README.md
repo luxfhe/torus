@@ -1,6 +1,6 @@
-# Concrete Compiler
+# Torus Compiler
 
-The Concrete Compiler is a set of tools that allows the compilation and from an high-level and crypto free representation of an arithmetic circuit of operations on encrypted integers.
+The Torus Compiler is a set of tools that allows the compilation and from an high-level and crypto free representation of an arithmetic circuit of operations on encrypted integers.
 This compiler is based on the [MLIR project](https://mlir.llvm.org/) it use the framework, the standard dialects exposed by MLIR and define new fhe specific dialects and passes to lower the high-level fhe dialects to standard MLIR dialects.
 
 ## Getting started
@@ -82,13 +82,13 @@ make build-initialized
 Build the compiler
 
 ```sh
-make concretecompiler
+make toruscompiler
 ```
 
 Run the compiler
 
 ```sh
-./build-Release/bin/concretecompiler
+./build-Release/bin/toruscompiler
 ```
 
 #### Debug build and custom linker
@@ -105,7 +105,7 @@ You can install libs, bins, and include files into a specific directory by runni
 make INSTALL_PREFIX=/your/directory install
 ```
 
-You will then find `lib`, `bin`, and `include` under `/your/directory/concretecompiler`.
+You will then find `lib`, `bin`, and `include` under `/your/directory/toruscompiler`.
 
 ### Tests
 

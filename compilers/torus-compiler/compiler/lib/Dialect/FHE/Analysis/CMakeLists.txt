@@ -1,7 +1,7 @@
 add_mlir_library(
   FHEDialectAnalysis
   utils.cpp
-  ConcreteOptimizer.cpp
+  TorusOptimizer.cpp
   MANP.cpp
   ADDITIONAL_HEADER_DIRS
   ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/FHE

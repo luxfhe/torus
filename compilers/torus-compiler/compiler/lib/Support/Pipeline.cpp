@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -34,9 +34,9 @@
 
 #include "toruslang/Conversion/Passes.h"
 #include "toruslang/Conversion/TFHEKeyNormalization/Pass.h"
-#include "toruslang/Dialect/Concrete/Analysis/MemoryUsage.h"
-#include "toruslang/Dialect/Concrete/Transforms/Passes.h"
-#include "toruslang/Dialect/FHE/Analysis/ConcreteOptimizer.h"
+#include "toruslang/Dialect/Torus/Analysis/MemoryUsage.h"
+#include "toruslang/Dialect/Torus/Transforms/Passes.h"
+#include "toruslang/Dialect/FHE/Analysis/TorusOptimizer.h"
 #include "toruslang/Dialect/FHE/Analysis/MANP.h"
 #include "toruslang/Dialect/FHE/IR/FHEOps.h"
 #include "toruslang/Dialect/FHE/Transforms/BigInt/BigInt.h"
@@ -130,7 +130,7 @@ getFHEContextFromFHE(mlir::MLIRContext &context, mlir::ModuleOp &module,
         {/*.norm2 = */ ceilLog2(oMax2norm.value()),
          /*.p = */ oMaxWidth.value()});
   }
-  auto dag = concrete_optimizer::dag::empty();
+  auto dag = torus_optimizer::dag::empty();
   addPotentiallyNestedPass(pm, optimizer::createDagPass(config, *dag),
                            enablePass);
   if (pm.run(module.getOperation()).failed()) {
@@ -410,13 +410,13 @@ extractTFHEStatistics(mlir::MLIRContext &context, mlir::ModuleOp &module,
 }
 
 mlir::LogicalResult
-lowerTFHEToConcrete(mlir::MLIRContext &context, mlir::ModuleOp &module,
+lowerTFHEToTorus(mlir::MLIRContext &context, mlir::ModuleOp &module,
                     std::function<bool(mlir::Pass *)> enablePass) {
   mlir::PassManager pm(&context);
-  pipelinePrinting("TFHEToConcrete", pm, context);
+  pipelinePrinting("TFHEToTorus", pm, context);
 
   addPotentiallyNestedPass(
-      pm, mlir::toruslang::createConvertTFHEToConcretePass(), enablePass);
+      pm, mlir::toruslang::createConvertTFHEToTorusPass(), enablePass);
 
   return pm.run(module.getOperation());
 }
@@ -488,7 +488,7 @@ mlir::LogicalResult extractSDFGOps(mlir::MLIRContext &context,
                                    std::function<bool(mlir::Pass *)> enablePass,
                                    bool unroll) {
   mlir::PassManager pm(&context);
-  pipelinePrinting("extract SDFG ops from Concrete", pm, context);
+  pipelinePrinting("extract SDFG ops from Torus", pm, context);
   addPotentiallyNestedPass(
       pm, mlir::toruslang::createExtractSDFGOpsPass(unroll), enablePass);
   LogicalResult res = pm.run(module.getOperation());
@@ -602,7 +602,7 @@ mlir::LogicalResult lowerToCAPI(mlir::MLIRContext &context,
   pipelinePrinting("Lowering to CAPI", pm, context);
 
   addPotentiallyNestedPass(
-      pm, mlir::toruslang::createConvertConcreteToCAPIPass(gpu), enablePass);
+      pm, mlir::toruslang::createConvertTorusToCAPIPass(gpu), enablePass);
   addPotentiallyNestedPass(
       pm, mlir::toruslang::createConvertTracingToCAPIPass(), enablePass);
 

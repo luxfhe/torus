@@ -1,5 +1,5 @@
 add_mlir_library(
-  ConcretelangInterfaces
+  ToruslangInterfaces
   BatchableInterface.cpp
   ADDITIONAL_HEADER_DIRS
   ${PROJECT_SOURCE_DIR}/toruslang/Interfaces

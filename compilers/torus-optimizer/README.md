@@ -1,8 +1,8 @@
-# Concrete optimizer
+# Torus optimizer
 
-Concrete Optimizer is a Rust library that find the best cryptographic parameters for a given TFHE homomorphic circuit.
+Torus Optimizer is a Rust library that find the best cryptographic parameters for a given TFHE homomorphic circuit.
 The goal if to minimize computation time under security and error constraints.
-Its main client is Concrete Compiler.
+Its main client is Torus Compiler.
 It is implemented in Rust and offers a C++ API.
 It also provides a CLI tool to provide parameters for simplified circuits.
 
@@ -12,9 +12,9 @@ It also provides a CLI tool to provide parameters for simplified circuits.
 
 # Build
 
-Concrete Optimizer and its C++ interface are built automatically by Concrete Compiler.
+Torus Optimizer and its C++ interface are built automatically by Torus Compiler.
 
-To build Concrete Optimizer manually, run:
+To build Torus Optimizer manually, run:
 ```
 cargo build --release
 ```

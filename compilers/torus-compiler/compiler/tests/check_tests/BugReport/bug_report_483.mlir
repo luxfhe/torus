@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
+// RUN: toruscompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
 func.func @main(%arg0: tensor<1x1x4x4x!FHE.eint<4>>) -> tensor<1x1x2x2x!FHE.eint<4>> {
   %cst = arith.constant dense<[[[[2, 0], [3, 1]]]]> : tensor<1x1x2x2xi5>
   %cst_0 = arith.constant dense<0> : tensor<1xi5>

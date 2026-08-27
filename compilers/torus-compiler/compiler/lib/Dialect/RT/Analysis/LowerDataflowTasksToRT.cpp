@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -7,9 +7,9 @@
 
 #include <toruslang/Conversion/Tools.h>
 #include <toruslang/Conversion/Utils/GenericOpTypeConversionPattern.h>
-#include <toruslang/Dialect/Concrete/IR/ConcreteDialect.h>
-#include <toruslang/Dialect/Concrete/IR/ConcreteOps.h>
-#include <toruslang/Dialect/Concrete/IR/ConcreteTypes.h>
+#include <toruslang/Dialect/Torus/IR/TorusDialect.h>
+#include <toruslang/Dialect/Torus/IR/TorusOps.h>
+#include <toruslang/Dialect/Torus/IR/TorusTypes.h>
 #include <toruslang/Dialect/FHE/IR/FHEDialect.h>
 #include <toruslang/Dialect/FHE/IR/FHEOps.h>
 #include <toruslang/Dialect/FHE/IR/FHETypes.h>
@@ -176,7 +176,7 @@ getTaskArgumentSizeAndType(Value val, Location loc, OpBuilder builder) {
     return std::pair<mlir::Value, mlir::Value>(typeSize, arg_type);
   }
 
-  if (type.isa<mlir::toruslang::Concrete::ContextType>()) {
+  if (type.isa<mlir::toruslang::Torus::ContextType>()) {
     Value arg_type = builder.create<arith::ConstantOp>(
         loc, builder.getI64IntegerAttr(dfr::_DFR_TASK_ARG_CONTEXT));
     Value typeSize =
@@ -401,7 +401,7 @@ struct StartStopPass : public StartStopBase<StartStopPass> {
       for (auto arg : llvm::enumerate(entryPoint.getArguments())) {
         if (arg.value()
                 .getType()
-                .isa<mlir::toruslang::Concrete::ContextType>()) {
+                .isa<mlir::toruslang::Torus::ContextType>()) {
           ctx = arg.value();
           break;
         }

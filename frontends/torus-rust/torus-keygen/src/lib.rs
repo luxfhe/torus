@@ -1,9 +1,9 @@
-//! This module provides functionality for generating cryptographic keys for the Concrete library.
+//! This module provides functionality for generating cryptographic keys for the Torus library.
 //! It includes functions for generating secret keys, bootstrap keys, keyswitch keys, and packing keyswitch keys.
 //! The keys are generated based on the provided keyset information and seeds for randomness.
 //!
 //! # Modules
-//! - `concrete_protocol_capnp`: Contains the Cap'n Proto schema for the Concrete protocol.
+//! - `torus_protocol_capnp`: Contains the Cap'n Proto schema for the Torus protocol.
 //! - `wasm`: Contains functions for generating keys in a WebAssembly environment.
 //!
 //! # Constants
@@ -35,7 +35,7 @@
 use std::collections::HashSet;
 use std::u128;
 
-use crate::concrete_protocol_capnp::*;
+use crate::torus_protocol_capnp::*;
 use capnp::message::HeapAllocator;
 use capnp::serialize;
 use tfhe::core_crypto::commons::math::random::CompressionSeed;
@@ -81,13 +81,13 @@ impl<T> UnwrapOrThrowExt<T> for Option<T> {
     }
 }
 
-pub mod concrete_protocol_capnp {
+pub mod torus_protocol_capnp {
     use capnp::serialize;
     use capnp::traits::FromPointerReader;
 
     include!(concat!(
         env!("OUT_DIR"),
-        "/capnp/concrete_protocol_capnp.rs"
+        "/capnp/torus_protocol_capnp.rs"
     ));
 
     /// Reads a secret key from a buffer and returns the key ID and Cap'n Proto message.
@@ -176,7 +176,7 @@ fn u8_slice_to_u64_vector(data: &[u8]) -> Vec<u64> {
 
 /// Converts a Cap'n Proto reader to an `LweSecretKey`.
 fn reader_to_lwe_secret_key(
-    reader: &concrete_protocol_capnp::lwe_secret_key::Reader,
+    reader: &torus_protocol_capnp::lwe_secret_key::Reader,
 ) -> LweSecretKey<Vec<u64>> {
     let payload = reader
         .get_payload()
@@ -419,7 +419,7 @@ macro_rules! build_key {
 
 /// Build a Cap'n Proto message containing appropriate bootstrapping key.
 fn build_bsk(
-    bsk_info: concrete_protocol_capnp::lwe_bootstrap_key_info::Reader,
+    bsk_info: torus_protocol_capnp::lwe_bootstrap_key_info::Reader,
     generated_secret_keys: &std::collections::HashMap<u32, LweSecretKey<Vec<u64>>>,
     mut enc_random_generator: &mut EncryptionRandomGenerator<SoftwareRandomGenerator>,
 ) -> capnp::message::Builder<HeapAllocator> {
@@ -457,7 +457,7 @@ fn build_bsk(
             build_key!(
                 bsk,
                 bsk_info,
-                concrete_protocol_capnp::lwe_bootstrap_key::Builder
+                torus_protocol_capnp::lwe_bootstrap_key::Builder
             )
         }
         Compression::Seed => {
@@ -474,7 +474,7 @@ fn build_bsk(
             build_key!(
                 bsk,
                 bsk_info,
-                concrete_protocol_capnp::lwe_bootstrap_key::Builder
+                torus_protocol_capnp::lwe_bootstrap_key::Builder
             )
         }
         Compression::Paillier => panic!("Paillier compression is not supported"),
@@ -483,7 +483,7 @@ fn build_bsk(
 
 /// Build a Cap'n Proto message containing appropriate keyswitching key.
 fn build_ksk(
-    ksk_info: concrete_protocol_capnp::lwe_keyswitch_key_info::Reader,
+    ksk_info: torus_protocol_capnp::lwe_keyswitch_key_info::Reader,
     generated_secret_keys: &std::collections::HashMap<u32, LweSecretKey<Vec<u64>>>,
     mut enc_random_generator: &mut EncryptionRandomGenerator<SoftwareRandomGenerator>,
 ) -> capnp::message::Builder<HeapAllocator> {
@@ -519,7 +519,7 @@ fn build_ksk(
             build_key!(
                 ksk,
                 ksk_info,
-                concrete_protocol_capnp::lwe_keyswitch_key::Builder
+                torus_protocol_capnp::lwe_keyswitch_key::Builder
             )
         }
         Compression::Seed => {
@@ -535,7 +535,7 @@ fn build_ksk(
             build_key!(
                 ksk,
                 ksk_info,
-                concrete_protocol_capnp::lwe_keyswitch_key::Builder
+                torus_protocol_capnp::lwe_keyswitch_key::Builder
             )
         }
         Compression::Paillier => panic!("Paillier compression is not supported"),
@@ -544,7 +544,7 @@ fn build_ksk(
 
 /// Build a Cap'n Proto message containing appropriate packing keyswitch key.
 fn build_pksk(
-    pksk_info: concrete_protocol_capnp::packing_keyswitch_key_info::Reader,
+    pksk_info: torus_protocol_capnp::packing_keyswitch_key_info::Reader,
     generated_secret_keys: &std::collections::HashMap<u32, LweSecretKey<Vec<u64>>>,
     mut enc_random_generator: &mut EncryptionRandomGenerator<SoftwareRandomGenerator>,
 ) -> capnp::message::Builder<HeapAllocator> {
@@ -575,7 +575,7 @@ fn build_pksk(
     build_key!(
         pksk,
         pksk_info,
-        concrete_protocol_capnp::packing_keyswitch_key::Builder
+        torus_protocol_capnp::packing_keyswitch_key::Builder
     )
 }
 
@@ -598,7 +598,7 @@ fn build_pksk(
 /// This function will panic if the LWE secret keys cannot be retrieved, or if the secret key
 /// with the specified ID is not found in the keyset.
 fn get_lwe_secret_key_from_client_keyset(
-    client_keyset: &concrete_protocol_capnp::client_keyset::Reader,
+    client_keyset: &torus_protocol_capnp::client_keyset::Reader,
     id: u32,
 ) -> capnp::message::Builder<HeapAllocator> {
     let sk = client_keyset
@@ -613,7 +613,7 @@ fn get_lwe_secret_key_from_client_keyset(
         })
         .expect_or_throw(format!("Secret key (id:{}) not found in keyset", id).as_str());
     let mut builder = capnp::message::Builder::new_default();
-    let mut sk_builder = builder.init_root::<concrete_protocol_capnp::lwe_secret_key::Builder>();
+    let mut sk_builder = builder.init_root::<torus_protocol_capnp::lwe_secret_key::Builder>();
     sk_builder
         .set_info(
             sk.get_info()
@@ -653,13 +653,13 @@ pub fn get_lwe_secret_key_from_client_keyset_from_buffers(
 ///
 /// A Cap'n Proto message builder containing the bootstrap key.
 pub fn build_bsk_proto(
-    keyset_info: concrete_protocol_capnp::keyset_info::Reader,
+    keyset_info: torus_protocol_capnp::keyset_info::Reader,
     bsk_id: u32,
     bsk: &LweBootstrapKey<Vec<u64>>,
 ) -> capnp::message::Builder<HeapAllocator> {
     let mut builder = capnp::message::Builder::new_default();
     let mut bsk_builder =
-        builder.init_root::<concrete_protocol_capnp::lwe_bootstrap_key::Builder>();
+        builder.init_root::<torus_protocol_capnp::lwe_bootstrap_key::Builder>();
     bsk_builder
         .set_info(
             keyset_info
@@ -692,11 +692,11 @@ pub fn build_bsk_proto(
 ///
 /// A new keyset with the additional bootstrap keys.
 pub fn add_bsk_keys_to_keyset(
-    keyset: concrete_protocol_capnp::keyset::Reader,
-    bsks: Vec<concrete_protocol_capnp::lwe_bootstrap_key::Reader>,
+    keyset: torus_protocol_capnp::keyset::Reader,
+    bsks: Vec<torus_protocol_capnp::lwe_bootstrap_key::Reader>,
 ) -> capnp::message::Builder<HeapAllocator> {
     let mut builder = capnp::message::Builder::new_default();
-    let mut new_keyset = builder.init_root::<concrete_protocol_capnp::keyset::Builder>();
+    let mut new_keyset = builder.init_root::<torus_protocol_capnp::keyset::Builder>();
 
     // Copy existing client and server keysets
     new_keyset
@@ -826,7 +826,7 @@ pub fn add_bsk_keys_to_keyset_from_buffers(
 /// # Returns
 /// A Cap'n Proto message containing the generated keyset.
 fn generate_keyset(
-    info: concrete_protocol_capnp::keyset_info::Reader,
+    info: torus_protocol_capnp::keyset_info::Reader,
     secret_seed: u128,
     enc_seed: u128,
     no_bsk: bool,
@@ -835,11 +835,11 @@ fn generate_keyset(
     ignore_ksk: Vec<u32>,
     init_lwe_secret_keys: &mut std::collections::HashMap<
         u32,
-        concrete_protocol_capnp::lwe_secret_key::Reader,
+        torus_protocol_capnp::lwe_secret_key::Reader,
     >,
 ) -> capnp::message::Builder<HeapAllocator> {
     let mut builder = capnp::message::Builder::new_default();
-    let mut keyset_builder = builder.init_root::<concrete_protocol_capnp::keyset::Builder>();
+    let mut keyset_builder = builder.init_root::<torus_protocol_capnp::keyset::Builder>();
 
     // Random generators
     let mut secret_random_generator: SecretRandomGenerator<SoftwareRandomGenerator> =
@@ -886,7 +886,7 @@ fn generate_keyset(
             let sk_builder = build_key!(
                 sk,
                 sk_info,
-                concrete_protocol_capnp::lwe_secret_key::Builder
+                torus_protocol_capnp::lwe_secret_key::Builder
             );
             client_keyset
                 .reborrow()
@@ -1027,7 +1027,7 @@ fn generate_keyset(
     builder
 }
 
-/// Generate a Concrete keyset based on the provided keyset information and seeds.
+/// Generate a Torus keyset based on the provided keyset information and seeds.
 ///
 /// The function generates secret keys, bootstrap keys, keyswitch keys, and packing keyswitch keys based on the keyset information.
 /// It uses initial secret keys instead of generating them if they are provided. Bootstrap keys can be ignored in bulk or individually.
@@ -1071,7 +1071,7 @@ pub fn generate_keyset_from_buffers(
         .collect();
     let mut init_lwe_secret_keys: std::collections::HashMap<
         u32,
-        concrete_protocol_capnp::lwe_secret_key::Reader,
+        torus_protocol_capnp::lwe_secret_key::Reader,
     > = initial_secret_keys_owned
         .iter()
         .map(|(k, v)| {
@@ -1107,10 +1107,10 @@ pub fn generate_keyset_from_buffers(
 ///
 /// A Cap'n Proto message builder containing the client keyset.
 fn get_client_keyset(
-    keyset: concrete_protocol_capnp::keyset::Reader,
+    keyset: torus_protocol_capnp::keyset::Reader,
 ) -> capnp::message::Builder<HeapAllocator> {
     let mut builder = capnp::message::Builder::new_default();
-    let mut client_keyset = builder.init_root::<concrete_protocol_capnp::client_keyset::Builder>();
+    let mut client_keyset = builder.init_root::<torus_protocol_capnp::client_keyset::Builder>();
 
     client_keyset.reborrow().init_lwe_secret_keys(
         keyset
@@ -1162,7 +1162,7 @@ pub fn get_client_keyset_from_buffers(keyset_buffer: &[u8]) -> Vec<u8> {
 #[cfg(feature = "wasm")]
 pub mod wasm {
     /// This module provides WebAssembly (WASM) bindings for cryptographic key generation and manipulation
-    /// in the Concrete library. It includes functions for generating LWE bootstrap keys, retrieving LWE
+    /// in the Torus library. It includes functions for generating LWE bootstrap keys, retrieving LWE
     /// secret keys, generating keysets, and explaining keyset information in JSON format.
     ///
     /// The functions in this module are designed to be used in a WebAssembly environment and leverage
@@ -1224,7 +1224,7 @@ pub mod wasm {
         let message = read_capnp_from_buffer(keyset_info_buffer)
             .expect_throw("Failed to read keyset info buffer");
         let key_set_info =
-            get_reader_from_message::<concrete_protocol_capnp::keyset_info::Reader>(&message)
+            get_reader_from_message::<torus_protocol_capnp::keyset_info::Reader>(&message)
                 .expect_throw("Failed to get root keyset info reader");
         let message = read_capnp_from_buffer(input_secret_key_buffer)
             .expect_throw("Failed to read input secret key buffer");
@@ -1363,7 +1363,7 @@ pub mod wasm {
         get_lwe_secret_key_from_client_keyset_from_buffers(&mut client_keyset_buffer, id)
     }
 
-    /// Generate a Concrete keyset based on the provided keyset information and seeds.
+    /// Generate a Torus keyset based on the provided keyset information and seeds.
     ///
     /// The function generates secret keys, bootstrap keys, keyswitch keys, and packing keyswitch keys based on the keyset information.
     ///
@@ -1396,7 +1396,7 @@ pub mod wasm {
             client_keyset_message = read_capnp_from_buffer(client_keyset_buffer)
                 .expect_throw("Failed to read client keyset buffer");
             let client_keyset = get_reader_from_message::<
-                concrete_protocol_capnp::client_keyset::Reader,
+                torus_protocol_capnp::client_keyset::Reader,
             >(&client_keyset_message)
             .expect_throw("Failed to get root client keyset reader");
 
@@ -1431,7 +1431,7 @@ pub mod wasm {
         serialize::write_message_to_words(&builder)
     }
 
-    /// Generate a Concrete client keyset based on the provided keyset information and seeds.
+    /// Generate a Torus client keyset based on the provided keyset information and seeds.
     ///
     /// The function generates secret keys based on the keyset information.
     ///
@@ -1447,12 +1447,12 @@ pub mod wasm {
         let message = read_capnp_from_buffer(keyset_info_buffer)
             .expect_throw("Failed to read keyset info buffer");
         let key_set_info =
-            get_reader_from_message::<concrete_protocol_capnp::keyset_info::Reader>(&message)
+            get_reader_from_message::<torus_protocol_capnp::keyset_info::Reader>(&message)
                 .expect_throw("Failed to get root keyset info reader");
 
         let mut builder = capnp::message::Builder::new_default();
         let mut client_keyset =
-            builder.init_root::<concrete_protocol_capnp::client_keyset::Builder>();
+            builder.init_root::<torus_protocol_capnp::client_keyset::Builder>();
 
         let mut secret_random_generator: SecretRandomGenerator<SoftwareRandomGenerator> =
             SecretRandomGenerator::new(Seed(secret_seed));
@@ -1477,7 +1477,7 @@ pub mod wasm {
             let sk_builder = build_key!(
                 sk,
                 sk_info,
-                concrete_protocol_capnp::lwe_secret_key::Builder
+                torus_protocol_capnp::lwe_secret_key::Builder
             );
             client_keyset
                 .reborrow()
@@ -1524,7 +1524,7 @@ pub mod wasm {
         let message = read_capnp_from_buffer(keyset_info_buffer)
             .expect_throw("Failed to read keyset info buffer");
         let keyset_info =
-            get_reader_from_message::<concrete_protocol_capnp::keyset_info::Reader>(&message)
+            get_reader_from_message::<torus_protocol_capnp::keyset_info::Reader>(&message)
                 .expect_throw("Failed to get root keyset info reader");
 
         // Convert the keyset info to JSON

@@ -1,4 +1,4 @@
-// RUN: concretecompiler %s --action=roundtrip 2>&1 | FileCheck %s
+// RUN: toruscompiler %s --action=roundtrip 2>&1 | FileCheck %s
 
 
 //CHECK: func.func @mapped_lut(%[[A0:.*]]: tensor<2x3x!FHE.eint<2>>, %[[A1:.*]]: tensor<5x4xi64>, %[[A2:.*]]: tensor<2x3xindex>) -> tensor<2x3x!FHE.eint<2>> {

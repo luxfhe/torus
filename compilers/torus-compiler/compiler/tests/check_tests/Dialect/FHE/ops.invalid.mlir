@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --verify-diagnostics --action=roundtrip %s
+// RUN: toruscompiler --split-input-file --verify-diagnostics --action=roundtrip %s
 
 func.func @zero_1D_scalar() -> tensor<4x!FHE.eint<2>> {
   // expected-error @+1 {{'FHE.zero_tensor' op}}

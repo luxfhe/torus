@@ -7,13 +7,13 @@ pub struct Fft {
 }
 
 #[no_mangle]
-pub static CONCRETE_FFT_SIZE: usize = core::mem::size_of::<FftImpl>();
+pub static TORUS_FFT_SIZE: usize = core::mem::size_of::<FftImpl>();
 
 #[no_mangle]
-pub static CONCRETE_FFT_ALIGN: usize = core::mem::align_of::<FftImpl>();
+pub static TORUS_FFT_ALIGN: usize = core::mem::align_of::<FftImpl>();
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_construct_concrete_fft(
+pub unsafe extern "C" fn torus_cpu_construct_torus_fft(
     mem: *mut Fft,
     polynomial_size: usize,
 ) {
@@ -22,6 +22,6 @@ pub unsafe extern "C" fn concrete_cpu_construct_concrete_fft(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_destroy_concrete_fft(mem: *mut Fft) {
+pub unsafe extern "C" fn torus_cpu_destroy_torus_fft(mem: *mut Fft) {
     core::ptr::drop_in_place(mem);
 }

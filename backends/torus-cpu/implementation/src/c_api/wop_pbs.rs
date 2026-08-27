@@ -1,20 +1,20 @@
-use concrete_csprng::generators::SoftwareRandomGenerator;
-use concrete_fft::c64;
+use torus_csprng::generators::SoftwareRandomGenerator;
+use torus_fft::c64;
 use tfhe::core_crypto::prelude::*;
 
-use crate::c_api::bootstrap::concrete_cpu_fourier_bootstrap_key_size_u64;
-use crate::c_api::keyswitch::concrete_cpu_keyswitch_key_size_u64;
+use crate::c_api::bootstrap::torus_cpu_fourier_bootstrap_key_size_u64;
+use crate::c_api::keyswitch::torus_cpu_keyswitch_key_size_u64;
 use crate::c_api::types::*;
 use crate::c_api::utils::nounwind;
 use core::slice;
 use dyn_stack::PodStack;
 
 use super::secret_key::{
-    concrete_cpu_glwe_secret_key_size_u64, concrete_cpu_lwe_secret_key_size_u64,
+    torus_cpu_glwe_secret_key_size_u64, torus_cpu_lwe_secret_key_size_u64,
 };
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_init_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+pub unsafe extern "C" fn torus_cpu_init_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
     // packing keyswitch key
     lwe_pksk: *mut u64,
     // secret keys
@@ -36,12 +36,12 @@ pub unsafe extern "C" fn concrete_cpu_init_lwe_circuit_bootstrap_private_functio
     nounwind(|| {
         let input_key = LweSecretKey::from_container(slice::from_raw_parts(
             input_lwe_sk,
-            concrete_cpu_lwe_secret_key_size_u64(input_lwe_dimension),
+            torus_cpu_lwe_secret_key_size_u64(input_lwe_dimension),
         ));
         let output_key = GlweSecretKey::from_container(
             slice::from_raw_parts(
                 output_glwe_sk,
-                concrete_cpu_glwe_secret_key_size_u64(
+                torus_cpu_glwe_secret_key_size_u64(
                     output_glwe_dimension,
                     output_polynomial_size,
                 ),
@@ -51,7 +51,7 @@ pub unsafe extern "C" fn concrete_cpu_init_lwe_circuit_bootstrap_private_functio
         let mut fpksk_list = LwePrivateFunctionalPackingKeyswitchKeyList::from_container(
             slice::from_raw_parts_mut(
                 lwe_pksk,
-                concrete_cpu_lwe_packing_keyswitch_key_size(
+                torus_cpu_lwe_packing_keyswitch_key_size(
                     output_glwe_dimension,
                     output_polynomial_size,
                     decomposition_level_count,
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn concrete_cpu_init_lwe_circuit_bootstrap_private_functio
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64_scratch(
+pub unsafe extern "C" fn torus_cpu_extract_bit_lwe_ciphertext_u64_scratch(
     stack_size: *mut usize,
     stack_align: *mut usize,
     // ciphertexts dimensions
@@ -116,7 +116,7 @@ pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64_scratch(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_extract_bit_lwe_ciphertext_u64(
     // ciphertexts
     ct_vec_out: *mut u64,
     ct_in: *const u64,
@@ -169,7 +169,7 @@ pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64(
         let ksk = LweKeyswitchKey::from_container(
             slice::from_raw_parts(
                 ksk,
-                concrete_cpu_keyswitch_key_size_u64(
+                torus_cpu_keyswitch_key_size_u64(
                     ksk_decomposition_level_count,
                     ksk_input_dimension,
                     ksk_output_dimension,
@@ -184,7 +184,7 @@ pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64(
         let fourier_bsk = FourierLweBootstrapKey::from_container(
             slice::from_raw_parts(
                 fourier_bsk,
-                concrete_cpu_fourier_bootstrap_key_size_u64(
+                torus_cpu_fourier_bootstrap_key_size_u64(
                     bsk_decomposition_level_count,
                     bsk_glwe_dimension,
                     bsk_polynomial_size,
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn concrete_cpu_extract_bit_lwe_ciphertext_u64(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64_scratch(
+pub unsafe extern "C" fn torus_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64_scratch(
     stack_size: *mut usize,
     stack_align: *mut usize,
     // ciphertext dimensions
@@ -264,7 +264,7 @@ pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_circuit_bootstrap_boolean_vertical_packing_lwe_ciphertext_u64(
     // ciphertexts
     ct_out_vec: *mut u64,
     ct_in_vec: *const u64,
@@ -338,7 +338,7 @@ pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing
         let fourier_bsk = FourierLweBootstrapKey::from_container(
             slice::from_raw_parts(
                 fourier_bsk,
-                concrete_cpu_fourier_bootstrap_key_size_u64(
+                torus_cpu_fourier_bootstrap_key_size_u64(
                     bsk_decomposition_level_count,
                     bsk_glwe_dimension,
                     bsk_polynomial_size,
@@ -367,7 +367,7 @@ pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing
         let fpksk_list = LwePrivateFunctionalPackingKeyswitchKeyList::from_container(
             slice::from_raw_parts(
                 fpksk,
-                concrete_cpu_lwe_packing_keyswitch_key_size(
+                torus_cpu_lwe_packing_keyswitch_key_size(
                     fpksk_output_glwe_dimension,
                     fpksk_output_polynomial_size,
                     fpksk_decomposition_level_count,
@@ -397,7 +397,7 @@ pub unsafe extern "C" fn concrete_cpu_circuit_bootstrap_boolean_vertical_packing
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_lwe_packing_keyswitch_key_size(
+pub unsafe extern "C" fn torus_cpu_lwe_packing_keyswitch_key_size(
     output_glwe_dimension: usize,
     polynomial_size: usize,
     decomposition_level_count: usize,

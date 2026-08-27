@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-parametrized-tfhe --optimizer-strategy=dag-multi %s
+// RUN: toruscompiler --action=dump-parametrized-tfhe --optimizer-strategy=dag-multi %s
 
 // CHECK-NEXT: func.func @main(%[[Varg0:.*]]: !TFHE.glwe<sk<0,1,1536>>, %[[Varg1:.*]]: !TFHE.glwe<sk<1,1,8192>>) -> (!TFHE.glwe<sk<0,1,1536>>, !TFHE.glwe<sk<2,1,16384>>) {
 // CHECK-NEXT:   %[[Vcst:.*]] = arith.constant dense<0> : tensor<256xi64>

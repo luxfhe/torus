@@ -211,7 +211,7 @@ macro_rules! viz {
         );
     };
     ($object:expr) => {
-        let name = format!("concrete_optimizer_dbg_{}.svg", rand::random::<u64>());
+        let name = format!("torus_optimizer_dbg_{}.svg", rand::random::<u64>());
         $crate::utils::viz::viz!(&name, $object);
     };
 }
@@ -229,7 +229,7 @@ macro_rules! vizp {
         );
     }};
     ($object:expr) => {
-        let name = format!("concrete_optimizer_dbg_{}.svg", rand::random::<u64>());
+        let name = format!("torus_optimizer_dbg_{}.svg", rand::random::<u64>());
         $crate::utils::viz::vizp!(&name, $object);
     };
 }

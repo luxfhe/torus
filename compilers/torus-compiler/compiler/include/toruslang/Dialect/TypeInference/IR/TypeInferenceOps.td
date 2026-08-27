@@ -7,7 +7,7 @@ include "mlir/Interfaces/ControlFlowInterfaces.td"
 include "toruslang/Dialect/TypeInference/IR/TypeInferenceDialect.td"
 include "toruslang/Dialect/FHE/IR/FHETypes.td"
 include "toruslang/Dialect/TFHE/IR/TFHETypes.td"
-include "toruslang/Dialect/Concrete/IR/ConcreteTypes.td"
+include "toruslang/Dialect/Torus/IR/TorusTypes.td"
 
 class TypeInference_Op<string mnemonic, list<Trait> traits = []>
     : Op<TypeInference_Dialect, mnemonic, traits>;

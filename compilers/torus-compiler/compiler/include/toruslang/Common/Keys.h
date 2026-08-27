@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -41,27 +41,27 @@ class LweSecretKey {
   friend class PackingKeyswitchKey;
 
 public:
-  typedef Message<concreteprotocol::LweSecretKeyInfo> InfoType;
+  typedef Message<torusprotocol::LweSecretKeyInfo> InfoType;
 
-  LweSecretKey(Message<concreteprotocol::LweSecretKeyInfo> info,
+  LweSecretKey(Message<torusprotocol::LweSecretKeyInfo> info,
                toruslang::csprng::SecretCSPRNG &csprng);
   LweSecretKey() = delete;
   LweSecretKey(std::shared_ptr<std::vector<uint64_t>> buffer,
-               Message<concreteprotocol::LweSecretKeyInfo> info)
+               Message<torusprotocol::LweSecretKeyInfo> info)
       : buffer(buffer), info(info){};
 
   static LweSecretKey
-  fromProto(const Message<concreteprotocol::LweSecretKey> &proto);
+  fromProto(const Message<torusprotocol::LweSecretKey> &proto);
 
-  static LweSecretKey fromProto(concreteprotocol::LweSecretKey::Reader reader);
+  static LweSecretKey fromProto(torusprotocol::LweSecretKey::Reader reader);
 
-  Message<concreteprotocol::LweSecretKey> toProto() const;
+  Message<torusprotocol::LweSecretKey> toProto() const;
 
   const uint64_t *getRawPtr() const;
 
   size_t getSize() const;
 
-  const Message<concreteprotocol::LweSecretKeyInfo> &getInfo() const;
+  const Message<torusprotocol::LweSecretKeyInfo> &getInfo() const;
 
   const std::vector<uint64_t> &getBuffer() const;
 
@@ -71,12 +71,12 @@ public:
 
 private:
   std::shared_ptr<std::vector<uint64_t>> buffer;
-  Message<concreteprotocol::LweSecretKeyInfo> info;
+  Message<torusprotocol::LweSecretKeyInfo> info;
 };
 
 class LweBootstrapKey {
 public:
-  typedef Message<concreteprotocol::LweBootstrapKeyInfo> InfoType;
+  typedef Message<torusprotocol::LweBootstrapKeyInfo> InfoType;
 
   /// @brief Constructor of a bootstrap key that initialize according with the
   /// given specification.
@@ -84,27 +84,27 @@ public:
   /// @param inputKey The input secret key of the bootstraping key.
   /// @param outputKey The output secret key of the bootstraping key.
   /// @param csprng An encryption csprng that used to encrypt the secret keys.
-  LweBootstrapKey(Message<concreteprotocol::LweBootstrapKeyInfo> info,
+  LweBootstrapKey(Message<torusprotocol::LweBootstrapKeyInfo> info,
                   const LweSecretKey &inputKey, const LweSecretKey &outputKey,
                   toruslang::csprng::EncryptionCSPRNG &csprng);
   LweBootstrapKey(std::shared_ptr<std::vector<uint64_t>> buffer,
-                  Message<concreteprotocol::LweBootstrapKeyInfo> info)
+                  Message<torusprotocol::LweBootstrapKeyInfo> info)
       : seededBuffer(std::make_shared<std::vector<uint64_t>>()), buffer(buffer),
         info(info), decompress_mutext(std::make_shared<std::mutex>()),
         decompressed(std::make_shared<bool>(false)){};
 
   /// @brief Initialize the key from the protocol message.
   static LweBootstrapKey
-  fromProto(const Message<concreteprotocol::LweBootstrapKey> &proto);
+  fromProto(const Message<torusprotocol::LweBootstrapKey> &proto);
 
   /// @brief Initialize the key from a reader.
   static LweBootstrapKey
-  fromProto(concreteprotocol::LweBootstrapKey::Reader reader);
+  fromProto(torusprotocol::LweBootstrapKey::Reader reader);
 
   /// @brief Returns the serialized form of the key.
-  Message<concreteprotocol::LweBootstrapKey> toProto() const;
+  Message<torusprotocol::LweBootstrapKey> toProto() const;
 
-  const Message<concreteprotocol::LweBootstrapKeyInfo> &getInfo() const;
+  const Message<torusprotocol::LweBootstrapKeyInfo> &getInfo() const;
 
   const std::vector<uint64_t> &getBuffer();
 
@@ -113,7 +113,7 @@ public:
   void decompress();
 
 private:
-  LweBootstrapKey(Message<concreteprotocol::LweBootstrapKeyInfo> info)
+  LweBootstrapKey(Message<torusprotocol::LweBootstrapKeyInfo> info)
       : seededBuffer(std::make_shared<std::vector<uint64_t>>()),
         buffer(std::make_shared<std::vector<uint64_t>>()), info(info),
         decompress_mutext(std::make_shared<std::mutex>()),
@@ -127,7 +127,7 @@ private:
   std::shared_ptr<std::vector<uint64_t>> buffer;
 
   /// @brief The metadata of the bootrap key.
-  Message<concreteprotocol::LweBootstrapKeyInfo> info;
+  Message<torusprotocol::LweBootstrapKeyInfo> info;
 
   /// @brief Mutex to guard the decompression
   std::shared_ptr<std::mutex> decompress_mutext;
@@ -138,29 +138,29 @@ private:
 
 class LweKeyswitchKey {
 public:
-  typedef Message<concreteprotocol::LweKeyswitchKeyInfo> InfoType;
+  typedef Message<torusprotocol::LweKeyswitchKeyInfo> InfoType;
 
-  LweKeyswitchKey(Message<concreteprotocol::LweKeyswitchKeyInfo> info,
+  LweKeyswitchKey(Message<torusprotocol::LweKeyswitchKeyInfo> info,
                   const LweSecretKey &inputKey, const LweSecretKey &outputKey,
                   toruslang::csprng::EncryptionCSPRNG &csprng);
   LweKeyswitchKey(std::shared_ptr<std::vector<uint64_t>> buffer,
-                  Message<concreteprotocol::LweKeyswitchKeyInfo> info)
+                  Message<torusprotocol::LweKeyswitchKeyInfo> info)
       : seededBuffer(std::make_shared<std::vector<uint64_t>>()), buffer(buffer),
         info(info), decompress_mutext(std::make_shared<std::mutex>()),
         decompressed(std::make_shared<bool>(false)){};
 
   /// @brief Initialize the key from the protocol message.
   static LweKeyswitchKey
-  fromProto(const Message<concreteprotocol::LweKeyswitchKey> &proto);
+  fromProto(const Message<torusprotocol::LweKeyswitchKey> &proto);
 
   /// @brief Initialize the key from a reader.
   static LweKeyswitchKey
-  fromProto(concreteprotocol::LweKeyswitchKey::Reader reader);
+  fromProto(torusprotocol::LweKeyswitchKey::Reader reader);
 
   /// @brief Returns the serialized form of the key.
-  Message<concreteprotocol::LweKeyswitchKey> toProto() const;
+  Message<torusprotocol::LweKeyswitchKey> toProto() const;
 
-  const Message<concreteprotocol::LweKeyswitchKeyInfo> &getInfo() const;
+  const Message<torusprotocol::LweKeyswitchKeyInfo> &getInfo() const;
 
   const std::vector<uint64_t> &getBuffer();
 
@@ -169,7 +169,7 @@ public:
   void decompress();
 
 private:
-  LweKeyswitchKey(Message<concreteprotocol::LweKeyswitchKeyInfo> info)
+  LweKeyswitchKey(Message<torusprotocol::LweKeyswitchKeyInfo> info)
       : seededBuffer(std::make_shared<std::vector<uint64_t>>()),
         buffer(std::make_shared<std::vector<uint64_t>>()), info(info),
         decompress_mutext(std::make_shared<std::mutex>()),
@@ -182,7 +182,7 @@ private:
   std::shared_ptr<std::vector<uint64_t>> buffer;
 
   /// @brief The metadata of the bootrap key.
-  Message<concreteprotocol::LweKeyswitchKeyInfo> info;
+  Message<torusprotocol::LweKeyswitchKeyInfo> info;
 
   /// @brief Mutex to guard the decompression
   std::shared_ptr<std::mutex> decompress_mutext;
@@ -195,30 +195,30 @@ class PackingKeyswitchKey {
   friend class Keyset;
 
 public:
-  typedef Message<concreteprotocol::PackingKeyswitchKeyInfo> InfoType;
+  typedef Message<torusprotocol::PackingKeyswitchKeyInfo> InfoType;
 
-  PackingKeyswitchKey(Message<concreteprotocol::PackingKeyswitchKeyInfo> info,
+  PackingKeyswitchKey(Message<torusprotocol::PackingKeyswitchKeyInfo> info,
                       const LweSecretKey &inputKey,
                       const LweSecretKey &outputKey,
                       toruslang::csprng::EncryptionCSPRNG &csprng);
   PackingKeyswitchKey() = delete;
   PackingKeyswitchKey(std::shared_ptr<std::vector<uint64_t>> buffer,
-                      Message<concreteprotocol::PackingKeyswitchKeyInfo> info)
+                      Message<torusprotocol::PackingKeyswitchKeyInfo> info)
       : buffer(buffer), info(info){};
 
   static PackingKeyswitchKey
-  fromProto(const Message<concreteprotocol::PackingKeyswitchKey> &proto);
+  fromProto(const Message<torusprotocol::PackingKeyswitchKey> &proto);
 
   static PackingKeyswitchKey
-  fromProto(concreteprotocol::PackingKeyswitchKey::Reader reader);
+  fromProto(torusprotocol::PackingKeyswitchKey::Reader reader);
 
-  Message<concreteprotocol::PackingKeyswitchKey> toProto() const;
+  Message<torusprotocol::PackingKeyswitchKey> toProto() const;
 
   const uint64_t *getRawPtr() const;
 
   size_t getSize() const;
 
-  const Message<concreteprotocol::PackingKeyswitchKeyInfo> &getInfo() const;
+  const Message<torusprotocol::PackingKeyswitchKeyInfo> &getInfo() const;
 
   const std::vector<uint64_t> &getBuffer() const;
 
@@ -228,7 +228,7 @@ public:
 
 private:
   std::shared_ptr<std::vector<uint64_t>> buffer;
-  Message<concreteprotocol::PackingKeyswitchKeyInfo> info;
+  Message<torusprotocol::PackingKeyswitchKeyInfo> info;
 };
 
 } // namespace keys

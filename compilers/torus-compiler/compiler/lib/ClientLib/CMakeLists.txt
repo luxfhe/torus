@@ -1,14 +1,14 @@
 add_compile_options(-fexceptions)
 
 add_mlir_library(
-  ConcretelangClientLib
+  ToruslangClientLib
   ClientLib.cpp
   ADDITIONAL_HEADER_DIRS
   ${PROJECT_SOURCE_DIR}/include/toruslang/ClientLib
   ${PROJECT_SOURCE_DIR}/include/toruslang/Common
-  ${CONCRETE_CPU_INCLUDE_DIR}
+  ${TORUS_CPU_INCLUDE_DIR}
   LINK_LIBS
-  ConcretelangCommon
+  ToruslangCommon
   PUBLIC
   rust_deps_bundle
   torus-protocol)

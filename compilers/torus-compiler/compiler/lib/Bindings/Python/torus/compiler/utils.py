@@ -1,4 +1,4 @@
-#  Part of the Concrete Compiler Project, under the BSD3 License with Zama Exceptions.
+#  Part of the Torus Compiler Project, under the BSD3 License with Zama Exceptions.
 #  See https://github.com/luxfhe/torus/blob/main/LICENSE.txt for license information.
 
 """Common utils for the compiler submodule."""
@@ -37,7 +37,7 @@ def lookup_runtime_lib() -> str:
     runtime_library_paths = [
         filename
         for filename in os.listdir(lib_dir)
-        if filename.startswith("libConcretelangRuntime")
+        if filename.startswith("libToruslangRuntime")
     ]
     assert len(runtime_library_paths) == 1, "should be one and only one runtime library"
     return os.path.join(lib_dir, runtime_library_paths[0])
@@ -48,12 +48,12 @@ def _lookup_runtime_lib_dir_linux() -> str:
     cwd = os.path.abspath(__file__)
     # to compiler
     cwd = os.path.abspath(os.path.join(cwd, os.pardir))
-    # to concrete
+    # to torus
     cwd = os.path.abspath(os.path.join(cwd, os.pardir))
     # to site-packages
     cwd = os.path.abspath(os.path.join(cwd, os.pardir))
 
-    possible_package_names = ["torus_fhe", "concrete_compiler"]
+    possible_package_names = ["torus_fhe", "torus_compiler"]
     for name in possible_package_names:
         candidate = os.path.join(cwd, f"{name}.libs")
         if os.path.exists(candidate):
@@ -63,10 +63,10 @@ def _lookup_runtime_lib_dir_linux() -> str:
 
 
 def _lookup_runtime_lib_dir_macos() -> str:
-    # Go up to the concrete package level
+    # Go up to the torus package level
     cwd = os.path.abspath(__file__)
     # to compiler
     cwd = os.path.abspath(os.path.join(cwd, os.pardir))
-    # to concrete
+    # to torus
     cwd = os.path.abspath(os.path.join(cwd, os.pardir))
     return os.path.join(cwd, ".dylibs")

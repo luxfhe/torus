@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -36,7 +36,7 @@ static inline int timespec_diff(struct timespec *, const struct timespec *,
   do {                                                                         \
     assert(clock_gettime(TIME_UTIL_CLOCK,                                      \
                          &mlir::toruslang::time_util::timestamp) == 0);     \
-    char *env = getenv("CONCRETE_TIMING_ENABLED");                             \
+    char *env = getenv("TORUS_TIMING_ENABLED");                             \
     if (env != nullptr)                                                        \
       if (!strncmp(env, "True", 4) || !strncmp(env, "true", 4) ||              \
           !strncmp(env, "ON", 2) || !strncmp(env, "on", 2) ||                  \

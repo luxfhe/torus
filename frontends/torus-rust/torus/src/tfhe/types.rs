@@ -78,10 +78,10 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
                 EncryptionKeyChoice::BIG => {
-                    tokens.extend(quote! {::concrete::tfhe::EncryptionKeyChoice::BIG})
+                    tokens.extend(quote! {::torus::tfhe::EncryptionKeyChoice::BIG})
                 }
                 EncryptionKeyChoice::SMALL => {
-                    tokens.extend(quote! {::concrete::tfhe::EncryptionKeyChoice::SMALL})
+                    tokens.extend(quote! {::torus::tfhe::EncryptionKeyChoice::SMALL})
                 }
             }
         }
@@ -98,7 +98,7 @@ mod to_tokens {
             let glwe_noise_distribution = self.glwe_noise_distribution;
             let encryption_key_choice = &self.encryption_key_choice;
             tokens.extend(quote! {
-                ::concrete::tfhe::CryptoParams {
+                ::torus::tfhe::CryptoParams {
                     lwe_dimension: #lwe_dimension,
                     glwe_dimension: #glwe_dimension,
                     polynomial_size: #polynomial_size,
@@ -120,7 +120,7 @@ mod to_tokens {
             let bit_width = &self.bit_width;
             let is_signed = &self.is_signed;
             tokens.extend(quote! {
-                ::concrete::tfhe::IntegerType {
+                ::torus::tfhe::IntegerType {
                     carry_width: #carry_width,
                     msg_width: #msg_width,
                     params: #params,

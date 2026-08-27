@@ -170,7 +170,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3fd119d74b830634cea2a0f58bbd0d54540518a14397557951e79340abc28c0"
 
 [[package]]
-name = "concrete-csprng"
+name = "torus-csprng"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90518357249582c16a6b64d7410243dfb3109d5bf0ad1665c058c9a59f2fc4cc"
@@ -181,7 +181,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-fft"
+name = "torus-fft"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "86ff7397e00e903afb03f0adca6a5f3bec3a6e96a7cdb70bdc088e01b125e170"
@@ -196,7 +196,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete-ntt"
+name = "torus-ntt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bea708a14b4cfe650eec644eac11889a187404a3a0738a41a5524b0f548850a1"
@@ -206,7 +206,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "concrete_quantizer"
+name = "torus_quantizer"
 version = "0.1.0"
 source = "git+https://github.com/luxfhe/torus-ml-processing-rs#0e0ba9a036cc24fa38dad199230f74be7fdcfd3f"
 dependencies = [
@@ -611,9 +611,9 @@ dependencies = [
  "aligned-vec",
  "bincode",
  "bytemuck",
- "concrete-csprng",
- "concrete-fft",
- "concrete-ntt",
+ "torus-csprng",
+ "torus-fft",
+ "torus-ntt",
  "dyn-stack",
  "itertools",
  "paste",
@@ -654,7 +654,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "clap",
- "concrete_quantizer",
+ "torus_quantizer",
  "ndarray",
  "serde",
  "serde_json",

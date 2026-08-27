@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --action=roundtrip %s 2>&1| FileCheck %s
+// RUN: toruscompiler --split-input-file --action=roundtrip %s 2>&1| FileCheck %s
 
 // -----
 

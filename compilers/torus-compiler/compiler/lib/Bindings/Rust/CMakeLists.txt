@@ -6,18 +6,18 @@ add_custom_command(
   COMMAND cxxbridge ${CMAKE_CURRENT_SOURCE_DIR}/ffi.rs > ffi.rs.cc
   COMMAND cxxbridge --header > ${CMAKE_CURRENT_SOURCE_DIR}/cxx.h)
 
-add_library(ConcreteRust SHARED ffi.rs.cc)
+add_library(TorusRust SHARED ffi.rs.cc)
 
 if(LINUX)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-Bsymbolic")
 endif()
 
 target_link_libraries(
-  ConcreteRust
-  PRIVATE ConcretelangSupport
-          ConcretelangClientLib
-          ConcretelangServerLib
-          ConcretelangRuntimeStatic
+  TorusRust
+  PRIVATE ToruslangSupport
+          ToruslangClientLib
+          ToruslangServerLib
+          ToruslangRuntimeStatic
           LLVMSupport
           capnp
           capnp-json
@@ -28,5 +28,5 @@ if(APPLE)
   if(NOT SECURITY_FRAMEWORK)
     message(FATAL_ERROR "Security framework not found")
   endif()
-  target_link_libraries(ConcreteRust LINK_PUBLIC ${SECURITY_FRAMEWORK})
+  target_link_libraries(TorusRust LINK_PUBLIC ${SECURITY_FRAMEWORK})
 endif()

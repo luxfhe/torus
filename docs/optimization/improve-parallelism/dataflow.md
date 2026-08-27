@@ -15,7 +15,7 @@ import numpy as np
 from torus import fhe
 
 def f(x, y, z):
-    # normally, you'd use fhe.array to construct a concrete tensor
+    # normally, you'd use fhe.array to construct a torus tensor
     # but for this example, we just create a simple numpy array
     # so the matrix multiplication can happen on a cellular level
     a = np.array([[x, y], [z, 2]])

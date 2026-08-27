@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -361,9 +361,9 @@ DynamicModule::open(const std::string &sharedLibPath) {
 }
 
 size_t
-getGateDescriptionSize(const Message<concreteprotocol::GateInfo> &gateInfo,
+getGateDescriptionSize(const Message<torusprotocol::GateInfo> &gateInfo,
                        bool useSimulation) {
-  auto shapeToSize = [](concreteprotocol::Shape::Reader shape) -> size_t {
+  auto shapeToSize = [](torusprotocol::Shape::Reader shape) -> size_t {
     if (shape.getDimensions().size() == 0) {
       return 1;
     } else {
@@ -380,7 +380,7 @@ getGateDescriptionSize(const Message<concreteprotocol::GateInfo> &gateInfo,
   } else if (typeInfo.hasLweCiphertext()) {
     if (useSimulation) {
       if (typeInfo.getLweCiphertext()
-              .getConcreteShape()
+              .getTorusShape()
               .getDimensions()
               .size() == 1) {
         // Initially it was just one ciphertext in native mode. Only an integer
@@ -390,10 +390,10 @@ getGateDescriptionSize(const Message<concreteprotocol::GateInfo> &gateInfo,
         // This is either a tensor in native encoding mode, or a tensor in crt
         // mode or whatever. A tensor will be passed, but with the lwe dimension
         // removed basically (hence the -2).
-        return shapeToSize(typeInfo.getLweCiphertext().getConcreteShape()) - 2;
+        return shapeToSize(typeInfo.getLweCiphertext().getTorusShape()) - 2;
       }
     } else {
-      return shapeToSize(typeInfo.getLweCiphertext().getConcreteShape());
+      return shapeToSize(typeInfo.getLweCiphertext().getTorusShape());
     }
   } else {
     assert(false);
@@ -401,7 +401,7 @@ getGateDescriptionSize(const Message<concreteprotocol::GateInfo> &gateInfo,
 }
 
 size_t
-getGateIntegerPrecision(const Message<concreteprotocol::GateInfo> &gateInfo) {
+getGateIntegerPrecision(const Message<torusprotocol::GateInfo> &gateInfo) {
   if (gateInfo.asReader().getTypeInfo().hasIndex()) {
     return gateInfo.asReader().getTypeInfo().getIndex().getIntegerPrecision();
   } else if (gateInfo.asReader().getTypeInfo().hasPlaintext()) {
@@ -418,7 +418,7 @@ getGateIntegerPrecision(const Message<concreteprotocol::GateInfo> &gateInfo) {
   assert(false);
 }
 
-bool getGateIsSigned(const Message<concreteprotocol::GateInfo> &gateInfo) {
+bool getGateIsSigned(const Message<torusprotocol::GateInfo> &gateInfo) {
   if (gateInfo.asReader().getTypeInfo().hasIndex()) {
     return gateInfo.asReader().getTypeInfo().getIndex().getIsSigned();
   } else if (gateInfo.asReader().getTypeInfo().hasPlaintext()) {
@@ -473,7 +473,7 @@ std::string ServerCircuit::getName() {
 }
 
 Result<ServerCircuit> ServerCircuit::fromFnPtr(
-    const Message<concreteprotocol::CircuitInfo> &circuitInfo,
+    const Message<torusprotocol::CircuitInfo> &circuitInfo,
     void (*func)(void *...), bool useSimulation = false) {
   ServerCircuit output;
   output.circuitInfo = circuitInfo;
@@ -487,16 +487,16 @@ Result<ServerCircuit> ServerCircuit::fromFnPtr(
     if (gateInfo.getTypeInfo().hasIndex()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getIndexArgTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasPlaintext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getPlaintextArgTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasLweCiphertext()) {
       OUTCOME_TRY(
           transformer,
           TransformerFactory::getLweCiphertextArgTransformer(
-              (Message<concreteprotocol::GateInfo>)gateInfo, useSimulation));
+              (Message<torusprotocol::GateInfo>)gateInfo, useSimulation));
     } else {
       return StringError("Malformed input gate info.");
     }
@@ -510,16 +510,16 @@ Result<ServerCircuit> ServerCircuit::fromFnPtr(
     if (gateInfo.getTypeInfo().hasIndex()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getIndexReturnTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasPlaintext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getPlaintextReturnTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasLweCiphertext()) {
       OUTCOME_TRY(
           transformer,
           TransformerFactory::getLweCiphertextReturnTransformer(
-              (Message<concreteprotocol::GateInfo>)gateInfo, useSimulation));
+              (Message<torusprotocol::GateInfo>)gateInfo, useSimulation));
     } else {
       return StringError("Malformed input gate info.");
     }
@@ -534,7 +534,7 @@ Result<ServerCircuit> ServerCircuit::fromFnPtr(
   output.argRawSize = 0;
   for (auto gateInfo : circuitInfo.asReader().getInputs()) {
     auto descriptorSize = getGateDescriptionSize(
-        (Message<concreteprotocol::GateInfo>)gateInfo, useSimulation);
+        (Message<torusprotocol::GateInfo>)gateInfo, useSimulation);
     output.argDescriptorSizes.push_back(descriptorSize);
     output.argRawSize += descriptorSize;
   }
@@ -542,7 +542,7 @@ Result<ServerCircuit> ServerCircuit::fromFnPtr(
   output.returnRawSize = 0;
   for (auto gateInfo : circuitInfo.asReader().getOutputs()) {
     auto descriptorSize = getGateDescriptionSize(
-        (Message<concreteprotocol::GateInfo>)gateInfo, useSimulation);
+        (Message<torusprotocol::GateInfo>)gateInfo, useSimulation);
     output.returnDescriptorSizes.push_back(descriptorSize);
     output.returnRawSize += descriptorSize;
   }
@@ -551,12 +551,12 @@ Result<ServerCircuit> ServerCircuit::fromFnPtr(
 }
 
 Result<ServerCircuit> ServerCircuit::fromDynamicModule(
-    const Message<concreteprotocol::CircuitInfo> &circuitInfo,
+    const Message<torusprotocol::CircuitInfo> &circuitInfo,
     std::shared_ptr<DynamicModule> dynamicModule, bool useSimulation = false) {
 
   auto func = (void (*)(void *, ...))dlsym(
       dynamicModule->libraryHandle,
-      (std::string("_mlir_concrete_") +
+      (std::string("_mlir_torus_") +
        std::string(circuitInfo.asReader().getName().cStr()))
           .c_str());
   if (auto err = dlerror()) {
@@ -628,10 +628,10 @@ void ServerCircuit::invoke(const ServerKeyset &serverKeyset) {
        i++) {
     // We read the descriptor from the _returnRaws via the maps.
     size_t precision = getGateIntegerPrecision(
-        (Message<concreteprotocol::GateInfo>)circuitInfo.asReader()
+        (Message<torusprotocol::GateInfo>)circuitInfo.asReader()
             .getOutputs()[i]);
     bool isSigned = getGateIsSigned(
-        (Message<concreteprotocol::GateInfo>)circuitInfo.asReader()
+        (Message<torusprotocol::GateInfo>)circuitInfo.asReader()
             .getOutputs()[i]);
     InvocationDescriptor descriptor =
         InvocationDescriptor::fromU64s(_returnRawMaps[i], precision, isSigned);
@@ -647,7 +647,7 @@ void ServerCircuit::invoke(const ServerKeyset &serverKeyset) {
 }
 
 Result<ServerProgram>
-ServerProgram::load(const Message<concreteprotocol::ProgramInfo> &programInfo,
+ServerProgram::load(const Message<torusprotocol::ProgramInfo> &programInfo,
                     const std::string &sharedLibPath, bool useSimulation) {
   ServerProgram output;
   OUTCOME_TRY(auto dynamicModule, DynamicModule::open(sharedLibPath));
@@ -656,7 +656,7 @@ ServerProgram::load(const Message<concreteprotocol::ProgramInfo> &programInfo,
   for (auto circuitInfo : programInfo.asReader().getCircuits()) {
     OUTCOME_TRY(auto serverCircuit,
                 ServerCircuit::fromDynamicModule(
-                    (Message<concreteprotocol::CircuitInfo>)circuitInfo,
+                    (Message<torusprotocol::CircuitInfo>)circuitInfo,
                     sharedDynamicModule, useSimulation));
     serverCircuits.push_back(serverCircuit);
   }

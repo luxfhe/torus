@@ -14,11 +14,11 @@ ignore = [
 
 [per-file-ignores]
 "**/__init__.py" = ["F401"]
-"concrete/fhe/compilation/configuration.py" = ["ARG002"]
+"torus/fhe/compilation/configuration.py" = ["ARG002"]
 "torus/fhe/mlir/processors/all.py" = ["F401"]
 "torus/fhe/mlir/processors/assign_bit_widths.py" = ["ARG002", "RUF012"]
 "torus/fhe/mlir/converter.py" = ["ARG002", "B011", "F403", "F405"]
-"concrete/**" = ["RUF010"]
+"torus/**" = ["RUF010"]
 "examples/**" = ["PLR2004", "RUF010"]
 "tests/**" = ["PLR2004", "PLW0603", "SIM300", "S311", "RUF010"]
 "tests/execution/test_tfhers.py" = ["S605"]

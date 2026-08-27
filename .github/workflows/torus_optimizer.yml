@@ -1,0 +1,111 @@
+name: torus-optimizer test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/torus_optimizer.yml
+      - compilers/torus-optimizer/**
+      - backends/**
+      - tools/**
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+
+env:
+  CARGO_TERM_COLOR: always
+  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+concurrency:
+  group: torus_optimizer-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        runson: ["ubuntu-latest", "aws-mac1-metal", "aws-mac2-metal"]
+    runs-on: ${{ matrix.runson }}
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: 'false'
+      - name: Setup
+        uses: ./.github/actions/optimizer_setup
+      - name: Formatting
+        run: |
+          cargo --version
+          cd compilers/torus-optimizer
+          cargo fmt --check
+      - name: Fix fontconfig on ubuntu
+        if: ${{ matrix.runson == 'ubuntu-latest' }}
+        run: |
+          sudo apt update
+          sudo apt -y install libfontconfig1-dev
+      - name: Build
+        run: |
+          cd compilers/torus-optimizer
+          cargo build --release --all-targets
+      - name: Lint
+        run: |
+          cd compilers/torus-optimizer
+          cargo clippy --release --all-targets
+      - name: Tests
+        run: |
+          cd compilers/torus-optimizer
+          cargo test --release --no-fail-fast --all-targets
+          make -C torus-optimizer-cpp test-ci
+
+  benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      # to comment the benchmark result in the PR
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: 'false'
+      - name: Setup
+        uses: ./.github/actions/optimizer_setup
+      - name: Run benchmark
+        run: |
+          cd compilers/torus-optimizer
+          cargo bench -p v0-parameters -- --output-format bencher | tee bench_result.txt
+      - name: Download PR base benchmark data
+        if: ${{ github.event_name == 'pull_request' }}
+        # for artifacts restrictions see https://github.com/actions/download-artifact/issues/3
+        # for cache restrictions see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
+        # and  https://github.com/actions/cache/issues/692
+        uses: dawidd6/action-download-artifact@80620a5d27ce0ae443b965134db88467fc607b43
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow_conclusion: ""
+          search_artifacts: true
+          name: ${{ runner.os }}-benchmark
+          if_no_artifact_found: warn
+          path: ./benchmark
+      - name: Save benchmark result to file
+        uses: benchmark-action/github-action-benchmark@d48d326b4ca9ba73ca0cd0d59f108f9e02a381c7 # v1.20.4
+        with:
+          tool: 'cargo'
+          output-file-path: ./compilers/torus-optimizer/bench_result.txt
+          external-data-json-path: ./benchmark/benchmark-data.json
+          # GitHub API token to make a commit comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-always: true
+          # Enable Job Summary for PRs
+          summary-always: true
+      - name: Upload benchmark data
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          path: ./benchmark
+          name: ${{ runner.os }}-benchmark

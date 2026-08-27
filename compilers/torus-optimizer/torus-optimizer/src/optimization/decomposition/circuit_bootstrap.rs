@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use concrete_cpu_noise_model::gaussian_noise::noise::cmux::variance_cmux;
+use torus_cpu_noise_model::gaussian_noise::noise::cmux::variance_cmux;
 use serde::{Deserialize, Serialize};
 
 use crate::computing_cost::complexity_model::ComplexityModel;

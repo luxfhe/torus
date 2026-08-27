@@ -1,8 +1,8 @@
 BSD 3-Clause Clear License
 
 Copyright (c) the holders listed in NOTICE.
-Python module rename from concrete to torus, MLIR dialect rename from
-concrete to torus, backend rename from concrete-cuda to torus-cuda,
+Python module rename from torus to torus, MLIR dialect rename from
+torus to torus, backend rename from torus-cuda to torus-cuda,
 kernel routing through luxcpp/gpu + lux-private/gpu-kernels).
 All rights reserved.
 

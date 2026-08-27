@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -13,7 +13,7 @@
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
 #include "mlir/Dialect/SCF/IR/SCF.h"
 
-#include "toruslang/Conversion/ConcreteToCAPI/Pass.h"
+#include "toruslang/Conversion/TorusToCAPI/Pass.h"
 #include "toruslang/Conversion/ExtractSDFGOps/Pass.h"
 #include "toruslang/Conversion/FHETensorOpsToLinalg/Pass.h"
 #include "toruslang/Conversion/FHEToTFHECrt/Pass.h"
@@ -24,9 +24,9 @@
 #include "toruslang/Conversion/SimulateTFHE/Pass.h"
 #include "toruslang/Conversion/TFHEGlobalParametrization/Pass.h"
 #include "toruslang/Conversion/TFHEKeyNormalization/Pass.h"
-#include "toruslang/Conversion/TFHEToConcrete/Pass.h"
+#include "toruslang/Conversion/TFHEToTorus/Pass.h"
 #include "toruslang/Conversion/TracingToCAPI/Pass.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteDialect.h"
+#include "toruslang/Dialect/Torus/IR/TorusDialect.h"
 #include "toruslang/Dialect/FHE/IR/FHEDialect.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGDialect.h"
 #include "toruslang/Dialect/TFHE/IR/TFHEDialect.h"

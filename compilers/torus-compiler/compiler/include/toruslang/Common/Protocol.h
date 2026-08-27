@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -264,15 +264,15 @@ private:
   typename MessageType::Builder message;
 };
 
-template struct Message<concreteprotocol::ProgramInfo>;
-template struct Message<concreteprotocol::CircuitEncodingInfo>;
-template struct Message<concreteprotocol::ProgramEncodingInfo>;
-template struct Message<concreteprotocol::Value>;
-template struct Message<concreteprotocol::GateInfo>;
+template struct Message<torusprotocol::ProgramInfo>;
+template struct Message<torusprotocol::CircuitEncodingInfo>;
+template struct Message<torusprotocol::ProgramEncodingInfo>;
+template struct Message<torusprotocol::Value>;
+template struct Message<torusprotocol::GateInfo>;
 
 /// Helper function turning a vector of integers to a payload.
 template <typename T>
-Message<concreteprotocol::Payload>
+Message<torusprotocol::Payload>
 vectorToProtoPayload(const std::vector<T> &input) {
   auto is_big_endian = []() {
     union {
@@ -285,7 +285,7 @@ vectorToProtoPayload(const std::vector<T> &input) {
 
   assert(is_big_endian() == false &&
          "we assume it's always LE for now. Rust-side use LE for protos.");
-  auto output = Message<concreteprotocol::Payload>();
+  auto output = Message<torusprotocol::Payload>();
   auto elmsPerBlob = capnp::MAX_TEXT_SIZE / sizeof(T);
   auto remainingElms = input.size() % elmsPerBlob;
   auto nbCompleteBlobs = (input.size() / elmsPerBlob);
@@ -318,12 +318,12 @@ vectorToProtoPayload(const std::vector<T> &input) {
 /// Helper function turning a payload to a vector of integers.
 template <typename T>
 std::vector<T>
-protoPayloadToVector(const Message<concreteprotocol::Payload> &input) {
+protoPayloadToVector(const Message<torusprotocol::Payload> &input) {
   return protoPayloadToVector<T>(input.asReader());
 }
 
 template <typename T>
-std::vector<T> protoPayloadToVector(concreteprotocol::Payload::Reader reader) {
+std::vector<T> protoPayloadToVector(torusprotocol::Payload::Reader reader) {
   auto payloadData = reader.getData();
   auto elmsPerBlob = capnp::MAX_TEXT_SIZE / sizeof(T);
   size_t totalPayloadSize = 0;
@@ -346,13 +346,13 @@ std::vector<T> protoPayloadToVector(concreteprotocol::Payload::Reader reader) {
 /// heap.
 template <typename T>
 std::shared_ptr<std::vector<T>>
-protoPayloadToSharedVector(const Message<concreteprotocol::Payload> &input) {
+protoPayloadToSharedVector(const Message<torusprotocol::Payload> &input) {
   return protoPayloadToSharedVector<T>(input.asReader());
 }
 
 template <typename T>
 std::shared_ptr<std::vector<T>>
-protoPayloadToSharedVector(concreteprotocol::Payload::Reader reader) {
+protoPayloadToSharedVector(torusprotocol::Payload::Reader reader) {
   auto payloadData = reader.getData();
   size_t elmsPerBlob = capnp::MAX_TEXT_SIZE / sizeof(T);
   size_t totalPayloadSize = 0;
@@ -374,13 +374,13 @@ protoPayloadToSharedVector(concreteprotocol::Payload::Reader reader) {
 /// Helper function turning a protocol `Shape` object into a vector of
 /// dimensions.
 std::vector<size_t>
-protoShapeToDimensions(const Message<concreteprotocol::Shape> &shape);
+protoShapeToDimensions(const Message<torusprotocol::Shape> &shape);
 std::vector<size_t>
-protoShapeToDimensions(concreteprotocol::Shape::Reader reader);
+protoShapeToDimensions(torusprotocol::Shape::Reader reader);
 
 /// Helper function turning a protocol `Shape` object into a vector of
 /// dimensions.
-Message<concreteprotocol::Shape>
+Message<torusprotocol::Shape>
 dimensionsToProtoShape(const std::vector<size_t> &input);
 
 template <typename MessageType> size_t hashMessage(Message<MessageType> &mess);

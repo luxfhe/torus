@@ -2,14 +2,14 @@ add_mlir_dialect_library(
   LinalgExtras
   LinalgExtras.cpp
   ADDITIONAL_HEADER_DIRS
-  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Concrete
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Torus
   DEPENDS
-  ConcreteDialect
-  ConcretelangConversionPassIncGen
+  TorusDialect
+  ToruslangConversionPassIncGen
   LINK_LIBS
   PUBLIC
   MLIRIR
   MLIRTransforms
   MLIRLinalgTransforms)
 
-target_link_libraries(LinalgExtras PUBLIC ConcreteDialect MLIRIR)
+target_link_libraries(LinalgExtras PUBLIC TorusDialect MLIRIR)

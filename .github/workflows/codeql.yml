@@ -96,7 +96,7 @@ jobs:
 
     - if: matrix.build-mode == 'manual' && matrix.language == 'c-cpp'
       name: Setup rust toolchain for torus-cpu (Cpp)
-      uses: ./.github/actions/setup_rust_toolchain_for_concrete_cpu
+      uses: ./.github/actions/setup_rust_toolchain_for_torus_cpu
 
     - if: matrix.build-mode == 'manual' && matrix.language == 'c-cpp'
       name: Setup runtime (Cpp)
@@ -133,7 +133,7 @@ jobs:
       shell: bash
       run: |
         cd compilers/torus-compiler/compiler
-        make concretecompiler python-bindings
+        make toruscompiler python-bindings
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # v3

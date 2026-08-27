@@ -1,9 +1,9 @@
 [package]
-name = "concrete-test"
+name = "torus-test"
 version = "0.0.0"
 edition = "2021"
 
 [dependencies]
 tfhe = "1.0"
 torus-macro = { path = "../torus-macro" }
-concrete = { path = "../concrete"  }
+torus = { path = "../torus"  }

@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -32,7 +32,7 @@ public:
                   mlir::ConversionPatternRewriter &rewriter) const override {
 
     // Note: To understand the operator indexes propagation take a look at the
-    // addMul function on ConcreteOptimizer.cpp
+    // addMul function on TorusOptimizer.cpp
 
     auto inputType = adaptor.getRhs().getType();
     auto outputType = op->getResult(0).getType();

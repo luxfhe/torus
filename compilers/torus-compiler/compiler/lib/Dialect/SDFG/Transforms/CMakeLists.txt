@@ -1,21 +1,21 @@
 add_mlir_dialect_library(
-  ConcretelangSDFGTransforms
+  ToruslangSDFGTransforms
   BufferizableOpInterfaceImpl.cpp
   SDFGConvertibleOpInterfaceImpl.cpp
   SDFGBufferOwnership.cpp
   ADDITIONAL_HEADER_DIRS
-  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Concrete
+  ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/Torus
   ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/SDFG
   DEPENDS
   mlir-headers
   SDFGDialect
-  ConcretelangSDFGTransformsPassIncGen
-  ConcretelangSDFGInterfaces
+  ToruslangSDFGTransformsPassIncGen
+  ToruslangSDFGInterfaces
   LINK_LIBS
   PUBLIC
   SDFGDialect
-  ConcretelangSDFGInterfaces
-  ConcretelangConversion
+  ToruslangSDFGInterfaces
+  ToruslangConversion
   MLIRArithDialect
   MLIRBufferizationDialect
   MLIRBufferizationTransforms

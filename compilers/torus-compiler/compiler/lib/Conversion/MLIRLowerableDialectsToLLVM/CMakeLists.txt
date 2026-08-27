@@ -11,7 +11,7 @@ add_mlir_dialect_library(
   PUBLIC
   ${dialect_libs}
   ${conversion_libs}
-  ConcretelangConversion
+  ToruslangConversion
   MLIRIR
   MLIRTransforms
   MLIRLLVMIRTransforms

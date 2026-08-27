@@ -44,7 +44,7 @@ redirects:
   dev/compilation/FHELinalgDialect: explanations/FHELinalgDialect.md
   dev/compilation/FHEDialect: explanations/FHEDialect.md
   dev/compilation/TFHEDialect: explanations/TFHEDialect.md
-  dev/compilation/ConcreteDialect: explanations/ConcreteDialect.md
+  dev/compilation/TorusDialect: explanations/TorusDialect.md
   dev/compilation/TracingDialect: explanations/TracingDialect.md
   dev/compilation/RTDialect: explanations/RTDialect.md
   dev/compilation/SDFGDialect: explanations/SDFGDialect.md

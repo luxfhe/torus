@@ -69,8 +69,8 @@
 ## Tutorials
 
 * [See all tutorials](tutorials/see-all-tutorials.md)
-* [Part I: Torus - FHE compiler](https://www.luxfhe.com/post/lux-concrete-fully-homomorphic-encryption-compiler)
-* [Part II: The Architecture of Torus](https://www.luxfhe.com/post/the-architecture-of-concrete-lux-fully-homomorphic-encryption-compiler-leveraging-mlir)
+* [Part I: Torus - FHE compiler](https://www.luxfhe.com/post/lux-torus-fully-homomorphic-encryption-compiler)
+* [Part II: The Architecture of Torus](https://www.luxfhe.com/post/the-architecture-of-torus-lux-fully-homomorphic-encryption-compiler-leveraging-mlir)
 
 ## References
 

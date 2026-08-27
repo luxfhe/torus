@@ -6,7 +6,7 @@ build*/
 *.lit_test_times.txt
 
 # Test-generated artifacts
-concrete-compiler_compilation_artifacts/
+torus-compiler_compilation_artifacts/
 py_test_lib_compile_and_run_custom_perror/
 tests/TestLib/out/
 tests/end_to_end_fixture/tests_cpu/bug_report.yaml

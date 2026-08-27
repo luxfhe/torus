@@ -49,16 +49,16 @@ def compute(tfhers_x):
     # x and y are supposed to be TFHE-rs values.
     # to_native will use type information from x and y to do
     # a correct conversion from TFHE-rs to Torus
-    concrete_x = tfhers.to_native(tfhers_x)
+    torus_x = tfhers.to_native(tfhers_x)
     ####### TFHE-rs to Torus #########
 
     ####### Torus Computation ########
-    concrete_res = ml_inference(concrete_x)
+    torus_res = ml_inference(torus_x)
     ####### Torus Computation ########
 
     ####### Torus to TFHE-rs #########
     tfhers_res = tfhers.from_native(
-        concrete_res, tfhers_type
+        torus_res, tfhers_type
     )  # we have to specify the type we want to convert to
     ####### Torus to TFHE-rs #########
     return tfhers_res
@@ -108,15 +108,15 @@ def cli():
 @cli.command()
 @click.option("-s", "--secret-key", type=str, required=False)
 @click.option("-o", "--output-secret-key", type=str, required=True)
-@click.option("-k", "--concrete-keyset-path", type=str, required=True)
-def keygen(output_secret_key: str, secret_key: str, concrete_keyset_path: str):
+@click.option("-k", "--torus-keyset-path", type=str, required=True)
+def keygen(output_secret_key: str, secret_key: str, torus_keyset_path: str):
     """Torus Key Generation"""
 
     circuit, tfhers_bridge = ccompilee()
 
-    if os.path.exists(concrete_keyset_path):
-        print(f"removing old keyset at '{concrete_keyset_path}'")
-        os.remove(concrete_keyset_path)
+    if os.path.exists(torus_keyset_path):
+        print(f"removing old keyset at '{torus_keyset_path}'")
+        os.remove(torus_keyset_path)
 
     if secret_key:
         print(f"partial keygen from sk at '{secret_key}'")
@@ -133,9 +133,9 @@ def keygen(output_secret_key: str, secret_key: str, concrete_keyset_path: str):
         circuit.keygen()
 
     print("saving Torus Evaluation Keys")
-    with open(concrete_keyset_path, "wb") as f:
+    with open(torus_keyset_path, "wb") as f:
         f.write(circuit.client.evaluation_keys.serialize())
-    print(f"saved Torus Evaluation Keys to '{concrete_keyset_path}'")
+    print(f"saved Torus Evaluation Keys to '{torus_keyset_path}'")
 
     sk: bytes = tfhers_bridge.serialize_input_secret_key(input_idx=0)
     print(f"writing secret key of size {len(sk)} to '{output_secret_key}'")
@@ -146,16 +146,16 @@ def keygen(output_secret_key: str, secret_key: str, concrete_keyset_path: str):
 @cli.command()
 @click.option("-c", "--rust-ct", type=str, required=True)
 @click.option("-o", "--output-rust-ct", type=str, required=True)
-@click.option("-k", "--concrete-keyset-path", type=str, required=True)
-def run(rust_ct: str, output_rust_ct: str, concrete_keyset_path: str):
+@click.option("-k", "--torus-keyset-path", type=str, required=True)
+def run(rust_ct: str, output_rust_ct: str, torus_keyset_path: str):
     """Run circuit"""
     circuit, tfhers_bridge = ccompilee()
 
-    if not os.path.exists(concrete_keyset_path):
+    if not os.path.exists(torus_keyset_path):
         msg = "cannot find keys, you should run keygen before"
         raise RuntimeError(msg)
-    print(f"loading keys from '{concrete_keyset_path}'")
-    with open(concrete_keyset_path, "rb") as f:
+    print(f"loading keys from '{torus_keyset_path}'")
+    with open(torus_keyset_path, "rb") as f:
         eval_keys = fhe.EvaluationKeys.deserialize(f.read())
 
     # read tfhers int from file

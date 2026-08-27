@@ -1,7 +1,7 @@
-add_custom_target(ConcretelangRuntimeTests)
+add_custom_target(ToruslangRuntimeTests)
 
-add_dependencies(ConcretelangUnitTests ConcretelangRuntimeTests)
+add_dependencies(ToruslangUnitTests ToruslangRuntimeTests)
 
-add_unittest(ConcretelangRuntimeTests unit_tests_toruslang_runtime Wrappers.cpp)
+add_unittest(ToruslangRuntimeTests unit_tests_toruslang_runtime Wrappers.cpp)
 
-target_link_libraries(unit_tests_toruslang_runtime PRIVATE ConcretelangRuntime)
+target_link_libraries(unit_tests_toruslang_runtime PRIVATE ToruslangRuntime)

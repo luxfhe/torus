@@ -1,4 +1,4 @@
-use concrete::{compiler, protocol::ProgramInfo, utils::flock::FileLock};
+use torus::{compiler, protocol::ProgramInfo, utils::flock::FileLock};
 use proc_macro::{
     TokenStream, {self},
 };
@@ -7,9 +7,9 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use std::path::PathBuf;
 use syn::LitStr;
 
-const CONCRETE_BUILD_DIR: &'static str = env!("CONCRETE_BUILD_DIR");
+const TORUS_BUILD_DIR: &'static str = env!("TORUS_BUILD_DIR");
 const PATH_STATIC_LIB: &'static str = "staticlib.a";
-const PATH_PROGRAM_INFO: &'static str = "program_info.concrete.params.json";
+const PATH_PROGRAM_INFO: &'static str = "program_info.torus.params.json";
 const PATH_CIRCUIT: &'static str = "circuit.mlir";
 const PATH_COMPOSITION_RULES: &'static str = "composition_rules.json";
 const PATH_SIMULATED: &'static str = "is_simulated";
@@ -41,34 +41,34 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
     if !zip_path.exists() {
         panic!("Input path must point to an existing export zip (relative to CARGO_MANIFEST_DIR): File {} not found.", zip_path.display());
     };
-    let concrete_build_dir = PathBuf::from(CONCRETE_BUILD_DIR);
+    let torus_build_dir = PathBuf::from(TORUS_BUILD_DIR);
 
     let mut s = DefaultHasher::new();
     fast_path_hasher::FastPathHasher::from_pathbuf(&zip_path).hash(&mut s);
     let hash_val = s.finish();
 
-    if !concrete_build_dir.exists() {
-        let _ = std::fs::create_dir(&concrete_build_dir);
+    if !torus_build_dir.exists() {
+        let _ = std::fs::create_dir(&torus_build_dir);
     }
 
     let lock_file = std::fs::OpenOptions::new()
         .write(true)
         .create(true)
-        .open(concrete_build_dir.join(format!("{hash_val}.lock")))
+        .open(torus_build_dir.join(format!("{hash_val}.lock")))
         .expect("Failed to open lock file.");
 
     let lock = FileLock::acquire(&lock_file).unwrap();
 
-    let concrete_hash_dir = concrete_build_dir.join(format!("{hash_val}"));
-    if !concrete_hash_dir.exists() {
-        unzip::unzip(&zip_path, &concrete_hash_dir);
+    let torus_hash_dir = torus_build_dir.join(format!("{hash_val}"));
+    if !torus_hash_dir.exists() {
+        unzip::unzip(&zip_path, &torus_hash_dir);
     }
 
-    let circuit_path = concrete_hash_dir.join(PATH_CIRCUIT);
-    let simulated_path = concrete_hash_dir.join(PATH_SIMULATED);
-    let config_path = concrete_hash_dir.join(PATH_CONFIGURATION);
-    let composition_rules_path = concrete_hash_dir.join(PATH_COMPOSITION_RULES);
-    let output_lib_path = concrete_hash_dir.join(PATH_STATIC_LIB);
+    let circuit_path = torus_hash_dir.join(PATH_CIRCUIT);
+    let simulated_path = torus_hash_dir.join(PATH_SIMULATED);
+    let config_path = torus_hash_dir.join(PATH_CONFIGURATION);
+    let composition_rules_path = torus_hash_dir.join(PATH_COMPOSITION_RULES);
+    let output_lib_path = torus_hash_dir.join(PATH_STATIC_LIB);
 
     if !output_lib_path.exists() {
         if !circuit_path.exists() {
@@ -89,11 +89,11 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
         }
         let configuration_string =
             read_to_string(config_path).expect("Failed to read configuration to string");
-        let conf: concrete::utils::configuration::Configuration =
+        let conf: torus::utils::configuration::Configuration =
             serde_json::from_str(configuration_string.as_str())
                 .expect("Failed to deserialize configuration");
 
-        let client_specs_path = concrete_hash_dir.join(CLIENT_SPECS);
+        let client_specs_path = torus_hash_dir.join(CLIENT_SPECS);
         if !client_specs_path.exists() {
             panic!("Missing `client.specs.json` file in the export. Did you save your server with the `via_mlir` option ?");
         }
@@ -139,22 +139,22 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
         }
 
         match conf.parameter_selection_strategy {
-            concrete::utils::configuration::ParameterSelectionStrategy::V0 => {
+            torus::utils::configuration::ParameterSelectionStrategy::V0 => {
                 opts.pin_mut().set_optimizer_strategy(0)
             }
-            concrete::utils::configuration::ParameterSelectionStrategy::Mono => {
+            torus::utils::configuration::ParameterSelectionStrategy::Mono => {
                 opts.pin_mut().set_optimizer_strategy(1)
             }
-            concrete::utils::configuration::ParameterSelectionStrategy::Multi => {
+            torus::utils::configuration::ParameterSelectionStrategy::Multi => {
                 opts.pin_mut().set_optimizer_strategy(2)
             }
         }
 
         match conf.multi_parameter_strategy {
-            concrete::utils::configuration::MultiParameterStrategy::Precision => {
+            torus::utils::configuration::MultiParameterStrategy::Precision => {
                 opts.pin_mut().set_optimizer_multi_parameter_strategy(0)
             }
-            concrete::utils::configuration::MultiParameterStrategy::PrecisionAndNorm2 => {
+            torus::utils::configuration::MultiParameterStrategy::PrecisionAndNorm2 => {
                 opts.pin_mut().set_optimizer_multi_parameter_strategy(1)
             }
         }
@@ -169,10 +169,10 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
         opts.pin_mut()
             .set_keyset_restriction(&conf.keyset_restriction.map(|a| a.0).unwrap_or("".into()));
         match conf.security_level {
-            concrete::utils::configuration::SecurityLevel::Security128Bits => {
+            torus::utils::configuration::SecurityLevel::Security128Bits => {
                 opts.pin_mut().set_security_level(128)
             }
-            concrete::utils::configuration::SecurityLevel::Security132Bits => {
+            torus::utils::configuration::SecurityLevel::Security132Bits => {
                 opts.pin_mut().set_security_level(132)
             }
         }
@@ -211,17 +211,17 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
         compiler::compile(
             mlir.as_str(),
             &opts,
-            concrete_hash_dir.as_os_str().to_str().unwrap(),
+            torus_hash_dir.as_os_str().to_str().unwrap(),
         )
         .expect("Failed to compile sources");
     }
 
-    let output_path = concrete_build_dir.join(format!("libconcrete-artifact-{hash_val}.a"));
+    let output_path = torus_build_dir.join(format!("libtorus-artifact-{hash_val}.a"));
     if !output_path.exists() {
-        std::fs::copy(concrete_hash_dir.join(PATH_STATIC_LIB), output_path).unwrap();
+        std::fs::copy(torus_hash_dir.join(PATH_STATIC_LIB), output_path).unwrap();
     }
 
-    let client_specs_path = concrete_hash_dir.join(CLIENT_SPECS);
+    let client_specs_path = torus_hash_dir.join(CLIENT_SPECS);
     if !client_specs_path.exists() {
         panic!("Missing `client.specs.json` file in the export. Did you save your server with the `via_mlir` option ?");
     }
@@ -229,12 +229,12 @@ pub fn from_torus_fhe_export_zip(input: TokenStream) -> TokenStream {
         serde_json::from_reader(std::fs::File::open(client_specs_path).unwrap()).unwrap();
     client_specs.eventually_patch_tfhers_specs();
 
-    let concrete_program_info_path = concrete_hash_dir.join(PATH_PROGRAM_INFO);
-    if !concrete_program_info_path.exists() {
-        panic!("Missing `program_info.concrete.params.json` file after compilation. Something is wrong. Delete target folder and re-compile.");
+    let torus_program_info_path = torus_hash_dir.join(PATH_PROGRAM_INFO);
+    if !torus_program_info_path.exists() {
+        panic!("Missing `program_info.torus.params.json` file after compilation. Something is wrong. Delete target folder and re-compile.");
     }
     let mut program_info: ProgramInfo =
-        serde_json::from_reader(std::fs::File::open(concrete_program_info_path).unwrap()).unwrap();
+        serde_json::from_reader(std::fs::File::open(torus_program_info_path).unwrap()).unwrap();
 
     program_info.tfhers_specs = client_specs.tfhers_specs.clone();
 

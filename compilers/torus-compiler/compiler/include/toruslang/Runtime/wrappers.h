@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -313,7 +313,7 @@ void memref_trace_message(char *message_ptr, uint32_t message_len);
 /// @brief Allocate memory using malloc and check for nullptr
 /// @param size number of bytes to allocate
 /// @return pointer to the allocated memory or nullptr
-void *concrete_checked_malloc(size_t size);
+void *torus_checked_malloc(size_t size);
 }
 
 #endif

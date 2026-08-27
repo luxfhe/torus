@@ -1,4 +1,4 @@
-// RUN: concretecompiler --chunk-integers --chunk-size 4 --chunk-width 2 --passes fhe-big-int-transform --action=dump-fhe  %s 2>&1| FileCheck %s
+// RUN: toruscompiler --chunk-integers --chunk-size 4 --chunk-width 2 --passes fhe-big-int-transform --action=dump-fhe  %s 2>&1| FileCheck %s
 
 // CHECK-LABEL: func.func @add_chunked_eint(%arg0: tensor<32x!FHE.eint<4>>, %arg1: tensor<32x!FHE.eint<4>>) -> tensor<32x!FHE.eint<4>>
 func.func @add_chunked_eint(%arg0: !FHE.eint<64>, %arg1: !FHE.eint<64>) -> !FHE.eint<64> {

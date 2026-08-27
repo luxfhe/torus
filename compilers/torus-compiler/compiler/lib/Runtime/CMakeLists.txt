@@ -2,7 +2,7 @@ add_compile_options(-fsized-deallocation)
 
 if(TORUSLANG_CUDA_SUPPORT)
   add_library(
-    ConcretelangRuntime SHARED
+    ToruslangRuntime SHARED
     context.cpp
     DFRuntime.cpp
     key_manager.cpp
@@ -12,7 +12,7 @@ if(TORUSLANG_CUDA_SUPPORT)
     time_util.cpp)
 else()
   add_library(
-    ConcretelangRuntime SHARED
+    ToruslangRuntime SHARED
     context.cpp
     DFRuntime.cpp
     key_manager.cpp
@@ -22,61 +22,61 @@ else()
     time_util.cpp)
 endif()
 
-add_dependencies(ConcretelangRuntime rust_deps_bundle torus-protocol)
+add_dependencies(ToruslangRuntime rust_deps_bundle torus-protocol)
 
 if(TORUSLANG_DATAFLOW_EXECUTION_ENABLED)
-  target_link_libraries(ConcretelangRuntime PUBLIC HPX::hpx HPX::iostreams_component HPX::component)
-  target_link_libraries(ConcretelangRuntime PRIVATE hwloc)
+  target_link_libraries(ToruslangRuntime PUBLIC HPX::hpx HPX::iostreams_component HPX::component)
+  target_link_libraries(ToruslangRuntime PRIVATE hwloc)
   set_source_files_properties(DFRuntime.cpp PROPERTIES COMPILE_FLAGS "-fopenmp")
-  add_dependencies(ConcretelangRuntime HPXLibs)
+  add_dependencies(ToruslangRuntime HPXLibs)
 endif()
 
 if(TORUSLANG_CUDA_SUPPORT)
-  target_link_libraries(ConcretelangRuntime LINK_PUBLIC tfhe_cuda_backend)
-  target_link_libraries(ConcretelangRuntime PRIVATE hwloc)
+  target_link_libraries(ToruslangRuntime LINK_PUBLIC tfhe_cuda_backend)
+  target_link_libraries(ToruslangRuntime PRIVATE hwloc)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  target_link_libraries(ConcretelangRuntime PUBLIC omp)
+  target_link_libraries(ToruslangRuntime PUBLIC omp)
 else()
-  target_link_libraries(ConcretelangRuntime PUBLIC -Wl,--no-as-needed omp)
+  target_link_libraries(ToruslangRuntime PUBLIC -Wl,--no-as-needed omp)
 endif()
 
-# Required to link with Concrete
+# Required to link with Torus
 if(APPLE)
   find_library(SECURITY_FRAMEWORK Security)
   if(NOT SECURITY_FRAMEWORK)
     message(FATAL_ERROR "Security framework not found")
   endif()
-  target_link_libraries(ConcretelangRuntime LINK_PUBLIC ${SECURITY_FRAMEWORK})
+  target_link_libraries(ToruslangRuntime LINK_PUBLIC ${SECURITY_FRAMEWORK})
 endif()
 
 target_include_directories(
-  ConcretelangRuntime
-  PUBLIC ${CONCRETE_CPU_INCLUDE_DIR}
-  PUBLIC ${CONCRETE_CPU_NOISE_MODEL_INCLUDE_DIR})
+  ToruslangRuntime
+  PUBLIC ${TORUS_CPU_INCLUDE_DIR}
+  PUBLIC ${TORUS_CPU_NOISE_MODEL_INCLUDE_DIR})
 
 target_link_libraries(
-  ConcretelangRuntime
+  ToruslangRuntime
   PRIVATE pthread
           m
           dl
           $<TARGET_OBJECTS:mlir_c_runner_utils>
           $<TARGET_OBJECTS:mlir_float16_utils>
           $<TARGET_OBJECTS:MLIRSparseTensorRuntime>
-          $<LINK_LIBRARY:WHOLE_ARCHIVE,ConcretelangCommon>)
+          $<LINK_LIBRARY:WHOLE_ARCHIVE,ToruslangCommon>)
 
 if(TORUSLANG_CUDA_SUPPORT)
-  install(TARGETS ConcretelangRuntime omp tfhe_cuda_backend EXPORT ConcretelangRuntime)
+  install(TARGETS ToruslangRuntime omp tfhe_cuda_backend EXPORT ToruslangRuntime)
 else()
-  install(TARGETS ConcretelangRuntime omp EXPORT ConcretelangRuntime)
+  install(TARGETS ToruslangRuntime omp EXPORT ToruslangRuntime)
 endif()
-install(EXPORT ConcretelangRuntime DESTINATION "./")
+install(EXPORT ToruslangRuntime DESTINATION "./")
 
 #
 
 add_library(
-  ConcretelangRuntimeStatic STATIC
+  ToruslangRuntimeStatic STATIC
   context.cpp
   DFRuntime.cpp
   key_manager.cpp
@@ -86,18 +86,18 @@ add_library(
   time_util.cpp)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  target_link_libraries(ConcretelangRuntimeStatic PUBLIC omp)
+  target_link_libraries(ToruslangRuntimeStatic PUBLIC omp)
 else()
-  target_link_libraries(ConcretelangRuntimeStatic PUBLIC -Wl,--no-as-needed omp)
+  target_link_libraries(ToruslangRuntimeStatic PUBLIC -Wl,--no-as-needed omp)
 endif()
 
 target_include_directories(
-  ConcretelangRuntimeStatic
-  PUBLIC ${CONCRETE_CPU_INCLUDE_DIR}
-  PUBLIC ${CONCRETE_CPU_NOISE_MODEL_INCLUDE_DIR})
+  ToruslangRuntimeStatic
+  PUBLIC ${TORUS_CPU_INCLUDE_DIR}
+  PUBLIC ${TORUS_CPU_NOISE_MODEL_INCLUDE_DIR})
 
 target_link_libraries(
-  ConcretelangRuntimeStatic
+  ToruslangRuntimeStatic
   PUBLIC rust_deps_bundle
          torus-protocol
          pthread
@@ -108,5 +108,5 @@ target_link_libraries(
          $<TARGET_OBJECTS:MLIRSparseTensorRuntime>)
 
 if(TORUSLANG_DATAFLOW_EXECUTION_ENABLED)
-  target_link_libraries(ConcretelangRuntimeStatic PUBLIC HPX::hpx HPX::iostreams_component HPX::component)
+  target_link_libraries(ToruslangRuntimeStatic PUBLIC HPX::hpx HPX::iostreams_component HPX::component)
 endif()

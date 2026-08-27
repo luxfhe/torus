@@ -34,7 +34,7 @@ function usage() {
 TMP_DIRECTORY="tmp_directory_for_cml_tests"
 TMP_VENV=".venv_test_cml"
 
-# Default is to use the Concrete current version, ie the one of the branch
+# Default is to use the Torus current version, ie the one of the branch
 CP_VERSION="current"
 
 # Set to 1 only to debug quickly
@@ -140,7 +140,7 @@ then
     git clone https://github.com/luxfhe/torus-ml.git --branch ${ML_BRANCH}
 
     cd torus-ml
-    git lfs pull --include "tests/data/**, src/concrete/ml/**" --exclude  ""
+    git lfs pull --include "tests/data/**, src/torus/ml/**" --exclude  ""
     cd ..
 else
     echo "    -- skipped during debug"
@@ -196,7 +196,7 @@ fi
 
 INSTALLED_CP=`pip freeze | grep "torus-python"`
 echo
-echo "Installed Concrete-Python: ${INSTALLED_CP}"
+echo "Installed Torus-Python: ${INSTALLED_CP}"
 
 if [ "$PATCH" != "" ]
 then

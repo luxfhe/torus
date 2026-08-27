@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -22,12 +22,12 @@
 #include <mlir/Dialect/Arith/IR/Arith.h>
 #include <mlir/Dialect/SCF/IR/SCF.h>
 
-#include <toruslang/Dialect/Concrete/IR/ConcreteDialect.h>
-#include <toruslang/Dialect/Concrete/IR/ConcreteOps.h>
-#include <toruslang/Dialect/Concrete/IR/ConcreteTypes.h>
+#include <toruslang/Dialect/Torus/IR/TorusDialect.h>
+#include <toruslang/Dialect/Torus/IR/TorusOps.h>
+#include <toruslang/Dialect/Torus/IR/TorusTypes.h>
 
 namespace SDFG = mlir::toruslang::SDFG;
-namespace Concrete = mlir::toruslang::Concrete;
+namespace Torus = mlir::toruslang::Torus;
 
 namespace {
 enum class StreamMappingKind { ON_DEVICE, TO_DEVICE, SPLICE, TO_HOST, NONE };
@@ -170,9 +170,9 @@ struct ExtractSDFGOpsPass : public ExtractSDFGOpsBase<ExtractSDFGOpsPass> {
           llvm::dyn_cast_or_null<mlir::scf::ForOp>(op->getParentOp());
       if (loopParent) {
         for (mlir::Operation &bop : loopParent.getBody()->getOperations())
-          if (llvm::isa<Concrete::BatchedBootstrapLweTensorOp,
-                        Concrete::BatchedMappedBootstrapLweTensorOp,
-                        Concrete::BatchedKeySwitchLweTensorOp>(bop))
+          if (llvm::isa<Torus::BatchedBootstrapLweTensorOp,
+                        Torus::BatchedMappedBootstrapLweTensorOp,
+                        Torus::BatchedKeySwitchLweTensorOp>(bop))
             return true;
         return false;
       } else {

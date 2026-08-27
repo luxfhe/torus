@@ -3,13 +3,13 @@ use tfhe::shortint::parameters::v0_10::classic::gaussian::p_fail_2_minus_64::ks_
 use tfhe::{generate_keys, FheUint8};
 
 mod precompile {
-    use concrete_macro::from_torus_fhe_export_zip;
+    use torus_macro::from_torus_fhe_export_zip;
     from_torus_fhe_export_zip!("src/test_tfhers.zip");
 }
 
 fn main() {
-    let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-    let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+    let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+    let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
     let config = tfhe::ConfigBuilder::with_custom_parameters(
         V0_10_PARAM_MESSAGE_2_CARRY_3_KS_PBS_GAUSSIAN_2M64,
     );

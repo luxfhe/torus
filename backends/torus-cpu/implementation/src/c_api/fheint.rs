@@ -103,7 +103,7 @@ impl TfhersFheIntDescription {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_tfhers_unknown_noise_level() -> usize {
+pub unsafe extern "C" fn torus_cpu_tfhers_unknown_noise_level() -> usize {
     NoiseLevel::UNKNOWN.get()
 }
 
@@ -386,7 +386,7 @@ macro_rules! lwe_array_to_tfhers {
                     desc.noise_level == NoiseLevel::UNKNOWN.get(),
                     "noise_level must be unknown"
                 );
-                // we want to use the max degree as we don't track it on Concrete side
+                // we want to use the max degree as we don't track it on Torus side
                 assert!(
                     desc.degree == desc.message_modulus - 1,
                     "degree must be the max value (msg_modulus - 1)"
@@ -448,7 +448,7 @@ macro_rules! lwe_array_to_tfhers_array {
                     desc.noise_level == NoiseLevel::UNKNOWN.get(),
                     "noise_level must be unknown"
                 );
-                // we want to use the max degree as we don't track it on Concrete side
+                // we want to use the max degree as we don't track it on Torus side
                 assert!(
                     desc.degree == desc.message_modulus - 1,
                     "degree must be the max value (msg_modulus - 1)"
@@ -573,7 +573,7 @@ unsafe fn tfhers_uint_to_lwe_array(
     }
 }
 
-macro_rules! concrete_cpu_tfhers_to_lwe_array {
+macro_rules! torus_cpu_tfhers_to_lwe_array {
     ($name:ident, $bitwidth:expr) => {
         #[no_mangle]
         pub unsafe extern "C" fn $name(
@@ -588,14 +588,14 @@ macro_rules! concrete_cpu_tfhers_to_lwe_array {
     };
 }
 
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint2_to_lwe_array, 2);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint4_to_lwe_array, 4);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint6_to_lwe_array, 6);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint8_to_lwe_array, 8);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint10_to_lwe_array, 10);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint12_to_lwe_array, 12);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint14_to_lwe_array, 14);
-concrete_cpu_tfhers_to_lwe_array!(concrete_cpu_tfhers_uint16_to_lwe_array, 16);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint2_to_lwe_array, 2);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint4_to_lwe_array, 4);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint6_to_lwe_array, 6);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint8_to_lwe_array, 8);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint10_to_lwe_array, 10);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint12_to_lwe_array, 12);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint14_to_lwe_array, 14);
+torus_cpu_tfhers_to_lwe_array!(torus_cpu_tfhers_uint16_to_lwe_array, 16);
 
 unsafe fn tfhers_int_to_lwe_array(
     buffer: *const u8,
@@ -667,7 +667,7 @@ unsafe fn tfhers_int_to_lwe_array(
     }
 }
 
-macro_rules! concrete_cpu_tfhers_int_to_lwe_array {
+macro_rules! torus_cpu_tfhers_int_to_lwe_array {
     ($name:ident, $bitwidth:expr) => {
         #[no_mangle]
         pub unsafe extern "C" fn $name(
@@ -682,14 +682,14 @@ macro_rules! concrete_cpu_tfhers_int_to_lwe_array {
     };
 }
 
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int2_to_lwe_array, 2);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int4_to_lwe_array, 4);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int6_to_lwe_array, 6);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int8_to_lwe_array, 8);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int10_to_lwe_array, 10);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int12_to_lwe_array, 12);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int14_to_lwe_array, 14);
-concrete_cpu_tfhers_int_to_lwe_array!(concrete_cpu_tfhers_int16_to_lwe_array, 16);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int2_to_lwe_array, 2);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int4_to_lwe_array, 4);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int6_to_lwe_array, 6);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int8_to_lwe_array, 8);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int10_to_lwe_array, 10);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int12_to_lwe_array, 12);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int14_to_lwe_array, 14);
+torus_cpu_tfhers_int_to_lwe_array!(torus_cpu_tfhers_int16_to_lwe_array, 16);
 
 unsafe fn lwe_array_to_tfhers_uint(
     lwe_vec_buffer: *const u64,
@@ -761,7 +761,7 @@ unsafe fn lwe_array_to_tfhers_uint(
     }
 }
 
-macro_rules! concrete_cpu_lwe_array_to_tfhers_uint {
+macro_rules! torus_cpu_lwe_array_to_tfhers_uint {
     ($name:ident, $bitwidth:expr) => {
         #[no_mangle]
         pub unsafe extern "C" fn $name(
@@ -776,14 +776,14 @@ macro_rules! concrete_cpu_lwe_array_to_tfhers_uint {
     };
 }
 
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint2, 2);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint4, 4);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint6, 6);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint8, 8);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint10, 10);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint12, 12);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint14, 14);
-concrete_cpu_lwe_array_to_tfhers_uint!(concrete_cpu_lwe_array_to_tfhers_uint16, 16);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint2, 2);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint4, 4);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint6, 6);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint8, 8);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint10, 10);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint12, 12);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint14, 14);
+torus_cpu_lwe_array_to_tfhers_uint!(torus_cpu_lwe_array_to_tfhers_uint16, 16);
 
 unsafe fn lwe_array_to_tfhers_int(
     lwe_vec_buffer: *const u64,
@@ -855,7 +855,7 @@ unsafe fn lwe_array_to_tfhers_int(
     }
 }
 
-macro_rules! concrete_cpu_lwe_array_to_tfhers_int {
+macro_rules! torus_cpu_lwe_array_to_tfhers_int {
     ($name:ident, $bitwidth:expr) => {
         #[no_mangle]
         pub unsafe extern "C" fn $name(
@@ -870,17 +870,17 @@ macro_rules! concrete_cpu_lwe_array_to_tfhers_int {
     };
 }
 
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int2, 2);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int4, 4);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int6, 6);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int8, 8);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int10, 10);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int12, 12);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int14, 14);
-concrete_cpu_lwe_array_to_tfhers_int!(concrete_cpu_lwe_array_to_tfhers_int16, 16);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int2, 2);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int4, 4);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int6, 6);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int8, 8);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int10, 10);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int12, 12);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int14, 14);
+torus_cpu_lwe_array_to_tfhers_int!(torus_cpu_lwe_array_to_tfhers_int16, 16);
 
 #[no_mangle]
-pub extern "C" fn concrete_cpu_tfhers_fheint_buffer_size_u64(
+pub extern "C" fn torus_cpu_tfhers_fheint_buffer_size_u64(
     lwe_size: usize,
     n_cts: usize,
     n_elem: usize,

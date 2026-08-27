@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --verify-diagnostics --action=roundtrip %s
+// RUN: toruscompiler --split-input-file --verify-diagnostics --action=roundtrip %s
 
 // GLWE dimension parameter result
 func.func @add_glwe(%arg0: !TFHE.glwe<sk[1]<12,1024>>, %arg1: !TFHE.glwe<sk[1]<12,1024>>) -> !TFHE.glwe<sk[1]<12,512>> {

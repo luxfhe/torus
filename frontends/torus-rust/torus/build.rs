@@ -5,14 +5,14 @@ use std::path::{Path, PathBuf};
 
 const ARTIFACTS: &[&str] = if cfg!(target_os = "macos") {
     &[
-        "libConcreteRust.dylib",
-        "libConcretelangRuntime.dylib",
+        "libTorusRust.dylib",
+        "libToruslangRuntime.dylib",
         "libomp.dylib",
     ]
 } else if cfg!(target_os = "linux") {
     &[
-        "libConcreteRust.so",
-        "libConcretelangRuntime.so",
+        "libTorusRust.so",
+        "libToruslangRuntime.so",
         "libomp.so",
         "libhpx.so",
         "libhpx_core.so",
@@ -135,9 +135,9 @@ fn fetch_artifacts(out_dir: &Path) {
     });
 }
 
-fn symlink_outdir(concrete_dir: &Path, out_dir: &Path) {
-    if !concrete_dir.exists() {
-        let _ = std::fs::create_dir(&concrete_dir);
+fn symlink_outdir(torus_dir: &Path, out_dir: &Path) {
+    if !torus_dir.exists() {
+        let _ = std::fs::create_dir(&torus_dir);
     }
     if !out_dir.is_symlink() {
         assert!(
@@ -145,11 +145,11 @@ fn symlink_outdir(concrete_dir: &Path, out_dir: &Path) {
             "Failed to delete original out_dir {}",
             out_dir.display()
         );
-        std::os::unix::fs::symlink(concrete_dir, &out_dir)
+        std::os::unix::fs::symlink(torus_dir, &out_dir)
             .map_err(|e| {
                 format!(
                     "Failed to symlink {} to {}: {e}",
-                    concrete_dir.display(),
+                    torus_dir.display(),
                     out_dir.display()
                 )
             })
@@ -164,14 +164,14 @@ fn main() {
         .canonicalize()
         .map_err(|e| format!("Failed to get target dir: {e}"))
         .unwrap();
-    let concrete_dir = target_dir.join("concrete");
+    let torus_dir = target_dir.join("torus");
 
-    symlink_outdir(&concrete_dir, &out_dir);
+    symlink_outdir(&torus_dir, &out_dir);
     install_artifacts(&out_dir);
 
     println!("cargo::rustc-link-search={}", out_dir.display());
     println!("cargo::metadata=build_dir={}", out_dir.display());
-    println!("cargo::rustc-link-lib=dylib=ConcreteRust");
+    println!("cargo::rustc-link-lib=dylib=TorusRust");
     println!("cargo::rustc-link-lib=z");
     #[cfg(target_os = "macos")]
     {

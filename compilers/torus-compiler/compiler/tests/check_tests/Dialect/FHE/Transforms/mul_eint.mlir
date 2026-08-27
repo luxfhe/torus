@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-tfhe --passes EncryptedMulToDoubleTLU --split-input-file %s 2>&1 | FileCheck %s
+// RUN: toruscompiler --action=dump-tfhe --passes EncryptedMulToDoubleTLU --split-input-file %s 2>&1 | FileCheck %s
 
 // CHECK:      func.func @simple_eint(%[[a0:.*]]: !FHE.eint<3>, %[[a1:.*]]: !FHE.eint<3>) -> !FHE.eint<3> {
 // CHECK-NEXT:   %[[v0:.*]] = "FHE.add_eint"(%[[a0]], %[[a1]]) : (!FHE.eint<3>, !FHE.eint<3>) -> !FHE.eint<3>

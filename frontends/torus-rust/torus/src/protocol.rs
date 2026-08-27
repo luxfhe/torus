@@ -496,7 +496,7 @@ mod to_tokens {
                 None => quote! {None},
             };
             tokens.extend(quote! {
-                ::concrete::protocol::ProgramInfo {
+                ::torus::protocol::ProgramInfo {
                     keyset: #keyset,
                     circuits: vec![#(#circuits),*],
                     tfhers_specs: #tfhers_specs
@@ -519,7 +519,7 @@ mod to_tokens {
                 .collect::<Vec<_>>();
             let name = &self.name;
             tokens.extend(quote! {
-                ::concrete::protocol::CircuitInfo {
+                ::torus::protocol::CircuitInfo {
                     inputs: vec![#(#inputs),*],
                     outputs: vec![#(#outputs),*],
                     name: String::from(#name),
@@ -532,7 +532,7 @@ mod to_tokens {
             let raw_info = &self.rawInfo;
             let type_info = &self.typeInfo;
             tokens.extend(quote! {
-                ::concrete::protocol::GateInfo {
+                ::torus::protocol::GateInfo {
                     rawInfo: #raw_info,
                     typeInfo: #type_info,
                 }
@@ -546,7 +546,7 @@ mod to_tokens {
             let integer_precision = &self.integerPrecision;
             let is_signed = &self.isSigned;
             tokens.extend(quote! {
-                ::concrete::protocol::RawInfo {
+                ::torus::protocol::RawInfo {
                     shape: #shape,
                     integerPrecision: #integer_precision,
                     isSigned: #is_signed,
@@ -563,7 +563,7 @@ mod to_tokens {
                 .map(|dim| quote! { #dim })
                 .collect::<Vec<_>>();
             tokens.extend(quote! {
-                ::concrete::protocol::Shape {
+                ::torus::protocol::Shape {
                     dimensions: vec![#(#dimensions),*],
                 }
             });
@@ -574,13 +574,13 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
                 TypeInfo::lweCiphertext(info) => {
-                    tokens.extend(quote! { ::concrete::protocol::TypeInfo::lweCiphertext(#info) })
+                    tokens.extend(quote! { ::torus::protocol::TypeInfo::lweCiphertext(#info) })
                 }
                 TypeInfo::plaintext(info) => {
-                    tokens.extend(quote! { ::concrete::protocol::TypeInfo::plaintext(#info) })
+                    tokens.extend(quote! { ::torus::protocol::TypeInfo::plaintext(#info) })
                 }
                 TypeInfo::index(info) => {
-                    tokens.extend(quote! { ::concrete::procotol::TypeInfo::index(#info) })
+                    tokens.extend(quote! { ::torus::procotol::TypeInfo::index(#info) })
                 }
             }
         }
@@ -592,7 +592,7 @@ mod to_tokens {
             let integer_precision = &self.integerPrecision;
             let is_signed = &self.isSigned;
             tokens.extend(quote! {
-                ::concrete::protocol::PlaintextTypeInfo {
+                ::torus::protocol::PlaintextTypeInfo {
                     shape: #shape,
                     integerPrecision: #integer_precision,
                     isSigned: #is_signed,
@@ -607,7 +607,7 @@ mod to_tokens {
             let integer_precision = &self.integerPrecision;
             let is_signed = &self.isSigned;
             tokens.extend(quote! {
-                ::concrete::protocol::IndexTypeInfo {
+                ::torus::protocol::IndexTypeInfo {
                     shape: #shape,
                     integerPrecision: #integer_precision,
                     isSigned: #is_signed,
@@ -619,15 +619,15 @@ mod to_tokens {
     impl ToTokens for LweCiphertextTypeInfo {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             let abstract_shape = &self.abstractShape;
-            let concrete_shape = &self.concreteShape;
+            let torus_shape = &self.concreteShape;
             let integer_precision = &self.integerPrecision;
             let encryption = &self.encryption;
             let compression = &self.compression;
             let encoding = &self.encoding;
             tokens.extend(quote! {
-                ::concrete::protocol::LweCiphertextTypeInfo {
+                ::torus::protocol::LweCiphertextTypeInfo {
                     abstractShape: #abstract_shape,
-                    concreteShape: #concrete_shape,
+                    concreteShape: #torus_shape,
                     integerPrecision: #integer_precision,
                     encryption: #encryption,
                     compression: #compression,
@@ -643,7 +643,7 @@ mod to_tokens {
             let variance = &self.variance;
             let lwe_dimension = &self.lweDimension;
             tokens.extend(quote! {
-                ::concrete::protocol::LweCiphertextEncryptionInfo {
+                ::torus::protocol::LweCiphertextEncryptionInfo {
                     keyId: #key_id,
                     variance: #variance,
                     lweDimension: #lwe_dimension,
@@ -656,13 +656,13 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
                 Compression::none => {
-                    tokens.extend(quote! { ::concrete::protocol::Compression::none })
+                    tokens.extend(quote! { ::torus::protocol::Compression::none })
                 }
                 Compression::seed => {
-                    tokens.extend(quote! { ::concrete::protocol::Compression::seed })
+                    tokens.extend(quote! { ::torus::protocol::Compression::seed })
                 }
                 Compression::paillier => {
-                    tokens.extend(quote! { ::concrete::protocol::Compression::paillier })
+                    tokens.extend(quote! { ::torus::protocol::Compression::paillier })
                 }
             }
         }
@@ -672,10 +672,10 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
                 LweCiphretextTypeInfo_Encoding::integer(info) => tokens.extend(
-                    quote! { ::concrete::protocol::LweCiphretextTypeInfo_Encoding::integer(#info) },
+                    quote! { ::torus::protocol::LweCiphretextTypeInfo_Encoding::integer(#info) },
                 ),
                 LweCiphretextTypeInfo_Encoding::boolean(info) => tokens.extend(
-                    quote! { ::concrete::protocol::LweCiphretextTypeInfo_Encoding::boolean(#info) },
+                    quote! { ::torus::protocol::LweCiphretextTypeInfo_Encoding::boolean(#info) },
                 ),
             }
         }
@@ -687,7 +687,7 @@ mod to_tokens {
             let is_signed = &self.isSigned;
             let mode = &self.mode;
             tokens.extend(quote! {
-                ::concrete::protocol::IntegerCiphertextEncodingInfo {
+                ::torus::protocol::IntegerCiphertextEncodingInfo {
                     width: #width,
                     isSigned: #is_signed,
                     mode: #mode,
@@ -699,9 +699,9 @@ mod to_tokens {
     impl ToTokens for IntegerCiphertextEncodingInfo_Mode {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
-                IntegerCiphertextEncodingInfo_Mode::native(info) => tokens.extend(quote! { ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode::native(#info) }),
-                IntegerCiphertextEncodingInfo_Mode::chunked(info) => tokens.extend(quote! { ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode::chunked(#info) }),
-                IntegerCiphertextEncodingInfo_Mode::crt(info) => tokens.extend(quote! { ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode::crt(#info) }),
+                IntegerCiphertextEncodingInfo_Mode::native(info) => tokens.extend(quote! { ::torus::protocol::IntegerCiphertextEncodingInfo_Mode::native(#info) }),
+                IntegerCiphertextEncodingInfo_Mode::chunked(info) => tokens.extend(quote! { ::torus::protocol::IntegerCiphertextEncodingInfo_Mode::chunked(#info) }),
+                IntegerCiphertextEncodingInfo_Mode::crt(info) => tokens.extend(quote! { ::torus::protocol::IntegerCiphertextEncodingInfo_Mode::crt(#info) }),
             }
         }
     }
@@ -709,7 +709,7 @@ mod to_tokens {
     impl ToTokens for IntegerCiphertextEncodingInfo_Mode_NativeMode {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             tokens.extend(quote! {
-                ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode_NativeMode {}
+                ::torus::protocol::IntegerCiphertextEncodingInfo_Mode_NativeMode {}
             });
         }
     }
@@ -719,7 +719,7 @@ mod to_tokens {
             let size = &self.size;
             let width = &self.width;
             tokens.extend(quote! {
-                ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode_ChunkedMode {
+                ::torus::protocol::IntegerCiphertextEncodingInfo_Mode_ChunkedMode {
                     size: #size,
                     width: #width,
                 }
@@ -735,7 +735,7 @@ mod to_tokens {
                 .map(|modulus| quote! { #modulus })
                 .collect::<Vec<_>>();
             tokens.extend(quote! {
-                ::concrete::protocol::IntegerCiphertextEncodingInfo_Mode_CrtMode {
+                ::torus::protocol::IntegerCiphertextEncodingInfo_Mode_CrtMode {
                     moduli: vec![#(#moduli),*],
                 }
             });
@@ -744,7 +744,7 @@ mod to_tokens {
     impl ToTokens for BooleanCiphertextEncodingInfo {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             tokens.extend(quote! {
-                ::concrete::protocol::BooleanCiphertextEncodingInfo {}
+                ::torus::protocol::BooleanCiphertextEncodingInfo {}
             });
         }
     }
@@ -752,9 +752,9 @@ mod to_tokens {
     impl ToTokens for KeyType {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
-                KeyType::binary => tokens.extend(quote! { ::concrete::protocol::KeyType::binary }),
+                KeyType::binary => tokens.extend(quote! { ::torus::protocol::KeyType::binary }),
                 KeyType::ternary => {
-                    tokens.extend(quote! { ::concrete::protocol::KeyType::ternary })
+                    tokens.extend(quote! { ::torus::protocol::KeyType::ternary })
                 }
             }
         }
@@ -764,7 +764,7 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             let modulus = &self.modulus;
             tokens.extend(quote! {
-                ::concrete::protocol::Modulus {
+                ::torus::protocol::Modulus {
                     modulus: #modulus,
                 }
             });
@@ -775,13 +775,13 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             match self {
                 Modulus_enum::native(info) => {
-                    tokens.extend(quote! { ::concrete::protocol::Modulus_enum::native(#info) })
+                    tokens.extend(quote! { ::torus::protocol::Modulus_enum::native(#info) })
                 }
                 Modulus_enum::powerOfTwo(info) => {
-                    tokens.extend(quote! { ::concrete::protocol::Modulus_enum::powerOfTwo(#info) })
+                    tokens.extend(quote! { ::torus::protocol::Modulus_enum::powerOfTwo(#info) })
                 }
                 Modulus_enum::integer(info) => {
-                    tokens.extend(quote! { ::concrete::protocol::Modulus_enum::integer(#info) })
+                    tokens.extend(quote! { ::torus::protocol::Modulus_enum::integer(#info) })
                 }
             }
         }
@@ -790,7 +790,7 @@ mod to_tokens {
     impl ToTokens for NativeModulus {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             tokens.extend(quote! {
-                ::concrete::protocol::NativeModulus {}
+                ::torus::protocol::NativeModulus {}
             });
         }
     }
@@ -799,7 +799,7 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             let power = &self.power;
             tokens.extend(quote! {
-                ::concrete::protocol::PowerOfTwoModulus {
+                ::torus::protocol::PowerOfTwoModulus {
                     power: #power,
                 }
             });
@@ -810,7 +810,7 @@ mod to_tokens {
         fn to_tokens(&self, tokens: &mut TokenStream) {
             let modulus = &self.modulus;
             tokens.extend(quote! {
-                ::concrete::protocol::IntegerModulus {
+                ::torus::protocol::IntegerModulus {
                     modulus: #modulus,
                 }
             });
@@ -822,7 +822,7 @@ mod to_tokens {
             let id = &self.id;
             let params = &self.params;
             tokens.extend(quote! {
-                ::concrete::protocol::LweSecretKeyInfo {
+                ::torus::protocol::LweSecretKeyInfo {
                     id: #id,
                     params: #params,
                 }
@@ -836,7 +836,7 @@ mod to_tokens {
             let integer_precision = &self.integerPrecision;
             let key_type = &self.keyType;
             tokens.extend(quote! {
-                ::concrete::protocol::LweSecretKeyParams {
+                ::torus::protocol::LweSecretKeyParams {
                     lweDimension: #lwe_dimension,
                     integerPrecision: #integer_precision,
                     keyType: #key_type,
@@ -853,7 +853,7 @@ mod to_tokens {
             let params = &self.params;
             let compression = &self.compression;
             tokens.extend(quote! {
-                ::concrete::protocol::LweKeyswitchKeyInfo {
+                ::torus::protocol::LweKeyswitchKeyInfo {
                     id: #id,
                     inputId: #input_id,
                     outputId: #output_id,
@@ -875,7 +875,7 @@ mod to_tokens {
             let modulus = &self.modulus;
             let key_type = &self.keyType;
             tokens.extend(quote! {
-                ::concrete::protocol::LweKeyswitchKeyParams {
+                ::torus::protocol::LweKeyswitchKeyParams {
                     levelCount: #level_count,
                     baseLog: #base_log,
                     variance: #variance,
@@ -897,7 +897,7 @@ mod to_tokens {
             let params = &self.params;
             let compression = &self.compression;
             tokens.extend(quote! {
-                ::concrete::protocol::PackingKeyswitchKeyInfo {
+                ::torus::protocol::PackingKeyswitchKeyInfo {
                     id: #id,
                     inputId: #input_id,
                     outputId: #output_id,
@@ -921,7 +921,7 @@ mod to_tokens {
             let modulus = &self.modulus;
             let key_type = &self.keyType;
             tokens.extend(quote! {
-                ::concrete::protocol::PackingKeyswitchKeyParams {
+                ::torus::protocol::PackingKeyswitchKeyParams {
                     levelCount: #level_count,
                     baseLog: #base_log,
                     glweDimension: #glwe_dimension,
@@ -945,7 +945,7 @@ mod to_tokens {
             let params = &self.params;
             let compression = &self.compression;
             tokens.extend(quote! {
-                ::concrete::protocol::LweBootstrapKeyInfo {
+                ::torus::protocol::LweBootstrapKeyInfo {
                     id: #id,
                     inputId: #input_id,
                     outputId: #output_id,
@@ -968,7 +968,7 @@ mod to_tokens {
             let modulus = &self.modulus;
             let key_type = &self.keyType;
             tokens.extend(quote! {
-                ::concrete::protocol::LweBootstrapKeyParams {
+                ::torus::protocol::LweBootstrapKeyParams {
                     levelCount: #level_count,
                     baseLog: #base_log,
                     glweDimension: #glwe_dimension,
@@ -1006,7 +1006,7 @@ mod to_tokens {
                 .map(|key| quote! { #key })
                 .collect::<Vec<_>>();
             tokens.extend(quote! {
-                ::concrete::protocol::KeysetInfo {
+                ::torus::protocol::KeysetInfo {
                     lweSecretKeys: vec![#(#lwe_secret_keys),*],
                     lweBootstrapKeys: vec![#(#lwe_bootstrap_keys),*],
                     lweKeyswitchKeys: vec![#(#lwe_keyswitch_keys),*],

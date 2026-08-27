@@ -20,7 +20,7 @@ def ForLoopToParallel : Pass<"for-loop-to-parallel", "mlir::ModuleOp"> {
   let dependentDialects = ["mlir::scf::SCFDialect"];
 }
 
-def Batching : Pass<"concrete", "mlir::ModuleOp"> {
+def Batching : Pass<"torus", "mlir::ModuleOp"> {
   let summary =
       "Hoists operation for which a batched version exists out of loops applying "
       "the operation to values stored in a tensor.";

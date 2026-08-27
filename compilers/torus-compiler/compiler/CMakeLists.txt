@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(concretecompiler LANGUAGES C CXX)
+project(toruscompiler LANGUAGES C CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set_property(GLOBAL PROPERTY GLOBAL_DEPENDS_DEBUG_MODE 0)
@@ -21,7 +21,7 @@ add_definitions("-Wfatal-errors")
 
 # If we are trying to build the compiler with LLVM/MLIR as libraries
 if(NOT DEFINED LLVM_EXTERNAL_TORUSLANG_SOURCE_DIR)
-  message(FATAL_ERROR "Concrete compiler requires a unified build with LLVM/MLIR")
+  message(FATAL_ERROR "Torus compiler requires a unified build with LLVM/MLIR")
 endif()
 
 # CMake library generation settings.
@@ -63,54 +63,54 @@ endif()
 
 # Custom doc generation function
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
-include(AddConcretelangDoc)
+include(AddToruslangDoc)
 set(TORUSLANG_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 # -------------------------------------------------------------------------------
-# Concrete Security curves Configuration
+# Torus Security curves Configuration
 # -------------------------------------------------------------------------------
 include_directories(${PROJECT_SOURCE_DIR}/../../../tools/parameter-curves/torus-security-curves-cpp/include)
 
 # -------------------------------------------------------------------------------
-# Concrete Protocol
+# Torus Protocol
 # -------------------------------------------------------------------------------
-set(CONCRETE_PROTOCOL_DIR "${PROJECT_SOURCE_DIR}/../../../tools/torus-protocol")
-add_subdirectory(${CONCRETE_PROTOCOL_DIR} torus-protocol)
-get_target_property(CONCRETE_PROTOCOL_GEN_DIR torus-protocol BINARY_DIR)
-set(CONCRETE_PROTOCOL_CAPNP_SRC "${CONCRETE_PROTOCOL_GEN_DIR}/capnp_src_dir/c++/src")
-include_directories(${CONCRETE_PROTOCOL_GEN_DIR})
-include_directories(${CONCRETE_PROTOCOL_CAPNP_SRC})
+set(TORUS_PROTOCOL_DIR "${PROJECT_SOURCE_DIR}/../../../tools/torus-protocol")
+add_subdirectory(${TORUS_PROTOCOL_DIR} torus-protocol)
+get_target_property(TORUS_PROTOCOL_GEN_DIR torus-protocol BINARY_DIR)
+set(TORUS_PROTOCOL_CAPNP_SRC "${TORUS_PROTOCOL_GEN_DIR}/capnp_src_dir/c++/src")
+include_directories(${TORUS_PROTOCOL_GEN_DIR})
+include_directories(${TORUS_PROTOCOL_CAPNP_SRC})
 add_dependencies(mlir-headers torus-protocol)
 install(TARGETS torus-protocol EXPORT torus-protocol)
 install(EXPORT torus-protocol DESTINATION "./")
 
 # -------------------------------------------------------------------------------
-# Concrete Optimizer
+# Torus Optimizer
 # -------------------------------------------------------------------------------
 
-set(CONCRETE_OPTIMIZER_DIR "${PROJECT_SOURCE_DIR}/../../torus-optimizer")
-set(CONCRETE_OPTIMIZER_INCLUDE_DIR "${CONCRETE_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp")
-include_directories(${CONCRETE_OPTIMIZER_INCLUDE_DIR})
+set(TORUS_OPTIMIZER_DIR "${PROJECT_SOURCE_DIR}/../../torus-optimizer")
+set(TORUS_OPTIMIZER_INCLUDE_DIR "${TORUS_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp")
+include_directories(${TORUS_OPTIMIZER_INCLUDE_DIR})
 
 # -------------------------------------------------------------------------------
-# Concrete Backends
+# Torus Backends
 # -------------------------------------------------------------------------------
 
-set(CONCRETE_BACKENDS_DIR "${PROJECT_SOURCE_DIR}/../../../backends")
+set(TORUS_BACKENDS_DIR "${PROJECT_SOURCE_DIR}/../../../backends")
 
 # -------------------------------------------------------------------------------
-# Concrete CPU Configuration
+# Torus CPU Configuration
 # -------------------------------------------------------------------------------
 
-set(CONCRETE_CPU_DIR "${CONCRETE_BACKENDS_DIR}/torus-cpu/implementation")
-set(CONCRETE_CPU_INCLUDE_DIR "${CONCRETE_CPU_DIR}/include")
+set(TORUS_CPU_DIR "${TORUS_BACKENDS_DIR}/torus-cpu/implementation")
+set(TORUS_CPU_INCLUDE_DIR "${TORUS_CPU_DIR}/include")
 
 # -------------------------------------------------------------------------------
-# Concrete CPU Noise Model Configuration
+# Torus CPU Noise Model Configuration
 # -------------------------------------------------------------------------------
 
-set(CONCRETE_CPU_NOISE_MODEL_DIR "${CONCRETE_BACKENDS_DIR}/torus-cpu/noise-model")
-set(CONCRETE_CPU_NOISE_MODEL_INCLUDE_DIR "${CONCRETE_CPU_NOISE_MODEL_DIR}/include")
+set(TORUS_CPU_NOISE_MODEL_DIR "${TORUS_BACKENDS_DIR}/torus-cpu/noise-model")
+set(TORUS_CPU_NOISE_MODEL_INCLUDE_DIR "${TORUS_CPU_NOISE_MODEL_DIR}/include")
 
 # -------------------------------------------------------------------------------
 # RUST DEPS BUNDLE
@@ -143,23 +143,23 @@ add_dependencies(rust_deps_bundle rust_deps_bundle_build)
 target_link_libraries(rust_deps_bundle INTERFACE dl)
 
 # --------------------------------------------------------------------------------
-# Concrete Cuda Configuration
+# Torus Cuda Configuration
 # --------------------------------------------------------------------------------
-option(TORUSLANG_CUDA_SUPPORT "Support Concrete CUDA Execution." OFF)
+option(TORUSLANG_CUDA_SUPPORT "Support Torus CUDA Execution." OFF)
 
-set(CONCRETE_CUDA_DIR "${CONCRETE_BACKENDS_DIR}/torus-cuda/implementation")
+set(TORUS_CUDA_DIR "${TORUS_BACKENDS_DIR}/torus-cuda/implementation")
 
 if(TORUSLANG_CUDA_SUPPORT)
   remove_definitions("-Werror ")
-  message(STATUS "Building with Concrete CUDA execution support")
+  message(STATUS "Building with Torus CUDA execution support")
   find_package(CUDAToolkit REQUIRED)
   message(STATUS "Found CUDA version: ${CUDAToolkit_VERSION}")
   message(STATUS "Found CUDA library dir: ${CUDAToolkit_LIBRARY_DIR}")
   link_directories(${CUDAToolkit_LIBRARY_DIR})
-  set(CONCRETE_CUDA_BUILD_TESTS OFF)
-  set(CONCRETE_CUDA_BUILD_BENCHMARKS OFF)
-  add_subdirectory(${CONCRETE_CUDA_DIR} torus-cuda)
-  include_directories(${CONCRETE_CUDA_DIR}/include)
+  set(TORUS_CUDA_BUILD_TESTS OFF)
+  set(TORUS_CUDA_BUILD_BENCHMARKS OFF)
+  add_subdirectory(${TORUS_CUDA_DIR} torus-cuda)
+  include_directories(${TORUS_CUDA_DIR}/include)
   include_directories(${CUDAToolkit_INCLUDE_DIRS})
   add_compile_options(-DTORUSLANG_CUDA_SUPPORT)
 endif()

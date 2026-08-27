@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -140,7 +140,7 @@ std::string roundTrip(const char *module) {
 // get an extra transformer executed right before the ArgTransformer gets
 // called.
 std::function<Value(Value)>
-getPythonTypeTransformer(const Message<concreteprotocol::GateInfo> &info) {
+getPythonTypeTransformer(const Message<torusprotocol::GateInfo> &info) {
   if (info.asReader().getTypeInfo().hasIndex()) {
     return [=](Value input) {
       Tensor<int64_t> tensorInput = input.getTensor<int64_t>().value();
@@ -227,7 +227,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   using pybind11::init;
   using Library = Library;
 
-  m.doc() = "Concretelang compiler python API";
+  m.doc() = "Toruslang compiler python API";
 
   m.def("round_trip",
         [](std::string mlir_input) { return roundTrip(mlir_input.c_str()); });
@@ -256,74 +256,74 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .value("DAG_MULTI", optimizer::Strategy::DAG_MULTI)
       .export_values();
 
-  pybind11::enum_<concrete_optimizer::MultiParamStrategy>(
+  pybind11::enum_<torus_optimizer::MultiParamStrategy>(
       m, "OptimizerMultiParameterStrategy")
-      .value("PRECISION", concrete_optimizer::MultiParamStrategy::ByPrecision)
+      .value("PRECISION", torus_optimizer::MultiParamStrategy::ByPrecision)
       .value("PRECISION_AND_NORM2",
-             concrete_optimizer::MultiParamStrategy::ByPrecisionAndNorm2)
+             torus_optimizer::MultiParamStrategy::ByPrecisionAndNorm2)
       .export_values();
 
-  pybind11::enum_<concrete_optimizer::Encoding>(m, "Encoding")
-      .value("AUTO", concrete_optimizer::Encoding::Auto)
-      .value("CRT", concrete_optimizer::Encoding::Crt)
-      .value("NATIVE", concrete_optimizer::Encoding::Native)
+  pybind11::enum_<torus_optimizer::Encoding>(m, "Encoding")
+      .value("AUTO", torus_optimizer::Encoding::Auto)
+      .value("CRT", torus_optimizer::Encoding::Crt)
+      .value("NATIVE", torus_optimizer::Encoding::Native)
       .export_values();
 
   // ------------------------------------------------------------------------------//
   // RANGE RESTRICTION //
   // ------------------------------------------------------------------------------//
-  pybind11::class_<concrete_optimizer::restriction::RangeRestriction>(
+  pybind11::class_<torus_optimizer::restriction::RangeRestriction>(
       m, "RangeRestriction")
       .def(pybind11::init(
-          []() { return concrete_optimizer::restriction::RangeRestriction(); }))
+          []() { return torus_optimizer::restriction::RangeRestriction(); }))
       .def(
           "add_available_glwe_log_polynomial_size",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) {
             restriction.glwe_log_polynomial_sizes.push_back(v);
           },
           "Add an available glwe log poly size to the restriction")
       .def(
           "add_available_glwe_dimension",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.glwe_dimensions.push_back(v); },
           "Add an available glwe dimension to the restriction")
       .def(
           "add_available_internal_lwe_dimension",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.internal_lwe_dimensions.push_back(v); },
           "Add an available internal lwe dimension to the restriction")
       .def(
           "add_available_pbs_level_count",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.pbs_level_count.push_back(v); },
           "Add an available pbs level count to the restriction")
       .def(
           "add_available_pbs_base_log",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.pbs_base_log.push_back(v); },
           "Add an available pbs base log to the restriction")
       .def(
           "add_available_ks_level_count",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.ks_level_count.push_back(v); },
           "Add an available ks level count to the restriction")
       .def(
           "add_available_ks_base_log",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction,
+          [](torus_optimizer::restriction::RangeRestriction &restriction,
              uint64_t v) { restriction.ks_base_log.push_back(v); },
           "Add an available ks base log to the restriction")
       .def(
           "from_json",
           [](std::string input)
-              -> concrete_optimizer::restriction::RangeRestriction {
-            return concrete_optimizer::restriction::range_restriction_from_json(
+              -> torus_optimizer::restriction::RangeRestriction {
+            return torus_optimizer::restriction::range_restriction_from_json(
                 input);
           },
           "Create a RangeRestriction from a json string.")
       .def(
           "to_json",
-          [](concrete_optimizer::restriction::RangeRestriction &restriction)
+          [](torus_optimizer::restriction::RangeRestriction &restriction)
               -> std::string {
             return std::string(restriction.range_restriction_to_json());
           },
@@ -334,19 +334,19 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // KEYSET RESTRICTION //
   // ------------------------------------------------------------------------------//
-  pybind11::class_<concrete_optimizer::restriction::KeysetRestriction>(
+  pybind11::class_<torus_optimizer::restriction::KeysetRestriction>(
       m, "KeysetRestriction")
       .def(
           "from_json",
           [](std::string input)
-              -> concrete_optimizer::restriction::KeysetRestriction {
-            return concrete_optimizer::restriction::
+              -> torus_optimizer::restriction::KeysetRestriction {
+            return torus_optimizer::restriction::
                 keyset_restriction_from_json(input);
           },
           "Create a KeysetRestriction from a json string.")
       .def(
           "to_json",
-          [](concrete_optimizer::restriction::KeysetRestriction &restriction)
+          [](torus_optimizer::restriction::KeysetRestriction &restriction)
               -> std::string {
             return std::string(restriction.keyset_restriction_to_json());
           },
@@ -358,16 +358,16 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // OPTIMIZER OPTIONS //
   // ------------------------------------------------------------------------------//
-  pybind11::class_<concrete_optimizer::Options>(m, "OptimizerOptions")
+  pybind11::class_<torus_optimizer::Options>(m, "OptimizerOptions")
       .def(
           "set_security_level",
-          [](concrete_optimizer::Options &options, uint64_t security_level) {
+          [](torus_optimizer::Options &options, uint64_t security_level) {
             options.security_level = security_level;
           },
           "Set option for security level.", arg("security_level"))
       .def(
           "set_maximum_acceptable_error_probability",
-          [](concrete_optimizer::Options &options,
+          [](torus_optimizer::Options &options,
              double maximum_acceptable_error_probability) {
             options.maximum_acceptable_error_probability =
                 maximum_acceptable_error_probability;
@@ -376,27 +376,27 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           arg("maximum_acceptable_error_probability"))
       .def(
           "set_key_sharing",
-          [](concrete_optimizer::Options &options, bool key_sharing) {
+          [](torus_optimizer::Options &options, bool key_sharing) {
             options.key_sharing = key_sharing;
           },
           "Set option for key sharing.", arg("key_sharing"))
       .def(
           "set_multi_param_strategy_to_by_precision",
-          [](concrete_optimizer::Options &options) {
+          [](torus_optimizer::Options &options) {
             options.multi_param_strategy =
-                concrete_optimizer::MultiParamStrategy::ByPrecision;
+                torus_optimizer::MultiParamStrategy::ByPrecision;
           },
           "Set option for multi param strategy to by-precision.")
       .def(
           "set_multi_param_strategy_to_by_precision_and_norm_2",
-          [](concrete_optimizer::Options &options) {
+          [](torus_optimizer::Options &options) {
             options.multi_param_strategy =
-                concrete_optimizer::MultiParamStrategy::ByPrecisionAndNorm2;
+                torus_optimizer::MultiParamStrategy::ByPrecisionAndNorm2;
           },
           "Set option for multi param strategy to by-precision-and-norm2.")
       .def(
           "set_default_log_norm2_woppbs",
-          [](concrete_optimizer::Options &options,
+          [](torus_optimizer::Options &options,
              double default_log_norm2_woppbs) {
             options.default_log_norm2_woppbs = default_log_norm2_woppbs;
           },
@@ -404,37 +404,37 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           arg("default_log_norm2_woppbs"))
       .def(
           "set_use_gpu_constraints",
-          [](concrete_optimizer::Options &options, bool use_gpu_constraints) {
+          [](torus_optimizer::Options &options, bool use_gpu_constraints) {
             options.use_gpu_constraints = use_gpu_constraints;
           },
           "Set option for use gpu constrints.", arg("use_gpu_constraints"))
       .def(
           "set_encoding_to_auto",
-          [](concrete_optimizer::Options &options) {
-            options.encoding = concrete_optimizer::Encoding::Auto;
+          [](torus_optimizer::Options &options) {
+            options.encoding = torus_optimizer::Encoding::Auto;
           },
           "Set option for encoding to auto.")
       .def(
           "set_encoding_to_crt",
-          [](concrete_optimizer::Options &options) {
-            options.encoding = concrete_optimizer::Encoding::Crt;
+          [](torus_optimizer::Options &options) {
+            options.encoding = torus_optimizer::Encoding::Crt;
           },
           "Set option for encoding to crt.")
       .def(
           "set_encoding_to_native",
-          [](concrete_optimizer::Options &options) {
-            options.encoding = concrete_optimizer::Encoding::Native;
+          [](torus_optimizer::Options &options) {
+            options.encoding = torus_optimizer::Encoding::Native;
           },
           "Set option for encoding to native.")
       .def(
           "set_cache_on_disk",
-          [](concrete_optimizer::Options &options, bool cache_on_disk) {
+          [](torus_optimizer::Options &options, bool cache_on_disk) {
             options.cache_on_disk = cache_on_disk;
           },
           "Set option for cache on disk.", arg("cache_on_disk"))
       .def(
           "set_ciphertext_modulus_log",
-          [](concrete_optimizer::Options &options,
+          [](torus_optimizer::Options &options,
              uint32_t ciphertext_modulus_log) {
             options.ciphertext_modulus_log = ciphertext_modulus_log;
           },
@@ -442,30 +442,30 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           arg("ciphertext_modulus_log"))
       .def(
           "set_fft_precision",
-          [](concrete_optimizer::Options &options, uint32_t fft_precision) {
+          [](torus_optimizer::Options &options, uint32_t fft_precision) {
             options.fft_precision = fft_precision;
           },
           "Set option for fft precision.", arg("fft_precision"))
       .def(
           "set_fft_precision",
-          [](concrete_optimizer::Options &options, uint32_t fft_precision) {
+          [](torus_optimizer::Options &options, uint32_t fft_precision) {
             options.fft_precision = fft_precision;
           },
           "Set option for fft precision.", arg("fft_precision"))
       .def(
           "set_range_restriction",
-          [](concrete_optimizer::Options &options,
-             concrete_optimizer::restriction::RangeRestriction restriction) {
+          [](torus_optimizer::Options &options,
+             torus_optimizer::restriction::RangeRestriction restriction) {
             options.range_restriction = std::make_shared<
-                concrete_optimizer::restriction::RangeRestriction>(restriction);
+                torus_optimizer::restriction::RangeRestriction>(restriction);
           },
           "Set option for range restriction", arg("restriction"))
       .def(
           "set_keyset_restriction",
-          [](concrete_optimizer::Options &options,
-             concrete_optimizer::restriction::KeysetRestriction restriction) {
+          [](torus_optimizer::Options &options,
+             torus_optimizer::restriction::KeysetRestriction restriction) {
             options.keyset_restriction = std::make_shared<
-                concrete_optimizer::restriction::KeysetRestriction>(
+                torus_optimizer::restriction::KeysetRestriction>(
                 restriction);
           },
           "Set option for keyset restriction", arg("restriction"))
@@ -519,9 +519,9 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           "Set option for compression of input ciphertexts.",
           arg("compress_input_ciphertexts"))
       .def(
-          "set_optimize_concrete",
+          "set_optimize_torus",
           [](CompilationOptions &options, bool b) { options.optimizeTFHE = b; },
-          "Set flag to enable/disable optimization of concrete intermediate "
+          "Set flag to enable/disable optimization of torus intermediate "
           "representation.",
           arg("optimize"))
       .def(
@@ -545,7 +545,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def(
           "set_optimizer_multi_parameter_strategy",
           [](CompilationOptions &options,
-             concrete_optimizer::MultiParamStrategy strategy) {
+             torus_optimizer::MultiParamStrategy strategy) {
             options.optimizerConfig.multi_param_strategy = strategy;
           },
           "Set the strategy of the optimizer for multi-parameter.",
@@ -580,16 +580,16 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           "Set security level.", arg("security_level"))
       .def("set_range_restriction",
            [](CompilationOptions &options,
-              concrete_optimizer::restriction::RangeRestriction restriction) {
+              torus_optimizer::restriction::RangeRestriction restriction) {
              options.optimizerConfig.range_restriction = std::make_shared<
-                 concrete_optimizer::restriction::RangeRestriction>(
+                 torus_optimizer::restriction::RangeRestriction>(
                  restriction);
            })
       .def("set_keyset_restriction",
            [](CompilationOptions &options,
-              concrete_optimizer::restriction::KeysetRestriction restriction) {
+              torus_optimizer::restriction::KeysetRestriction restriction) {
              options.optimizerConfig.keyset_restriction = std::make_shared<
-                 concrete_optimizer::restriction::KeysetRestriction>(
+                 torus_optimizer::restriction::KeysetRestriction>(
                  restriction);
            })
       .def(
@@ -634,7 +634,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def(
           "force_encoding",
           [](CompilationOptions &options,
-             concrete_optimizer::Encoding encoding) {
+             torus_optimizer::Encoding encoding) {
             options.optimizerConfig.encoding = encoding;
           },
           "Force the compiler to use a specific encoding.", arg("encoding"))
@@ -782,7 +782,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
 
   struct LweSecretKeyParam {
-    Message<concreteprotocol::LweSecretKeyInfo> info;
+    Message<torusprotocol::LweSecretKeyInfo> info;
 
     std::string toString() {
       std::string output = "LweSecretKeyParam(dimension=";
@@ -826,7 +826,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
 
   struct BootstrapKeyParam {
-    Message<concreteprotocol::LweBootstrapKeyInfo> info;
+    Message<torusprotocol::LweBootstrapKeyInfo> info;
 
     std::string toString() {
       std::string output = "BootstrapKeyParam(";
@@ -926,7 +926,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
 
   struct KeyswitchKeyParam {
-    Message<concreteprotocol::LweKeyswitchKeyInfo> info;
+    Message<torusprotocol::LweKeyswitchKeyInfo> info;
 
     std::string toString() {
       std::string output = "KeyswitchKeyParam(";
@@ -999,7 +999,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
 
   struct PackingKeyswitchKeyParam {
-    Message<concreteprotocol::PackingKeyswitchKeyInfo> info;
+    Message<torusprotocol::PackingKeyswitchKeyInfo> info;
 
     std::string toString() {
       std::string output = "PackingKeyswitchKeyParam(";
@@ -1100,11 +1100,11 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // PARTITION DEFINITION //
   // ------------------------------------------------------------------------------//
   //
-  pybind11::class_<concrete_optimizer::utils::PartitionDefinition>(
+  pybind11::class_<torus_optimizer::utils::PartitionDefinition>(
       m, "PartitionDefinition")
       .def(init([](uint8_t precision, double norm2)
-                    -> concrete_optimizer::utils::PartitionDefinition {
-             return concrete_optimizer::utils::PartitionDefinition{precision,
+                    -> torus_optimizer::utils::PartitionDefinition {
+             return torus_optimizer::utils::PartitionDefinition{precision,
                                                                    norm2};
            }),
            arg("precision"), arg("norm2"))
@@ -1114,14 +1114,14 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // KEYSET INFO //
   // ------------------------------------------------------------------------------//
-  typedef Message<concreteprotocol::KeysetInfo> KeysetInfo;
+  typedef Message<torusprotocol::KeysetInfo> KeysetInfo;
   pybind11::class_<KeysetInfo>(m, "KeysetInfo")
       .def_static(
           "generate_virtual",
-          [](std::vector<concrete_optimizer::utils::PartitionDefinition>
+          [](std::vector<torus_optimizer::utils::PartitionDefinition>
                  partitions,
              bool generateFks,
-             std::optional<concrete_optimizer::Options> options) -> KeysetInfo {
+             std::optional<torus_optimizer::Options> options) -> KeysetInfo {
             if (partitions.size() < 2) {
               throw std::runtime_error("Need at least two partition defs to "
                                        "generate a virtual keyset info.");
@@ -1138,7 +1138,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto secretKeys = std::vector<LweSecretKeyParam>();
             for (auto key : keysetInfo.asReader().getLweSecretKeys()) {
               secretKeys.push_back(LweSecretKeyParam{
-                  (Message<concreteprotocol::LweSecretKeyInfo>)key});
+                  (Message<torusprotocol::LweSecretKeyInfo>)key});
             }
             return secretKeys;
           },
@@ -1149,7 +1149,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto bootstrapKeys = std::vector<BootstrapKeyParam>();
             for (auto key : keysetInfo.asReader().getLweBootstrapKeys()) {
               bootstrapKeys.push_back(BootstrapKeyParam{
-                  (Message<concreteprotocol::LweBootstrapKeyInfo>)key});
+                  (Message<torusprotocol::LweBootstrapKeyInfo>)key});
             }
             return bootstrapKeys;
           },
@@ -1160,7 +1160,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto keyswitchKeys = std::vector<KeyswitchKeyParam>();
             for (auto key : keysetInfo.asReader().getLweKeyswitchKeys()) {
               keyswitchKeys.push_back(KeyswitchKeyParam{
-                  (Message<concreteprotocol::LweKeyswitchKeyInfo>)key});
+                  (Message<torusprotocol::LweKeyswitchKeyInfo>)key});
             }
             return keyswitchKeys;
           },
@@ -1171,7 +1171,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto packingKeyswitchKeys = std::vector<PackingKeyswitchKeyParam>();
             for (auto key : keysetInfo.asReader().getPackingKeyswitchKeys()) {
               packingKeyswitchKeys.push_back(PackingKeyswitchKeyParam{
-                  (Message<concreteprotocol::PackingKeyswitchKeyInfo>)key});
+                  (Message<torusprotocol::PackingKeyswitchKeyInfo>)key});
             }
             return packingKeyswitchKeys;
           },
@@ -1180,15 +1180,15 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def(
           "get_restriction",
           [](KeysetInfo &keysetInfo) {
-            concrete_optimizer::restriction::KeysetInfo output;
+            torus_optimizer::restriction::KeysetInfo output;
             for (auto key : keysetInfo.asReader().getLweSecretKeys()) {
               output.lwe_secret_keys.push_back(
-                  concrete_optimizer::restriction::LweSecretKeyInfo{
+                  torus_optimizer::restriction::LweSecretKeyInfo{
                       key.getParams().getLweDimension()});
             }
             for (auto key : keysetInfo.asReader().getLweBootstrapKeys()) {
               output.lwe_bootstrap_keys.push_back(
-                  concrete_optimizer::restriction::LweBootstrapKeyInfo{
+                  torus_optimizer::restriction::LweBootstrapKeyInfo{
                       key.getParams().getLevelCount(),
                       key.getParams().getBaseLog(),
                       key.getParams().getGlweDimension(),
@@ -1197,19 +1197,19 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             }
             for (auto key : keysetInfo.asReader().getLweKeyswitchKeys()) {
               output.lwe_keyswitch_keys.push_back(
-                  concrete_optimizer::restriction::LweKeyswitchKeyInfo{
+                  torus_optimizer::restriction::LweKeyswitchKeyInfo{
                       key.getParams().getLevelCount(),
                       key.getParams().getBaseLog(),
                       key.getParams().getInputLweDimension(),
                       key.getParams().getOutputLweDimension()});
             }
-            return concrete_optimizer::restriction::KeysetRestriction{output};
+            return torus_optimizer::restriction::KeysetRestriction{output};
           },
           "Return the search space restriction associated to this keyset info.")
       .def_static(
           "deserialize",
           [](const pybind11::bytes &buffer) {
-            auto keysetInfo = Message<concreteprotocol::KeysetInfo>();
+            auto keysetInfo = Message<torusprotocol::KeysetInfo>();
             auto maybeError = keysetInfo.readBinaryFromString(
                 buffer, mlir::toruslang::python::DESER_OPTIONS);
             if (maybeError.has_failure()) {
@@ -1236,7 +1236,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // TYPE INFO //
   // ------------------------------------------------------------------------------//
-  typedef Message<concreteprotocol::TypeInfo> TypeInfo;
+  typedef Message<torusprotocol::TypeInfo> TypeInfo;
   pybind11::class_<TypeInfo>(m, "TypeInfo")
       .def(
           "is_plaintext",
@@ -1247,7 +1247,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // RAW INFO //
   // ------------------------------------------------------------------------------//
-  typedef Message<concreteprotocol::RawInfo> RawInfo;
+  typedef Message<torusprotocol::RawInfo> RawInfo;
   pybind11::class_<RawInfo>(m, "RawInfo")
       .def(
           "get_shape",
@@ -1272,7 +1272,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // GATE INFO //
   // ------------------------------------------------------------------------------//
-  typedef Message<concreteprotocol::GateInfo> GateInfo;
+  typedef Message<torusprotocol::GateInfo> GateInfo;
   pybind11::class_<GateInfo>(m, "GateInfo")
       .def(
           "get_type_info",
@@ -1291,7 +1291,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
   // CIRCUIT INFO //
   // ------------------------------------------------------------------------------//
-  typedef Message<concreteprotocol::CircuitInfo> CircuitInfo;
+  typedef Message<torusprotocol::CircuitInfo> CircuitInfo;
   pybind11::class_<CircuitInfo>(m, "CircuitInfo")
       .def(
           "get_name",
@@ -1304,7 +1304,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           [](CircuitInfo &circuit) -> std::vector<GateInfo> {
             auto output = std::vector<GateInfo>();
             for (auto gate : circuit.asReader().getInputs()) {
-              output.push_back({(Message<concreteprotocol::GateInfo>)gate});
+              output.push_back({(Message<torusprotocol::GateInfo>)gate});
             }
             return output;
           },
@@ -1314,7 +1314,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           [](CircuitInfo &circuit) -> std::vector<GateInfo> {
             auto output = std::vector<GateInfo>();
             for (auto gate : circuit.asReader().getOutputs()) {
-              output.push_back({(Message<concreteprotocol::GateInfo>)gate});
+              output.push_back({(Message<torusprotocol::GateInfo>)gate});
             }
             return output;
           },
@@ -1326,9 +1326,9 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
   // ------------------------------------------------------------------------------//
 
   struct ProgramInfo {
-    Message<concreteprotocol::ProgramInfo> programInfo;
+    Message<torusprotocol::ProgramInfo> programInfo;
 
-    concreteprotocol::LweCiphertextEncryptionInfo::Reader
+    torusprotocol::LweCiphertextEncryptionInfo::Reader
     inputEncryptionAt(size_t inputId, std::string circuitName) {
       auto reader = programInfo.asReader();
       if (!reader.hasCircuits()) {
@@ -1373,7 +1373,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def_static(
           "deserialize",
           [](const pybind11::bytes &buffer) {
-            auto programInfo = Message<concreteprotocol::ProgramInfo>();
+            auto programInfo = Message<torusprotocol::ProgramInfo>();
             if (programInfo.readJsonFromString(buffer).has_failure()) {
               throw std::runtime_error("Failed to deserialize program info");
             }
@@ -1510,9 +1510,9 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           [](pybind11::bytes buffer, LweSecretKeyParam &params) {
             std::string buffer_str = buffer;
             auto lwe_dim = params.info.asReader().getParams().getLweDimension();
-            auto lwe_size = concrete_cpu_lwe_secret_key_size_u64(lwe_dim);
+            auto lwe_size = torus_cpu_lwe_secret_key_size_u64(lwe_dim);
             std::vector<uint64_t> lwe_sk(lwe_size);
-            auto key_size = concrete_cpu_unserialize_lwe_secret_key_u64(
+            auto key_size = torus_cpu_unserialize_lwe_secret_key_u64(
                 (uint8_t *)buffer_str.data(), buffer_str.size(), lwe_sk.data(),
                 lwe_sk.size());
             lwe_sk.resize(key_size);
@@ -1529,9 +1529,9 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             auto lwe_dimension =
                 lweSk.getInfo().asReader().getParams().getLweDimension();
             auto buffer_size =
-                concrete_cpu_lwe_secret_key_buffer_size_u64(lwe_dimension);
+                torus_cpu_lwe_secret_key_buffer_size_u64(lwe_dimension);
             std::vector<uint8_t> buffer(buffer_size, 0);
-            buffer_size = concrete_cpu_serialize_lwe_secret_key_u64(
+            buffer_size = torus_cpu_serialize_lwe_secret_key_u64(
                 skBuffer.data(), lwe_dimension, buffer.data(), buffer_size);
             if (buffer_size == 0) {
               throw std::runtime_error("couldn't serialize the secret key");
@@ -1545,9 +1545,9 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           [](pybind11::bytes buffer, LweSecretKeyParam &params) {
             std::string buffer_str = buffer;
             auto lwe_dim = params.info.asReader().getParams().getLweDimension();
-            auto glwe_sk_size = concrete_cpu_lwe_secret_key_size_u64(lwe_dim);
+            auto glwe_sk_size = torus_cpu_lwe_secret_key_size_u64(lwe_dim);
             std::vector<uint64_t> glwe_sk(glwe_sk_size);
-            auto key_size = concrete_cpu_unserialize_glwe_secret_key_u64(
+            auto key_size = torus_cpu_unserialize_glwe_secret_key_u64(
                 (uint8_t *)buffer_str.data(), buffer_str.size(), glwe_sk.data(),
                 glwe_sk.size());
             glwe_sk.resize(key_size);
@@ -1564,10 +1564,10 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
           [](LweSecretKey &lweSk, size_t glwe_dimension,
              size_t polynomial_size) {
             auto skBuffer = lweSk.getBuffer();
-            auto buffer_size = concrete_cpu_glwe_secret_key_buffer_size_u64(
+            auto buffer_size = torus_cpu_glwe_secret_key_buffer_size_u64(
                 glwe_dimension, polynomial_size);
             std::vector<uint8_t> buffer(buffer_size, 0);
-            buffer_size = concrete_cpu_serialize_glwe_secret_key_u64(
+            buffer_size = torus_cpu_serialize_glwe_secret_key_u64(
                 skBuffer.data(), glwe_dimension, polynomial_size, buffer.data(),
                 buffer_size);
             if (buffer_size == 0) {
@@ -1602,7 +1602,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def_static(
           "deserialize",
           [](const pybind11::bytes &buffer) {
-            auto serverKeysetProto = Message<concreteprotocol::ServerKeyset>();
+            auto serverKeysetProto = Message<torusprotocol::ServerKeyset>();
             auto maybeError = serverKeysetProto.readBinaryFromString(
                 buffer, mlir::toruslang::python::DESER_OPTIONS);
             if (maybeError.has_failure()) {
@@ -1683,7 +1683,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
       .def_static(
           "deserialize",
           [](const pybind11::bytes &buffer) {
-            auto keysetProto = Message<concreteprotocol::Keyset>();
+            auto keysetProto = Message<torusprotocol::Keyset>();
             auto maybeError = keysetProto.readBinaryFromString(
                 buffer, mlir::toruslang::python::DESER_OPTIONS);
             if (maybeError.has_failure()) {
@@ -1703,7 +1703,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
               throw std::runtime_error("Failed to open keyset file " + path);
             }
 
-            auto keysetProto = Message<concreteprotocol::Keyset>();
+            auto keysetProto = Message<torusprotocol::Keyset>();
             auto maybeError = keysetProto.readBinaryFromIstream(
                 ifs, mlir::toruslang::python::DESER_OPTIONS);
             if (maybeError.has_failure()) {
@@ -1754,10 +1754,10 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
             }
             auto secretKey = secretKeys[keyIndex];
             auto skBuffer = secretKey.getBuffer();
-            auto buffer_size = concrete_cpu_glwe_secret_key_buffer_size_u64(
+            auto buffer_size = torus_cpu_glwe_secret_key_buffer_size_u64(
                 glwe_dimension, polynomial_size);
             std::vector<uint8_t> buffer(buffer_size, 0);
-            buffer_size = concrete_cpu_serialize_glwe_secret_key_u64(
+            buffer_size = torus_cpu_serialize_glwe_secret_key_u64(
                 skBuffer.data(), glwe_dimension, polynomial_size, buffer.data(),
                 buffer_size);
             if (buffer_size == 0) {
@@ -2109,7 +2109,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
              GET_OR_THROW_RESULT(
                  auto result,
                  ServerProgram::load(
-                     (Message<concreteprotocol::ProgramInfo>)pi.asReader(),
+                     (Message<torusprotocol::ProgramInfo>)pi.asReader(),
                      sharedLibPath, useSimulation));
              return result;
            }),
@@ -2246,7 +2246,7 @@ void mlir::toruslang::python::populateCompilerAPISubmodule(
            arg("degree"), arg("noise_level"), arg("message_modulus"),
            arg("carry_modulus"), arg("ks_first"))
       .def_static("get_unknown_noise_level",
-                  [] { return concrete_cpu_tfhers_unknown_noise_level(); })
+                  [] { return torus_cpu_tfhers_unknown_noise_level(); })
       .def_property(
           "width", [](TfhersFheIntDescription &desc) { return desc.width; },
           [](TfhersFheIntDescription &desc, size_t width) {

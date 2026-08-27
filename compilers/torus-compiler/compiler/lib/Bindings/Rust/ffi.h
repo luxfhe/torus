@@ -1,10 +1,10 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
 
-#ifndef CONCRETE_RUST_COMPILER_H
-#define CONCRETE_RUST_COMPILER_H
+#ifndef TORUS_RUST_COMPILER_H
+#define TORUS_RUST_COMPILER_H
 
 #include "torus-optimizer.hpp"
 #include "torus-protocol.capnp.h"
@@ -63,7 +63,7 @@ private:
     size_t pos_;
 };
 
-namespace concrete_rust {
+namespace torus_rust {
 
 struct CompilationOptions : mlir::toruslang::CompilationOptions {
 
@@ -98,7 +98,7 @@ struct CompilationOptions : mlir::toruslang::CompilationOptions {
 
   void set_optimizer_multi_parameter_strategy(uint8_t val) {
     this->optimizerConfig.multi_param_strategy =
-        static_cast<concrete_optimizer::MultiParamStrategy>(val);
+        static_cast<torus_optimizer::MultiParamStrategy>(val);
   }
   void set_enable_tlu_fusing(bool val) { this->enableTluFusing = val; }
 
@@ -114,8 +114,8 @@ struct CompilationOptions : mlir::toruslang::CompilationOptions {
   void set_range_restriction(rust::Str json) {
     if (!json.empty()) {
       this->optimizerConfig.range_restriction =
-          std::make_shared<concrete_optimizer::restriction::RangeRestriction>(
-              concrete_optimizer::restriction::range_restriction_from_json(
+          std::make_shared<torus_optimizer::restriction::RangeRestriction>(
+              torus_optimizer::restriction::range_restriction_from_json(
                   json));
     }
   }
@@ -123,8 +123,8 @@ struct CompilationOptions : mlir::toruslang::CompilationOptions {
   void set_keyset_restriction(rust::Str json) {
     if (!json.empty()) {
       this->optimizerConfig.keyset_restriction =
-          std::make_shared<concrete_optimizer::restriction::KeysetRestriction>(
-              concrete_optimizer::restriction::keyset_restriction_from_json(
+          std::make_shared<torus_optimizer::restriction::KeysetRestriction>(
+              torus_optimizer::restriction::keyset_restriction_from_json(
                   json));
     }
   }
@@ -262,7 +262,7 @@ struct ServerKeyset : toruslang::keysets::ServerKeyset {
 };
 
 std::unique_ptr<ServerKeyset> _deserialize_server_keyset(rust::Slice<const uint8_t> slice) {
-    auto proto = Message<concreteprotocol::ServerKeyset>();
+    auto proto = Message<torusprotocol::ServerKeyset>();
     auto slice_istream = SliceIStream(slice);
     auto istream = std::istream(&slice_istream);
     proto.readBinaryFromIstream(istream, DESER_OPTIONS).value();
@@ -291,7 +291,7 @@ struct ClientKeyset : toruslang::keysets::ClientKeyset {
 };
 
 std::unique_ptr<ClientKeyset> _deserialize_client_keyset(rust::Slice<const uint8_t> slice) {
-    auto proto = Message<concreteprotocol::ClientKeyset>();
+    auto proto = Message<torusprotocol::ClientKeyset>();
     auto slice_istream = SliceIStream(slice);
     auto istream = std::istream(&slice_istream);
     proto.readBinaryFromIstream(istream, DESER_OPTIONS).value();
@@ -320,7 +320,7 @@ std::unique_ptr<Keyset> _keyset_new(rust::Str keyset_info,
                                     SecretCsprng &secret_csprng,
                                     EncryptionCsprng &encryption_csprng,
                                     rust::Slice<std::unique_ptr<LweSecretKey>> initial_keys) {
-  auto info = Message<concreteprotocol::KeysetInfo>();
+  auto info = Message<torusprotocol::KeysetInfo>();
   info.readJsonFromString(std::string(keyset_info)).value();
   auto map = std::map<uint32_t, toruslang::keys::LweSecretKey>();
   for (auto &key : initial_keys) {
@@ -450,7 +450,7 @@ struct Value : toruslang::values::Value {
 
   std::unique_ptr<TransportValue> into_transport_value(rust::Str type_info_json) const {
       auto first = intoRawTransportValue();
-      auto info = Message<concreteprotocol::TypeInfo>();
+      auto info = Message<torusprotocol::TypeInfo>();
       info.readJsonFromString(std::string(type_info_json)).value();
       first.asBuilder().setTypeInfo(info.asReader());
       auto output =
@@ -521,7 +521,7 @@ std::unique_ptr<ClientFunction>
 _client_function_new_encrypted(rust::Str circuit_info_json,
                               const ClientKeyset &client_keyset,
                               std::unique_ptr<EncryptionCsprng> csprng) {
-  auto info = Message<concreteprotocol::CircuitInfo>();
+  auto info = Message<torusprotocol::CircuitInfo>();
   info.readJsonFromString(std::string(circuit_info_json)).value();
   auto inner = std::make_unique<::toruslang::clientlib::ClientCircuit>(::toruslang::clientlib::ClientCircuit::createEncrypted(
                    info, client_keyset, std::move(csprng))
@@ -533,7 +533,7 @@ _client_function_new_encrypted(rust::Str circuit_info_json,
 std::unique_ptr<ClientFunction>
 _client_function_new_simulated(rust::Str circuit_info_json,
                               std::unique_ptr<EncryptionCsprng> csprng) {
-  auto info = Message<concreteprotocol::CircuitInfo>();
+  auto info = Message<torusprotocol::CircuitInfo>();
   info.readJsonFromString(std::string(circuit_info_json)).value();
   auto inner = std::make_unique<::toruslang::clientlib::ClientCircuit>(::toruslang::clientlib::ClientCircuit::createSimulated(
                    info, std::move(csprng))
@@ -554,7 +554,7 @@ std::unique_ptr<ClientModule>
 _client_module_new_encrypted(rust::Str program_info_json,
                               const ClientKeyset &client_keyset,
                               std::unique_ptr<EncryptionCsprng> csprng) {
-  auto info = Message<concreteprotocol::ProgramInfo>();
+  auto info = Message<torusprotocol::ProgramInfo>();
   info.readJsonFromString(std::string(program_info_json)).value();
   auto output = std::make_unique<::toruslang::clientlib::ClientProgram>(::toruslang::clientlib::ClientProgram::createEncrypted(
                     info, client_keyset, std::move(csprng))
@@ -566,7 +566,7 @@ _client_module_new_encrypted(rust::Str program_info_json,
 std::unique_ptr<ClientModule>
 _client_module_new_simulated(rust::Str program_info_json,
                               std::unique_ptr<EncryptionCsprng> csprng) {
-  auto info = Message<concreteprotocol::ProgramInfo>();
+  auto info = Message<torusprotocol::ProgramInfo>();
   info.readJsonFromString(std::string(program_info_json)).value();
   auto output = std::make_unique<::toruslang::clientlib::ClientProgram>(::toruslang::clientlib::ClientProgram::createSimulated(
                     info, std::move(csprng))
@@ -613,7 +613,7 @@ using c_void = void;
 std::unique_ptr<ServerFunction> _server_function_new(rust::Str circuit_info_json,
                                                    void *func,
                                                    bool use_simulation) {
-  auto info = Message<concreteprotocol::CircuitInfo>();
+  auto info = Message<torusprotocol::CircuitInfo>();
   info.readJsonFromString(std::string(circuit_info_json)).value();
   FnPtr fn_ptr = reinterpret_cast<FnPtr>(func);
   auto output = toruslang::serverlib::ServerCircuit::fromFnPtr(
@@ -623,6 +623,6 @@ std::unique_ptr<ServerFunction> _server_function_new(rust::Str circuit_info_json
       *reinterpret_cast<ServerFunction *>(&output));
 }
 
-} // namespace concrete_rust
+} // namespace torus_rust
 
 #endif

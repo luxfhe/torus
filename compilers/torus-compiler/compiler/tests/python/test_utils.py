@@ -13,5 +13,5 @@ def test_runtime_lib_path():
             runtime_lib_path, str
         ), f"runtime library path should be of type str, not {type(runtime_lib_path)}"
         assert re.match(
-            r".*libConcretelangRuntime.*\.(so|dylib)$", runtime_lib_path
+            r".*libToruslangRuntime.*\.(so|dylib)$", runtime_lib_path
         ), f"wrong runtime library path: {runtime_lib_path}"

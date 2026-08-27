@@ -7,7 +7,7 @@ include "mlir/Interfaces/ControlFlowInterfaces.td"
 include "toruslang/Dialect/Tracing/IR/TracingDialect.td"
 include "toruslang/Dialect/FHE/IR/FHETypes.td"
 include "toruslang/Dialect/TFHE/IR/TFHETypes.td"
-include "toruslang/Dialect/Concrete/IR/ConcreteTypes.td"
+include "toruslang/Dialect/Torus/IR/TorusTypes.td"
 
 class Tracing_Op<string mnemonic, list<Trait> traits = []>
     : Op<Tracing_Dialect, mnemonic, traits>;

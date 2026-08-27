@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -31,11 +31,11 @@ struct ClientKeyset {
   std::vector<LweSecretKey> lweSecretKeys;
 
   static ClientKeyset
-  fromProto(const Message<concreteprotocol::ClientKeyset> &proto);
+  fromProto(const Message<torusprotocol::ClientKeyset> &proto);
 
-  static ClientKeyset fromProto(concreteprotocol::ClientKeyset::Reader reader);
+  static ClientKeyset fromProto(torusprotocol::ClientKeyset::Reader reader);
 
-  Message<concreteprotocol::ClientKeyset> toProto() const;
+  Message<torusprotocol::ClientKeyset> toProto() const;
 };
 
 struct ServerKeyset {
@@ -44,10 +44,10 @@ struct ServerKeyset {
   std::vector<PackingKeyswitchKey> packingKeyswitchKeys;
 
   static ServerKeyset
-  fromProto(const Message<concreteprotocol::ServerKeyset> &proto);
-  static ServerKeyset fromProto(concreteprotocol::ServerKeyset::Reader reader);
+  fromProto(const Message<torusprotocol::ServerKeyset> &proto);
+  static ServerKeyset fromProto(torusprotocol::ServerKeyset::Reader reader);
 
-  Message<concreteprotocol::ServerKeyset> toProto() const;
+  Message<torusprotocol::ServerKeyset> toProto() const;
 };
 
 struct Keyset {
@@ -66,7 +66,7 @@ struct Keyset {
   /// @param secretCsprng
   /// @param encryptionCsprng
   /// @param lweSecretKeys secret keys to initialize the keyset with
-  Keyset(const Message<concreteprotocol::KeysetInfo> &info,
+  Keyset(const Message<torusprotocol::KeysetInfo> &info,
          toruslang::csprng::SecretCSPRNG &secretCsprng,
          csprng::EncryptionCSPRNG &encryptionCsprng,
          std::map<uint32_t, LweSecretKey> lweSecretKeys =
@@ -75,10 +75,10 @@ struct Keyset {
   Keyset(ServerKeyset server, ClientKeyset client)
       : server(server), client(client) {}
 
-  static Keyset fromProto(const Message<concreteprotocol::Keyset> &proto);
-  static Keyset fromProto(concreteprotocol::Keyset::Reader reader);
+  static Keyset fromProto(const Message<torusprotocol::Keyset> &proto);
+  static Keyset fromProto(torusprotocol::Keyset::Reader reader);
 
-  Message<concreteprotocol::Keyset> toProto() const;
+  Message<torusprotocol::Keyset> toProto() const;
 };
 
 class KeysetCache {
@@ -88,7 +88,7 @@ public:
   KeysetCache(std::string backingDirectoryPath);
 
   Result<Keyset>
-  getKeyset(const Message<concreteprotocol::KeysetInfo> &keysetInfo,
+  getKeyset(const Message<torusprotocol::KeysetInfo> &keysetInfo,
             __uint128_t secret_seed, __uint128_t encryption_seed,
             std::map<uint32_t, LweSecretKey> lweSecretKeys =
                 std::map<uint32_t, LweSecretKey>());
@@ -97,9 +97,9 @@ private:
   KeysetCache() = default;
 };
 
-Message<concreteprotocol::KeysetInfo> keysetInfoFromVirtualCircuit(
-    std::vector<concrete_optimizer::utils::PartitionDefinition> partitions,
-    bool generate_fks, std::optional<concrete_optimizer::Options> options);
+Message<torusprotocol::KeysetInfo> keysetInfoFromVirtualCircuit(
+    std::vector<torus_optimizer::utils::PartitionDefinition> partitions,
+    bool generate_fks, std::optional<torus_optimizer::Options> options);
 
 } // namespace keysets
 } // namespace toruslang

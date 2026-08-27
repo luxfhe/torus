@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=V0 --skip-program-info %s
+// RUN: toruscompiler --action=dump-llvm-ir --optimizer-strategy=V0 --skip-program-info %s
 // Just ensure that compile
 // https://github.com/luxfhe/torus-compiler-internal/issues/785
 func.func @main(%arg0: !FHE.eint<5>, %cst: tensor<32xi64>) -> tensor<1x!FHE.eint<5>> {

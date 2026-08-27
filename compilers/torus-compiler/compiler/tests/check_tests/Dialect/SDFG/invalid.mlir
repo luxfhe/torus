@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --verify-diagnostics --action=roundtrip %s
+// RUN: toruscompiler --split-input-file --verify-diagnostics --action=roundtrip %s
 
 func.func @wrong_element_type(%arg0: tensor<2xi32>, %arg1: tensor<1024xi64>) -> tensor<1024xi64> {
   %dfg = "SDFG.init"() : () -> !SDFG.dfg

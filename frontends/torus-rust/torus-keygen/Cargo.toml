@@ -25,7 +25,7 @@ path = "src/keyasm.rs"
 required-features = [ "cli" ]
 
 [lib]
-name = "concrete_keygen"
+name = "torus_keygen"
 path = "src/lib.rs"
 crate-type = ["cdylib", "lib"]
 

@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -48,12 +48,12 @@ template <class T> static std::optional<T> tryGetScalarType(mlir::Type t) {
   return std::nullopt;
 }
 
-// Wraps a `::concrete_optimizer::dag::CircuitSolution` and provides
+// Wraps a `::torus_optimizer::dag::CircuitSolution` and provides
 // helper functions for lookups and code generation
 class CircuitSolutionWrapper {
 public:
   CircuitSolutionWrapper(
-      const ::concrete_optimizer::dag::CircuitSolution &solution)
+      const ::torus_optimizer::dag::CircuitSolution &solution)
       : solution(solution) {}
 
   enum class SolutionKeyKind {
@@ -69,13 +69,13 @@ public:
 
   // Returns the `GLWESecretKey` type for a secrete key
   TFHE::GLWESecretKey
-  toGLWESecretKey(const ::concrete_optimizer::dag::SecretLweKey &key) const {
+  toGLWESecretKey(const ::torus_optimizer::dag::SecretLweKey &key) const {
     return TFHE::GLWESecretKey::newParameterized(
         key.glwe_dimension * key.polynomial_size, 1, key.identifier);
   }
 
   // Looks up the keys associated to an operation with a given `oid`
-  const ::concrete_optimizer::dag::InstructionKeys &
+  const ::torus_optimizer::dag::InstructionKeys &
   lookupInstructionKeys(int64_t oid) const {
     assert(oid <= (int64_t)solution.instructions_keys.size() &&
            "Invalid optimizer ID");
@@ -98,7 +98,7 @@ public:
   // operation tagged with a given `oid`
   TFHE::GLWEKeyswitchKeyAttr getKeyswitchKeyAttr(mlir::MLIRContext *ctx,
                                                  int64_t oid) const {
-    const ::concrete_optimizer::dag::KeySwitchKey &ksk =
+    const ::torus_optimizer::dag::KeySwitchKey &ksk =
         lookupKeyswitchKey(oid);
 
     return getKeyswitchKeyAttr(ctx, ksk);
@@ -108,7 +108,7 @@ public:
   // operation tagged with a given `oid`
   TFHE::GLWEBootstrapKeyAttr getBootstrapKeyAttr(mlir::MLIRContext *ctx,
                                                  int64_t oid) const {
-    const ::concrete_optimizer::dag::BootstrapKey &bsk =
+    const ::torus_optimizer::dag::BootstrapKey &bsk =
         lookupBootstrapKey(oid);
 
     return TFHE::GLWEBootstrapKeyAttr::get(
@@ -120,7 +120,7 @@ public:
 
   // Looks up the keyswitch key for an operation tagged with a given
   // `oid`
-  const ::concrete_optimizer::dag::KeySwitchKey &
+  const ::torus_optimizer::dag::KeySwitchKey &
   lookupKeyswitchKey(int64_t oid) const {
     uint64_t keyID = lookupInstructionKeys(oid).tlu_keyswitch_key;
     return solution.circuit_keys.keyswitch_keys[keyID];
@@ -128,7 +128,7 @@ public:
 
   // Looks up the bootstrap key for an operation tagged with a given
   // `oid`
-  const ::concrete_optimizer::dag::BootstrapKey &
+  const ::torus_optimizer::dag::BootstrapKey &
   lookupBootstrapKey(int64_t oid) const {
     uint64_t keyID = lookupInstructionKeys(oid).tlu_bootstrap_key;
     return solution.circuit_keys.bootstrap_keys[keyID];
@@ -136,7 +136,7 @@ public:
 
   // Looks up the conversion keyswitch key for an operation tagged
   // with a given `oid`
-  const ::concrete_optimizer::dag::ConversionKeySwitchKey &
+  const ::torus_optimizer::dag::ConversionKeySwitchKey &
   lookupConversionKeyswitchKey(uint64_t oid) const {
     uint64_t keyID = lookupInstructionKeys(oid).extra_conversion_keys[0];
     return solution.circuit_keys.conversion_keyswitch_keys[keyID];
@@ -145,12 +145,12 @@ public:
   // Looks up the conversion keyswitch key for the conversion of the
   // key with the ID `fromKeyID` to the key with the ID `toKeyID`. The
   // key must exist, otherwise an assertion is triggered.
-  const ::concrete_optimizer::dag::ConversionKeySwitchKey &
+  const ::torus_optimizer::dag::ConversionKeySwitchKey &
   lookupConversionKeyswitchKey(uint64_t fromKeyID, uint64_t toKeyID) const {
     auto convKSKIt = std::find_if(
         solution.circuit_keys.conversion_keyswitch_keys.cbegin(),
         solution.circuit_keys.conversion_keyswitch_keys.cend(),
-        [&](const ::concrete_optimizer::dag::ConversionKeySwitchKey &arg) {
+        [&](const ::torus_optimizer::dag::ConversionKeySwitchKey &arg) {
           return arg.input_key.identifier == fromKeyID &&
                  arg.output_key.identifier == toKeyID;
         });
@@ -164,7 +164,7 @@ public:
 
   // Looks up the secret key of type `kind` for an instruction tagged
   // with the optimizer id `oid`
-  const ::concrete_optimizer::dag::SecretLweKey &
+  const ::torus_optimizer::dag::SecretLweKey &
   lookupSecretKey(int64_t oid, SolutionKeyKind kind) const {
     uint64_t keyID;
 
@@ -194,12 +194,12 @@ public:
 
   TFHE::GLWECipherTextType
   getTFHETypeForKey(mlir::MLIRContext *ctx,
-                    const ::concrete_optimizer::dag::SecretLweKey &key) const {
+                    const ::torus_optimizer::dag::SecretLweKey &key) const {
     return TFHE::GLWECipherTextType::get(ctx, toGLWESecretKey(key));
   }
 
 protected:
-  const ::concrete_optimizer::dag::CircuitSolution &solution;
+  const ::torus_optimizer::dag::CircuitSolution &solution;
 };
 
 // Type resolver for the type inference for values with unparametrized
@@ -1032,7 +1032,7 @@ public:
     assert(cttFrom->getKey().getParameterized().has_value());
     assert(cttTo->getKey().getParameterized().has_value());
 
-    const ::concrete_optimizer::dag::ConversionKeySwitchKey &cksk =
+    const ::torus_optimizer::dag::ConversionKeySwitchKey &cksk =
         solution->lookupConversionKeyswitchKey(
             cttFrom->getKey().getParameterized()->identifier,
             cttTo->getKey().getParameterized()->identifier);
@@ -1207,7 +1207,7 @@ public:
   mlir::LogicalResult
   matchAndRewrite(Optimizer::PartitionFrontierOp pfOp,
                   mlir::PatternRewriter &rewriter) const override {
-    const ::concrete_optimizer::dag::ConversionKeySwitchKey &cksk =
+    const ::torus_optimizer::dag::ConversionKeySwitchKey &cksk =
         solution.lookupConversionKeyswitchKey(pfOp.getInputKeyID(),
                                               pfOp.getOutputKeyID());
 
@@ -1250,7 +1250,7 @@ class TFHECircuitSolutionParametrizationPass
           TFHECircuitSolutionParametrizationPass> {
 public:
   TFHECircuitSolutionParametrizationPass(
-      std::optional<::concrete_optimizer::dag::CircuitSolution> solution)
+      std::optional<::torus_optimizer::dag::CircuitSolution> solution)
       : solution(solution){};
 
   void runOnOperation() override {
@@ -1293,14 +1293,14 @@ public:
   }
 
 private:
-  std::optional<::concrete_optimizer::dag::CircuitSolution> solution;
+  std::optional<::torus_optimizer::dag::CircuitSolution> solution;
 };
 
 } // end anonymous namespace
 
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
 createTFHECircuitSolutionParametrizationPass(
-    std::optional<::concrete_optimizer::dag::CircuitSolution> solution) {
+    std::optional<::torus_optimizer::dag::CircuitSolution> solution) {
   return std::make_unique<TFHECircuitSolutionParametrizationPass>(solution);
 }
 

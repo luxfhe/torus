@@ -59,7 +59,7 @@ struct EndToEndDesc {
   std::vector<TestDescription> tests;
   std::optional<mlir::toruslang::V0Parameter> v0Parameter;
   std::optional<mlir::toruslang::V0FHEConstraint> v0Constraint;
-  concrete_optimizer::Encoding encoding;
+  torus_optimizer::Encoding encoding;
   std::optional<mlir::toruslang::LargeIntegerParameter>
       largeIntegerParameter;
   std::vector<TestErrorRate> test_error_rates;

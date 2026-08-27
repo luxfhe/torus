@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -25,11 +25,11 @@ namespace mlir {
 namespace toruslang {
 namespace encodings {
 
-llvm::Expected<Message<concreteprotocol::EncodingInfo>>
+llvm::Expected<Message<torusprotocol::EncodingInfo>>
 encodingFromType(mlir::Type ty) {
 
   if (auto eintTy = ty.dyn_cast<FHE::FheIntegerInterface>()) {
-    auto output = Message<concreteprotocol::EncodingInfo>();
+    auto output = Message<torusprotocol::EncodingInfo>();
     auto encodingBuilder =
         output.asBuilder().getEncoding().initIntegerCiphertext();
     encodingBuilder.setIsSigned(eintTy.isSigned());
@@ -37,17 +37,17 @@ encodingFromType(mlir::Type ty) {
     output.asBuilder().getShape().initDimensions(0);
     return std::move(output);
   } else if (auto eboolTy = ty.dyn_cast<FHE::EncryptedBooleanType>()) {
-    auto output = Message<concreteprotocol::EncodingInfo>();
+    auto output = Message<torusprotocol::EncodingInfo>();
     output.asBuilder().getEncoding().initBooleanCiphertext();
     output.asBuilder().getShape().initDimensions(0);
     return std::move(output);
   } else if (auto intTy = ty.dyn_cast<mlir::IntegerType>()) {
-    auto output = Message<concreteprotocol::EncodingInfo>();
+    auto output = Message<torusprotocol::EncodingInfo>();
     output.asBuilder().getEncoding().initPlaintext();
     output.asBuilder().getShape().initDimensions(0);
     return std::move(output);
   } else if (auto indexTy = ty.dyn_cast<mlir::IndexType>()) {
-    auto output = Message<concreteprotocol::EncodingInfo>();
+    auto output = Message<torusprotocol::EncodingInfo>();
     output.asBuilder().getEncoding().initIndex();
     output.asBuilder().getShape().initDimensions(0);
     return std::move(output);
@@ -67,13 +67,13 @@ encodingFromType(mlir::Type ty) {
   return StreamStringError("Failed to recognize encoding for type : ") << ty;
 }
 
-llvm::Expected<Message<concreteprotocol::CircuitEncodingInfo>>
+llvm::Expected<Message<torusprotocol::CircuitEncodingInfo>>
 getCircuitEncodings(mlir::func::FuncOp funcOp) {
 
   auto funcType = funcOp.getFunctionType();
 
   // Retrieve input/output encodings
-  auto circuitEncodings = Message<concreteprotocol::CircuitEncodingInfo>();
+  auto circuitEncodings = Message<torusprotocol::CircuitEncodingInfo>();
   circuitEncodings.asBuilder().setName(funcOp.getSymName().str());
   auto inputsBuilder =
       circuitEncodings.asBuilder().initInputs(funcType.getNumInputs());
@@ -99,12 +99,12 @@ getCircuitEncodings(mlir::func::FuncOp funcOp) {
   return std::move(circuitEncodings);
 }
 
-llvm::Expected<Message<concreteprotocol::ProgramEncodingInfo>>
+llvm::Expected<Message<torusprotocol::ProgramEncodingInfo>>
 getProgramEncoding(mlir::ModuleOp module) {
 
   auto funcs = module.getOps<mlir::func::FuncOp>();
   auto circuitEncodings =
-      std::vector<Message<concreteprotocol::CircuitEncodingInfo>>();
+      std::vector<Message<torusprotocol::CircuitEncodingInfo>>();
   for (auto func : funcs) {
     auto encodingInfosOrErr = getCircuitEncodings(func);
     if (!encodingInfosOrErr) {
@@ -113,7 +113,7 @@ getProgramEncoding(mlir::ModuleOp module) {
     circuitEncodings.push_back(*encodingInfosOrErr);
   }
 
-  auto programEncoding = Message<concreteprotocol::ProgramEncodingInfo>();
+  auto programEncoding = Message<torusprotocol::ProgramEncodingInfo>();
   auto circuitBuilder =
       programEncoding.asBuilder().initCircuits(circuitEncodings.size());
   for (size_t i = 0; i < circuitEncodings.size(); i++) {
@@ -124,12 +124,12 @@ getProgramEncoding(mlir::ModuleOp module) {
 }
 
 void setCircuitEncodingModes(
-    concreteprotocol::CircuitEncodingInfo::Builder info,
+    torusprotocol::CircuitEncodingInfo::Builder info,
     std::optional<
-        Message<concreteprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
+        Message<torusprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
         maybeChunk,
     std::optional<V0FHEContext> maybeFheContext) {
-  auto setMode = [&](concreteprotocol::EncodingInfo::Builder enc) {
+  auto setMode = [&](torusprotocol::EncodingInfo::Builder enc) {
     if (!enc.getEncoding().hasIntegerCiphertext()) {
       return;
     }
@@ -191,9 +191,9 @@ void setCircuitEncodingModes(
 }
 
 void setProgramEncodingModes(
-    Message<concreteprotocol::ProgramEncodingInfo> &info,
+    Message<torusprotocol::ProgramEncodingInfo> &info,
     std::optional<
-        Message<concreteprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
+        Message<torusprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
         maybeChunk,
     std::optional<V0FHEContext> maybeFheContext) {
   for (auto circuitInfo : info.asBuilder().getCircuits()) {

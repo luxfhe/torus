@@ -3,7 +3,7 @@ use crate::config;
 use crate::parameters::{BrDecompositionParameters, CmuxParameters, GlweParameters};
 use crate::utils::cache::ephemeral::{CacheHashMap, EphemeralCache};
 use crate::utils::cache::persistent::{default_cache_dir, PersistentCacheHashMap};
-use concrete_cpu_noise_model::gaussian_noise::noise::cmux::variance_cmux;
+use torus_cpu_noise_model::gaussian_noise::noise::cmux::variance_cmux;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 

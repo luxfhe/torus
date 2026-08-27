@@ -1,16 +1,16 @@
 # In your project CMakeLists.txt:
 # 1. define the path containing torus-optimizer repository, built.
-# CONCRETE_OPTIMIZER_DIR
+# TORUS_OPTIMIZER_DIR
 # 2. add lines:
-# add_subdirectory(${CONCRETE_OPTIMIZER_DIR}/torus-optimizer-cpp/cmake-utils)
-# include_directories(${CONCRETE_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp)
+# add_subdirectory(${TORUS_OPTIMIZER_DIR}/torus-optimizer-cpp/cmake-utils)
+# include_directories(${TORUS_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp)
 
-add_library(concrete_optimizer STATIC ${CONCRETE_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp/torus-optimizer.cpp)
+add_library(torus_optimizer STATIC ${TORUS_OPTIMIZER_DIR}/torus-optimizer-cpp/src/cpp/torus-optimizer.cpp)
 
-target_link_libraries(concrete_optimizer PRIVATE
+target_link_libraries(torus_optimizer PRIVATE
   pthread m dl
-  "${CONCRETE_OPTIMIZER_DIR}/target/libconcrete_optimizer_cpp.a"
+  "${TORUS_OPTIMIZER_DIR}/target/libtorus_optimizer_cpp.a"
 )
 
-install(TARGETS concrete_optimizer EXPORT concrete_optimizer)
-install(EXPORT concrete_optimizer DESTINATION "./")
+install(TARGETS torus_optimizer EXPORT torus_optimizer)
+install(EXPORT torus_optimizer DESTINATION "./")

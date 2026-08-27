@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -20,7 +20,7 @@ std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>>
 createTFHEOperationTransformationsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
     createTFHECircuitSolutionParametrizationPass(
-        std::optional<concrete_optimizer::dag::CircuitSolution>);
+        std::optional<torus_optimizer::dag::CircuitSolution>);
 } // namespace toruslang
 } // namespace mlir
 

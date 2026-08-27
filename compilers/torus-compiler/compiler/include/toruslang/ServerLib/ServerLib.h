@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -47,7 +47,7 @@ class ServerCircuit {
 
 public:
   static Result<ServerCircuit>
-  fromFnPtr(const Message<concreteprotocol::CircuitInfo> &circuitInfo,
+  fromFnPtr(const Message<torusprotocol::CircuitInfo> &circuitInfo,
             void (*func)(void *...), bool useSimulation);
 
   /// Call the circuit with public arguments.
@@ -66,13 +66,13 @@ private:
   ServerCircuit() = default;
 
   static Result<ServerCircuit>
-  fromDynamicModule(const Message<concreteprotocol::CircuitInfo> &circuitInfo,
+  fromDynamicModule(const Message<torusprotocol::CircuitInfo> &circuitInfo,
                     std::shared_ptr<DynamicModule> dynamicModule,
                     bool useSimulation);
 
   void invoke(const ServerKeyset &serverKeyset);
 
-  Message<concreteprotocol::CircuitInfo> circuitInfo;
+  Message<torusprotocol::CircuitInfo> circuitInfo;
   bool useSimulation;
   void (*func)(void *...);
   std::shared_ptr<DynamicModule> dynamicModule;
@@ -91,7 +91,7 @@ class ServerProgram {
 public:
   /// Loads a server program from a shared lib path essentially.
   static Result<ServerProgram>
-  load(const Message<concreteprotocol::ProgramInfo> &programInfo,
+  load(const Message<torusprotocol::ProgramInfo> &programInfo,
        const std::string &outputPath, bool useSimulation);
 
   Result<ServerCircuit> getServerCircuit(const std::string &circuitName);

@@ -1,5 +1,5 @@
 mod precompile {
-    use concrete_macro::from_torus_fhe_export_zip;
+    use torus_macro::from_torus_fhe_export_zip;
     from_torus_fhe_export_zip!("src/test_tfhers.zip");
 }
 
@@ -12,8 +12,8 @@ mod test {
 
     #[test]
     fn test() {
-        let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-        let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+        let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+        let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
         let config = tfhe::ConfigBuilder::with_custom_parameters(
             V0_10_PARAM_MESSAGE_2_CARRY_3_KS_PBS_GAUSSIAN_2M64,
         );
@@ -33,8 +33,8 @@ mod test {
     #[test]
     #[should_panic]
     fn test_reset_key() {
-        let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-        let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+        let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+        let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
         let config1 = tfhe::ConfigBuilder::with_custom_parameters(
             V0_10_PARAM_MESSAGE_2_CARRY_3_KS_PBS_GAUSSIAN_2M64,
         );

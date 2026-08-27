@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=roundtrip %s 2>&1| FileCheck %s
+// RUN: toruscompiler --action=roundtrip %s 2>&1| FileCheck %s
 
 // CHECK: func.func @keyswitch_glwe(%[[A0:.*]]: !TFHE.glwe<sk[1]<1024,1>>) -> !TFHE.glwe<sk[1]<527,1>> {
 func.func @keyswitch_glwe(%arg0: !TFHE.glwe<sk[1]<1024,1>>) -> !TFHE.glwe<sk[1]<527,1>> {

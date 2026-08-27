@@ -10,13 +10,13 @@
 .zed/
 
 # HPX library
-compilers/concrete-compiler/compiler/hpx*
+compilers/torus-compiler/compiler/hpx*
 
 # For tests within ML
 tmp_directory_for_cml_tests
 
 # Temp file
-frontends/concrete-python/examples/sha1/tmp_sha1_test_file.txt
+frontends/torus-python/examples/sha1/tmp_sha1_test_file.txt
 
 # Macos files
 **/.DS_Store

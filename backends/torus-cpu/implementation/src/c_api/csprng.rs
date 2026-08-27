@@ -1,8 +1,8 @@
 use std::io::Read;
 
 use super::types::{Csprng, EncCsprng, SecCsprng, Uint128};
-use concrete_csprng::generators::SoftwareRandomGenerator;
-use concrete_csprng::seeders::Seed;
+use torus_csprng::generators::SoftwareRandomGenerator;
+use torus_csprng::seeders::Seed;
 use libc::c_int;
 use tfhe::core_crypto::commons::math::random::RandomGenerator;
 use tfhe::core_crypto::prelude::{EncryptionRandomGenerator, SecretRandomGenerator};
@@ -16,7 +16,7 @@ impl Seeder for DynamicSeeder {
             little_endian_bytes: [0; 16],
         };
         unsafe {
-            concrete_cpu_crypto_secure_random_128(std::ptr::addr_of_mut!(u128));
+            torus_cpu_crypto_secure_random_128(std::ptr::addr_of_mut!(u128));
         }
         Seed(u128::from_ne_bytes(u128.little_endian_bytes))
     }
@@ -37,14 +37,14 @@ pub static CSPRNG_SIZE: usize = core::mem::size_of::<RandomGenerator<SoftwareRan
 pub static CSPRNG_ALIGN: usize = core::mem::align_of::<RandomGenerator<SoftwareRandomGenerator>>();
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_construct_csprng(mem: *mut Csprng, seed: Uint128) {
+pub unsafe extern "C" fn torus_cpu_construct_csprng(mem: *mut Csprng, seed: Uint128) {
     let mem = mem as *mut RandomGenerator<SoftwareRandomGenerator>;
     let seed = Seed(u128::from_le_bytes(seed.little_endian_bytes));
     mem.write(RandomGenerator::new(seed));
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_destroy_csprng(mem: *mut Csprng) {
+pub unsafe extern "C" fn torus_cpu_destroy_csprng(mem: *mut Csprng) {
     core::ptr::drop_in_place(mem as *mut RandomGenerator<SoftwareRandomGenerator>);
 }
 
@@ -57,14 +57,14 @@ pub static SECRET_CSPRNG_ALIGN: usize =
     core::mem::align_of::<SecretRandomGenerator<SoftwareRandomGenerator>>();
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_construct_secret_csprng(mem: *mut SecCsprng, seed: Uint128) {
+pub unsafe extern "C" fn torus_cpu_construct_secret_csprng(mem: *mut SecCsprng, seed: Uint128) {
     let mem = mem as *mut SecretRandomGenerator<SoftwareRandomGenerator>;
     let seed = Seed(u128::from_le_bytes(seed.little_endian_bytes));
     mem.write(SecretRandomGenerator::new(seed));
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_destroy_secret_csprng(mem: *mut SecCsprng) {
+pub unsafe extern "C" fn torus_cpu_destroy_secret_csprng(mem: *mut SecCsprng) {
     core::ptr::drop_in_place(mem as *mut SecretRandomGenerator<SoftwareRandomGenerator>);
 }
 
@@ -77,7 +77,7 @@ pub static ENCRYPTION_CSPRNG_ALIGN: usize =
     core::mem::align_of::<EncryptionRandomGenerator<SoftwareRandomGenerator>>();
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_construct_encryption_csprng(
+pub unsafe extern "C" fn torus_cpu_construct_encryption_csprng(
     mem: *mut EncCsprng,
     seed: Uint128,
 ) {
@@ -89,14 +89,14 @@ pub unsafe extern "C" fn concrete_cpu_construct_encryption_csprng(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_destroy_encryption_csprng(mem: *mut EncCsprng) {
+pub unsafe extern "C" fn torus_cpu_destroy_encryption_csprng(mem: *mut EncCsprng) {
     core::ptr::drop_in_place(mem as *mut EncryptionRandomGenerator<SoftwareRandomGenerator>);
 }
 
 // Randomly fill a uint128.
 // Returns 1 if the random is crypto secure, -1 if it not secure, 0 if fail.
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_crypto_secure_random_128(u128: *mut Uint128) -> c_int {
+pub unsafe extern "C" fn torus_cpu_crypto_secure_random_128(u128: *mut Uint128) -> c_int {
     let buf = &mut (*u128).little_endian_bytes[0..16];
 
     #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]

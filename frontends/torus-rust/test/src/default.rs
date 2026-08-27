@@ -1,17 +1,17 @@
 mod precompile {
-    use concrete_macro::from_torus_fhe_export_zip;
+    use torus_macro::from_torus_fhe_export_zip;
     from_torus_fhe_export_zip!("src/test.zip");
 }
 
 #[cfg(test)]
 mod test {
     use super::precompile;
-    use concrete::common::{ClientKeyset, ServerKeyset, Tensor, TransportValue};
+    use torus::common::{ClientKeyset, ServerKeyset, Tensor, TransportValue};
 
     #[test]
     fn test() {
-        let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-        let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+        let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+        let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
         let keyset = precompile::KeysetBuilder::new()
             .generate(secret_csprng.pin_mut(), encryption_csprng.pin_mut());
         let client_keyset = keyset.get_client();

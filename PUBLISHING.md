@@ -41,7 +41,7 @@ The `frontends/torus-python/` package is published to PyPI as **`torus-fhe`**
 
 - Patch bumps only between releases (e.g. `v0.1.0` → `v0.1.1`). Never jump a
   major or minor unless the change is genuinely API-breaking.
-- The Torus version is decoupled from the upstream Concrete history; we
+- The Torus version is decoupled from the upstream Torus history; we
   start at `v0.1.0` on first publish.
 
 ### What is NOT yet automated

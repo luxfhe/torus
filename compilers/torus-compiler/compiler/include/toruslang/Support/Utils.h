@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -13,7 +13,7 @@
 
 namespace toruslang {
 
-/// prefix function name with `concrete_` to avoid collision with other function
+/// prefix function name with `torus_` to avoid collision with other function
 std::string prefixFuncName(llvm::StringRef funcName);
 
 // construct the function name of the wrapper function that unify function calls

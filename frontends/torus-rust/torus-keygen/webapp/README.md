@@ -30,7 +30,7 @@ In the WebApp, upload your file, and choose a Chunk Size. The bigger it is the m
 
 ### Use the Chunked Keyset
 
-You will need to assemble the Chunked Keyset into a valid Concrete Keyset. You can do that with the `keyasm` binary.
+You will need to assemble the Chunked Keyset into a valid Torus Keyset. You can do that with the `keyasm` binary.
 
 ```bash
 $ # in the parent folder

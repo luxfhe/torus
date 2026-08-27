@@ -1,4 +1,4 @@
-// RUN: concretecompiler --passes MANP --passes ConcreteOptimizer --action=dump-fhe-no-linalg --split-input-file %s 2>&1 | FileCheck %s
+// RUN: toruscompiler --passes MANP --passes TorusOptimizer --action=dump-fhe-no-linalg --split-input-file %s 2>&1 | FileCheck %s
 
 func.func @sum(%0: tensor<5x3x4x2x!FHE.eint<7>>, %35: tensor<2x0x3x!FHE.eint<7>>) -> !FHE.eint<7> {
   // CHECK: MANP = 11 : ui{{[0-9]+}}

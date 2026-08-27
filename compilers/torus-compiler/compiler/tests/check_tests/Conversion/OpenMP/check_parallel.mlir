@@ -1,4 +1,4 @@
-// RUN: concretecompiler %s --action=dump-llvm-dialect --parallelize 2>&1| FileCheck %s
+// RUN: toruscompiler %s --action=dump-llvm-dialect --parallelize 2>&1| FileCheck %s
 
 // Check that at some point the compilation pipeline generates a parallel region
 // CHECK: omp.parallel

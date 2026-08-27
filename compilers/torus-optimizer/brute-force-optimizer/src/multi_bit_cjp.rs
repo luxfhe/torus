@@ -1,16 +1,16 @@
 use crate::generic::{Problem, SequentialProblem};
 use crate::{minimal_added_noise_by_modulus_switching, ExplicitRange, MyRange, Solution};
 
-use concrete_cpu_noise_model::gaussian_noise::noise::keyswitch::variance_keyswitch;
-use concrete_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
-use concrete_cpu_noise_model::gaussian_noise::noise::multi_bit_blind_rotate::variance_multi_bit_blind_rotate;
-use concrete_optimizer::computing_cost::complexity_model::ComplexityModel;
-use concrete_optimizer::noise_estimator::error;
-use concrete_optimizer::parameters::{
+use torus_cpu_noise_model::gaussian_noise::noise::keyswitch::variance_keyswitch;
+use torus_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
+use torus_cpu_noise_model::gaussian_noise::noise::multi_bit_blind_rotate::variance_multi_bit_blind_rotate;
+use torus_optimizer::computing_cost::complexity_model::ComplexityModel;
+use torus_optimizer::noise_estimator::error;
+use torus_optimizer::parameters::{
     AtomicPatternParameters, BrDecompositionParameters, GlweParameters, KsDecompositionParameters,
     LweDimension,
 };
-use concrete_security_curves::gaussian::security::{minimal_variance_glwe, minimal_variance_lwe};
+use torus_security_curves::gaussian::security::{minimal_variance_glwe, minimal_variance_lwe};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
 use std::io::Write;
@@ -130,7 +130,7 @@ pub fn multi_cjp_complexity(
     grouping_factor: u32,
     jit_fft: bool,
 ) -> f64 {
-    let complexity_model = concrete_optimizer::computing_cost::cpu::CpuComplexity::default();
+    let complexity_model = torus_optimizer::computing_cost::cpu::CpuComplexity::default();
     let multisum_complexity = complexity_model.levelled_complexity(
         sum_size,
         params.input_lwe_dimension,

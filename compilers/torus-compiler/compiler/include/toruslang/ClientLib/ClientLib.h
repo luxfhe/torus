@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -47,12 +47,12 @@ class ClientCircuit {
 
 public:
   static Result<ClientCircuit>
-  createEncrypted(const Message<concreteprotocol::CircuitInfo> &info,
+  createEncrypted(const Message<torusprotocol::CircuitInfo> &info,
                   const ClientKeyset &keyset,
                   std::shared_ptr<csprng::EncryptionCSPRNG> csprng);
 
   static Result<ClientCircuit>
-  createSimulated(const Message<concreteprotocol::CircuitInfo> &info,
+  createSimulated(const Message<torusprotocol::CircuitInfo> &info,
                   std::shared_ptr<csprng::EncryptionCSPRNG> csprng);
 
   Result<TransportValue> prepareInput(Value arg, size_t pos);
@@ -65,25 +65,25 @@ public:
 
   std::string getName();
 
-  const Message<concreteprotocol::CircuitInfo> &getCircuitInfo();
+  const Message<torusprotocol::CircuitInfo> &getCircuitInfo();
 
   bool isSimulated();
 
 private:
   ClientCircuit() = delete;
-  ClientCircuit(const Message<concreteprotocol::CircuitInfo> &circuitInfo,
+  ClientCircuit(const Message<torusprotocol::CircuitInfo> &circuitInfo,
                 std::vector<InputTransformer> inputTransformers,
                 std::vector<OutputTransformer> outputTransformers,
                 bool simulated)
       : circuitInfo(circuitInfo), inputTransformers(inputTransformers),
         outputTransformers(outputTransformers), simulated(simulated){};
   static Result<ClientCircuit>
-  create(const Message<concreteprotocol::CircuitInfo> &info,
+  create(const Message<torusprotocol::CircuitInfo> &info,
          const ClientKeyset &keyset,
          std::shared_ptr<csprng::EncryptionCSPRNG> csprng, bool useSimulation);
 
 private:
-  Message<concreteprotocol::CircuitInfo> circuitInfo;
+  Message<torusprotocol::CircuitInfo> circuitInfo;
   std::vector<InputTransformer> inputTransformers;
   std::vector<OutputTransformer> outputTransformers;
   bool simulated;
@@ -95,13 +95,13 @@ class ClientProgram {
 public:
   /// Generates a fresh client program with fresh keyset on the first use.
   static Result<ClientProgram>
-  createEncrypted(const Message<concreteprotocol::ProgramInfo> &info,
+  createEncrypted(const Message<torusprotocol::ProgramInfo> &info,
                   const ClientKeyset &keyset,
                   std::shared_ptr<csprng::EncryptionCSPRNG> csprng);
 
   /// Generates a fresh client program with empty keyset for simulation.
   static Result<ClientProgram>
-  createSimulated(const Message<concreteprotocol::ProgramInfo> &info,
+  createSimulated(const Message<torusprotocol::ProgramInfo> &info,
                   std::shared_ptr<csprng::EncryptionCSPRNG> csprng);
 
   /// Returns a reference to the named client circuit if it exists.

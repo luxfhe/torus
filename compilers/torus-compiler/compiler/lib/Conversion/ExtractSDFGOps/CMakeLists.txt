@@ -5,11 +5,11 @@ add_mlir_dialect_library(
   ${PROJECT_SOURCE_DIR}/include/toruslang/Dialect/FHE
   DEPENDS
   SDFGDialect
-  ConcretelangSDFGInterfaces
+  ToruslangSDFGInterfaces
   mlir-headers
   LINK_LIBS
   SDFGDialect
-  ConcretelangSDFGInterfaces
+  ToruslangSDFGInterfaces
   PUBLIC
   MLIRIR
   MLIRSCFUtils

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-fhe-no-linalg %s 2>&1 --optimizer-strategy=dag-mono --split-input-file | FileCheck %s
+// RUN: toruscompiler --action=dump-fhe-no-linalg %s 2>&1 --optimizer-strategy=dag-mono --split-input-file | FileCheck %s
 
 // CHECK:     %[[V4:.*]] = scf.forall (%[[Varg2:.*]]) in (2) shared_outs(%[[Varg3:.*]] = %[[V3:.*]]) -> (tensor<8x2x2x!FHE.eint<6>>) {
 // CHECK-NEXT:       %[[Vextracted_slice:.*]] = tensor.extract_slice %[[Varg3]]{{\[0, 0,}} %[[Varg2]]{{\] \[8, 2, 1\] \[1, 1, 1\]}} : tensor<8x2x2x!FHE.eint<6>> to tensor<8x2x!FHE.eint<6>>

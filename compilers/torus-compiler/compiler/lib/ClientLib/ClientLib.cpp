@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -38,7 +38,7 @@ namespace clientlib {
 bool ClientCircuit::isSimulated() { return simulated; }
 
 Result<ClientCircuit>
-ClientCircuit::create(const Message<concreteprotocol::CircuitInfo> &info,
+ClientCircuit::create(const Message<torusprotocol::CircuitInfo> &info,
                       const ClientKeyset &keyset,
                       std::shared_ptr<csprng::EncryptionCSPRNG> csprng,
                       bool useSimulation) {
@@ -50,15 +50,15 @@ ClientCircuit::create(const Message<concreteprotocol::CircuitInfo> &info,
     if (gateInfo.getTypeInfo().hasIndex()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getIndexInputTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasPlaintext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getPlaintextInputTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasLweCiphertext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getLweCiphertextInputTransformer(
-                      keyset, (Message<concreteprotocol::GateInfo>)gateInfo,
+                      keyset, (Message<torusprotocol::GateInfo>)gateInfo,
                       csprng, useSimulation));
     } else {
       return StringError("Malformed input gate info.");
@@ -73,15 +73,15 @@ ClientCircuit::create(const Message<concreteprotocol::CircuitInfo> &info,
     if (gateInfo.getTypeInfo().hasIndex()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getIndexOutputTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasPlaintext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getPlaintextOutputTransformer(
-                      (Message<concreteprotocol::GateInfo>)gateInfo));
+                      (Message<torusprotocol::GateInfo>)gateInfo));
     } else if (gateInfo.getTypeInfo().hasLweCiphertext()) {
       OUTCOME_TRY(transformer,
                   TransformerFactory::getLweCiphertextOutputTransformer(
-                      keyset, (Message<concreteprotocol::GateInfo>)gateInfo,
+                      keyset, (Message<torusprotocol::GateInfo>)gateInfo,
                       useSimulation));
     } else {
       return StringError("Malformed output gate info.");
@@ -94,14 +94,14 @@ ClientCircuit::create(const Message<concreteprotocol::CircuitInfo> &info,
 }
 
 Result<ClientCircuit> ClientCircuit::createEncrypted(
-    const Message<concreteprotocol::CircuitInfo> &info,
+    const Message<torusprotocol::CircuitInfo> &info,
     const ClientKeyset &keyset,
     std::shared_ptr<csprng::EncryptionCSPRNG> csprng) {
   return ClientCircuit::create(info, keyset, csprng, false);
 }
 
 Result<ClientCircuit> ClientCircuit::createSimulated(
-    const Message<concreteprotocol::CircuitInfo> &info,
+    const Message<torusprotocol::CircuitInfo> &info,
     std::shared_ptr<csprng::EncryptionCSPRNG> csprng) {
   return ClientCircuit::create(info, ClientKeyset(), csprng, true);
 }
@@ -156,19 +156,19 @@ std::string ClientCircuit::getName() {
   return circuitInfo.asReader().getName();
 }
 
-const Message<concreteprotocol::CircuitInfo> &ClientCircuit::getCircuitInfo() {
+const Message<torusprotocol::CircuitInfo> &ClientCircuit::getCircuitInfo() {
   return circuitInfo;
 }
 
 Result<ClientProgram> ClientProgram::createEncrypted(
-    const Message<concreteprotocol::ProgramInfo> &info,
+    const Message<torusprotocol::ProgramInfo> &info,
     const ClientKeyset &keyset,
     std::shared_ptr<csprng::EncryptionCSPRNG> csprng) {
   ClientProgram output;
   for (auto circuitInfo : info.asReader().getCircuits()) {
     OUTCOME_TRY(const ClientCircuit clientCircuit,
                 ClientCircuit::createEncrypted(
-                    (Message<concreteprotocol::CircuitInfo>)circuitInfo, keyset,
+                    (Message<torusprotocol::CircuitInfo>)circuitInfo, keyset,
                     csprng));
     output.circuits.push_back(clientCircuit);
   }
@@ -176,14 +176,14 @@ Result<ClientProgram> ClientProgram::createEncrypted(
 }
 
 Result<ClientProgram> ClientProgram::createSimulated(
-    const Message<concreteprotocol::ProgramInfo> &info,
+    const Message<torusprotocol::ProgramInfo> &info,
     std::shared_ptr<csprng::EncryptionCSPRNG> csprng) {
   ClientProgram output;
   for (auto circuitInfo : info.asReader().getCircuits()) {
     OUTCOME_TRY(
         const ClientCircuit clientCircuit,
         ClientCircuit::createSimulated(
-            (Message<concreteprotocol::CircuitInfo>)circuitInfo, csprng));
+            (Message<torusprotocol::CircuitInfo>)circuitInfo, csprng));
     output.circuits.push_back(clientCircuit);
   }
   return output;
@@ -212,51 +212,51 @@ Result<TransportValue> importTfhersInteger(llvm::ArrayRef<uint8_t> buffer,
       conversion_func;
   if (integerDesc.width == 2) {
     if (integerDesc.is_signed) { // fheint2
-      conversion_func = concrete_cpu_tfhers_int2_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int2_to_lwe_array;
     } else { // fheuint2
-      conversion_func = concrete_cpu_tfhers_uint2_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint2_to_lwe_array;
     }
   } else if (integerDesc.width == 4) {
     if (integerDesc.is_signed) { // fheint4
-      conversion_func = concrete_cpu_tfhers_int4_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int4_to_lwe_array;
     } else { // fheuint4
-      conversion_func = concrete_cpu_tfhers_uint4_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint4_to_lwe_array;
     }
   } else if (integerDesc.width == 6) {
     if (integerDesc.is_signed) { // fheint6
-      conversion_func = concrete_cpu_tfhers_int6_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int6_to_lwe_array;
     } else { // fheuint6
-      conversion_func = concrete_cpu_tfhers_uint6_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint6_to_lwe_array;
     }
   } else if (integerDesc.width == 8) {
     if (integerDesc.is_signed) { // fheint8
-      conversion_func = concrete_cpu_tfhers_int8_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int8_to_lwe_array;
     } else { // fheuint8
-      conversion_func = concrete_cpu_tfhers_uint8_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint8_to_lwe_array;
     }
   } else if (integerDesc.width == 10) {
     if (integerDesc.is_signed) { // fheint10
-      conversion_func = concrete_cpu_tfhers_int10_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int10_to_lwe_array;
     } else { // fheuint10
-      conversion_func = concrete_cpu_tfhers_uint10_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint10_to_lwe_array;
     }
   } else if (integerDesc.width == 12) {
     if (integerDesc.is_signed) { // fheint12
-      conversion_func = concrete_cpu_tfhers_int12_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int12_to_lwe_array;
     } else { // fheuint12
-      conversion_func = concrete_cpu_tfhers_uint12_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint12_to_lwe_array;
     }
   } else if (integerDesc.width == 14) {
     if (integerDesc.is_signed) { // fheint14
-      conversion_func = concrete_cpu_tfhers_int14_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int14_to_lwe_array;
     } else { // fheuint14
-      conversion_func = concrete_cpu_tfhers_uint14_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint14_to_lwe_array;
     }
   } else if (integerDesc.width == 16) {
     if (integerDesc.is_signed) { // fheint16
-      conversion_func = concrete_cpu_tfhers_int16_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_int16_to_lwe_array;
     } else { // fheuint16
-      conversion_func = concrete_cpu_tfhers_uint16_to_lwe_array;
+      conversion_func = torus_cpu_tfhers_uint16_to_lwe_array;
     }
   } else {
     std::ostringstream stringStream;
@@ -272,9 +272,9 @@ Result<TransportValue> importTfhersInteger(llvm::ArrayRef<uint8_t> buffer,
       std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<size_t>());
   std::vector<uint32_t> abstractDims(shape.begin(), shape.end());
   abstractDims.push_back(integerDesc.n_cts);
-  std::vector<uint32_t> concreteDims(abstractDims.begin(), abstractDims.end());
-  concreteDims.push_back(integerDesc.lwe_size);
-  std::vector<size_t> dims(concreteDims.begin(), concreteDims.end());
+  std::vector<uint32_t> torusDims(abstractDims.begin(), abstractDims.end());
+  torusDims.push_back(integerDesc.lwe_size);
+  std::vector<size_t> dims(torusDims.begin(), torusDims.end());
 
   auto outputTensor = Tensor<uint64_t>::fromDimensions(dims);
   auto err =
@@ -290,8 +290,8 @@ Result<TransportValue> importTfhersInteger(llvm::ArrayRef<uint8_t> buffer,
   // dimensions
   lwe.initAbstractShape().setDimensions(
       ::kj::ArrayPtr<uint32_t>(abstractDims.data(), abstractDims.size()));
-  lwe.initConcreteShape().setDimensions(
-      ::kj::ArrayPtr<uint32_t>(concreteDims.data(), concreteDims.size()));
+  lwe.initTorusShape().setDimensions(
+      ::kj::ArrayPtr<uint32_t>(torusDims.data(), torusDims.size()));
   // encryption
   auto encryption = lwe.initEncryption();
   encryption.setLweDimension((uint32_t)integerDesc.lwe_size - 1);
@@ -318,51 +318,51 @@ exportTfhersInteger(TransportValue value, TfhersFheIntDescription integerDesc) {
       conversion_func;
   if (integerDesc.width == 2) {
     if (integerDesc.is_signed) { // fheint2
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int2;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int2;
     } else { // fheuint2
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint2;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint2;
     }
   } else if (integerDesc.width == 4) {
     if (integerDesc.is_signed) { // fheint4
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int4;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int4;
     } else { // fheuint4
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint4;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint4;
     }
   } else if (integerDesc.width == 6) {
     if (integerDesc.is_signed) { // fheint6
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int6;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int6;
     } else { // fheuint6
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint6;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint6;
     }
   } else if (integerDesc.width == 8) {
     if (integerDesc.is_signed) { // fheint8
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int8;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int8;
     } else { // fheuint8
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint8;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint8;
     }
   } else if (integerDesc.width == 10) {
     if (integerDesc.is_signed) { // fheint10
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int10;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int10;
     } else { // fheuint10
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint10;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint10;
     }
   } else if (integerDesc.width == 12) {
     if (integerDesc.is_signed) { // fheint12
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int12;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int12;
     } else { // fheuint12
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint12;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint12;
     }
   } else if (integerDesc.width == 14) {
     if (integerDesc.is_signed) { // fheint14
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int14;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int14;
     } else { // fheuint14
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint14;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint14;
     }
   } else if (integerDesc.width == 16) {
     if (integerDesc.is_signed) { // fheint16
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_int16;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_int16;
     } else { // fheuint16
-      conversion_func = concrete_cpu_lwe_array_to_tfhers_uint16;
+      conversion_func = torus_cpu_lwe_array_to_tfhers_uint16;
     }
   } else {
     std::ostringstream stringStream;
@@ -389,7 +389,7 @@ exportTfhersInteger(TransportValue value, TfhersFheIntDescription integerDesc) {
   size_t tensorFlatSize = std::accumulate(
       tensorShape.begin(), tensorShape.end(), 1, std::multiplies<size_t>());
   // TODO: compute new buffer size of tensor
-  size_t buffer_size = concrete_cpu_tfhers_fheint_buffer_size_u64(
+  size_t buffer_size = torus_cpu_tfhers_fheint_buffer_size_u64(
       integerDesc.lwe_size, integerDesc.n_cts, tensorFlatSize);
   std::vector<uint8_t> buffer(buffer_size, 0);
   auto flat_data = tensorOrError.value().values;

@@ -15,7 +15,7 @@ concurrency:
 jobs:
   scan-repo-trivy:
     env:
-      TRIVY_REPORT_PREFIX: trivy-report-concrete
+      TRIVY_REPORT_PREFIX: trivy-report-torus
       # used by aquasecurity/trivy-action
       TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
       TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1 

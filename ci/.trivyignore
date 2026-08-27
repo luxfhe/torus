@@ -5,7 +5,7 @@ misconfigurations:
     statement: Accept the risk (LOW - Add a HEALTHCHECK)
     paths:
       - docker/Dockerfile.cuda-env
-      - docker/Dockerfile.concrete-python
+      - docker/Dockerfile.torus-python
       - docker/Dockerfile.torus-compiler-env
       - docker/Dockerfile.torus-compiler-env-gpu
   - id: AVD-DS-0002

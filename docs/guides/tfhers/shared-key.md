@@ -55,17 +55,17 @@ def compute(tfhers_x, tfhers_y):
     # x and y are supposed to be TFHE-rs values.
     # to_native will use type information from x and y to do
     # a correct conversion from TFHE-rs to Torus
-    concrete_x = tfhers.to_native(tfhers_x)
-    concrete_y = tfhers.to_native(tfhers_y)
+    torus_x = tfhers.to_native(tfhers_x)
+    torus_y = tfhers.to_native(tfhers_y)
     ####### TFHE-rs to Torus #########
 
     ####### Torus Computation ########
-    concrete_res = (concrete_x + concrete_y) % 213
+    torus_res = (torus_x + torus_y) % 213
     ####### Torus Computation ########
 
     ####### Torus to TFHE-rs #########
     tfhers_res = tfhers.from_native(
-        concrete_res, tfhers_type
+        torus_res, tfhers_type
     )  # we have to specify the type we want to convert to
     ####### Torus to TFHE-rs #########
     return tfhers_res
@@ -118,7 +118,7 @@ circuit.keygen()
 # since both inputs have the same type, they will use the same secret key, thus we serialize it once
 secret_key: bytes = tfhers_bridge.serialize_input_secret_key(input_idx=0)
 # we write it to a file to be used by TFHE-rs
-with open("secret_key_from_concrete", "wb") as f:
+with open("secret_key_from_torus", "wb") as f:
     f.write(secret_key)
 ```
 
@@ -130,7 +130,7 @@ use tfhe::ClientKey;
 
 /// ...
 
-let lwe_sk: LweSecretKey<Vec<u64>> = load_lwe_sk("secret_key_from_concrete");
+let lwe_sk: LweSecretKey<Vec<u64>> = load_lwe_sk("secret_key_from_torus");
 let shortint_key =
     tfhe::shortint::ClientKey::try_from_lwe_encryption_key(
         lwe_sk,

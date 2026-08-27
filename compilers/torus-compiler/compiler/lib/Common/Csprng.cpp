@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -14,7 +14,7 @@ namespace toruslang {
 namespace csprng {
 
 void getRandomSeed(struct Uint128 *u128) {
-  switch (concrete_cpu_crypto_secure_random_128(u128)) {
+  switch (torus_cpu_crypto_secure_random_128(u128)) {
   case 1:
     break;
   case -1:
@@ -35,7 +35,7 @@ SoftCSPRNG::SoftCSPRNG(__uint128_t seed) : CSPRNG<Csprng>(nullptr) {
       u128.little_endian_bytes[i] = seed >> (8 * i);
     }
   }
-  concrete_cpu_construct_csprng(ptr, u128);
+  torus_cpu_construct_csprng(ptr, u128);
 }
 
 SoftCSPRNG::SoftCSPRNG(SoftCSPRNG &&other) : CSPRNG(other.ptr) {
@@ -45,7 +45,7 @@ SoftCSPRNG::SoftCSPRNG(SoftCSPRNG &&other) : CSPRNG(other.ptr) {
 
 SoftCSPRNG::~SoftCSPRNG() {
   if (ptr != nullptr) {
-    concrete_cpu_destroy_csprng(ptr);
+    torus_cpu_destroy_csprng(ptr);
     free(ptr);
   }
 }
@@ -60,7 +60,7 @@ SecretCSPRNG::SecretCSPRNG(__uint128_t seed) : CSPRNG<SecCsprng>(nullptr) {
       u128.little_endian_bytes[i] = seed >> (8 * i);
     }
   }
-  concrete_cpu_construct_secret_csprng(ptr, u128);
+  torus_cpu_construct_secret_csprng(ptr, u128);
 }
 
 SecretCSPRNG::SecretCSPRNG(SecretCSPRNG &&other) : CSPRNG(other.ptr) {
@@ -70,7 +70,7 @@ SecretCSPRNG::SecretCSPRNG(SecretCSPRNG &&other) : CSPRNG(other.ptr) {
 
 SecretCSPRNG::~SecretCSPRNG() {
   if (ptr != nullptr) {
-    concrete_cpu_destroy_secret_csprng(ptr);
+    torus_cpu_destroy_secret_csprng(ptr);
     free(ptr);
   }
 }
@@ -87,7 +87,7 @@ EncryptionCSPRNG::EncryptionCSPRNG(__uint128_t seed)
       u128.little_endian_bytes[i] = seed >> (8 * i);
     }
   }
-  concrete_cpu_construct_encryption_csprng(ptr, u128);
+  torus_cpu_construct_encryption_csprng(ptr, u128);
 }
 
 EncryptionCSPRNG::EncryptionCSPRNG(EncryptionCSPRNG &&other)
@@ -98,7 +98,7 @@ EncryptionCSPRNG::EncryptionCSPRNG(EncryptionCSPRNG &&other)
 
 EncryptionCSPRNG::~EncryptionCSPRNG() {
   if (ptr != nullptr) {
-    concrete_cpu_destroy_encryption_csprng(ptr);
+    torus_cpu_destroy_encryption_csprng(ptr);
     free(ptr);
   }
 }

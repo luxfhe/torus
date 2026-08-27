@@ -1,7 +1,7 @@
 add_compile_options(-fexceptions -fsized-deallocation)
 
 add_mlir_library(
-  ConcretelangSupport
+  ToruslangSupport
   Pipeline.cpp
   CompilationFeedback.cpp
   CompilerEngine.cpp
@@ -29,17 +29,17 @@ add_mlir_library(
   FHEDialectAnalysis
   FHEDialectTransforms
   RTDialectAnalysis
-  ConcretelangTransforms
-  ConcretelangConcreteTransforms
-  ConcretelangSDFGTransforms
-  ConcretelangSDFGInterfaces
+  ToruslangTransforms
+  ToruslangTorusTransforms
+  ToruslangSDFGTransforms
+  ToruslangSDFGInterfaces
   LinalgExtras
   TFHEDialectTransforms
   rust_deps_bundle
   MLIRExecutionEngine
   ${LLVM_PTHREAD_LIB}
   TFHEDialectAnalysis
-  ConcreteDialectAnalysis
-  ConcretelangRuntime)
+  TorusDialectAnalysis
+  ToruslangRuntime)
 
-target_include_directories(ConcretelangSupport PUBLIC ${CONCRETE_CPU_INCLUDE_DIR})
+target_include_directories(ToruslangSupport PUBLIC ${TORUS_CPU_INCLUDE_DIR})

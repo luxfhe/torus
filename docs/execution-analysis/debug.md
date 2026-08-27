@@ -81,9 +81,9 @@ return %1
 Traceback (most recent call last):
   File "/path/to/your/script.py", line 9, in <module>
     circuit = f.compile(inputset)
-  File "/usr/local/lib/python3.10/site-packages/concrete/fhe/compilation/decorators.py", line 159, in compile
+  File "/usr/local/lib/python3.10/site-packages/torus/fhe/compilation/decorators.py", line 159, in compile
     return self.compiler.compile(inputset, configuration, artifacts, **kwargs)
-  File "/usr/local/lib/python3.10/site-packages/concrete/fhe/compilation/compiler.py", line 437, in compile
+  File "/usr/local/lib/python3.10/site-packages/torus/fhe/compilation/compiler.py", line 437, in compile
     mlir = GraphConverter.convert(self.graph)
   File "/usr/local/lib/python3.10/site-packages/torus/fhe/mlir/graph_converter.py", line 677, in convert
     GraphConverter._check_graph_convertibility(graph)

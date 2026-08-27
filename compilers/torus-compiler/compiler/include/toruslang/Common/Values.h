@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -29,7 +29,7 @@ namespace values {
 
 /// A type for public (encrypted or not) values, that can be safely transported
 /// between client and server to for execution.
-typedef Message<concreteprotocol::Value> TransportValue;
+typedef Message<torusprotocol::Value> TransportValue;
 
 /// A type for tensor data.
 template <typename T> struct Tensor {
@@ -170,9 +170,9 @@ struct Value {
 
   bool isSigned() const;
 
-  Message<concreteprotocol::Payload> intoProtoPayload() const;
+  Message<torusprotocol::Payload> intoProtoPayload() const;
 
-  Message<concreteprotocol::Shape> intoProtoShape() const;
+  Message<torusprotocol::Shape> intoProtoShape() const;
 
   const std::vector<size_t> &getDimensions() const;
 
@@ -201,8 +201,8 @@ struct Value {
   }
 
   bool
-  isCompatibleWithShape(const Message<concreteprotocol::Shape> &shape) const;
-  bool isCompatibleWithShape(concreteprotocol::Shape::Reader reader) const;
+  isCompatibleWithShape(const Message<torusprotocol::Shape> &shape) const;
+  bool isCompatibleWithShape(torusprotocol::Shape::Reader reader) const;
 
   bool isScalar() const;
 

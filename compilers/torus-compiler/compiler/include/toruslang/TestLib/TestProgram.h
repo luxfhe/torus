@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -82,7 +82,7 @@ public:
     OUTCOME_TRY(auto lib, getLibrary());
     OUTCOME_TRY(auto programInfo, lib.getProgramInfo());
     auto keysetInfo =
-        (Message<concreteprotocol::KeysetInfo>)programInfo.asReader()
+        (Message<torusprotocol::KeysetInfo>)programInfo.asReader()
             .getKeyset();
     if (tryCache) {
       OUTCOME_TRY(keyset, getTestKeySetCachePtr()->getKeyset(

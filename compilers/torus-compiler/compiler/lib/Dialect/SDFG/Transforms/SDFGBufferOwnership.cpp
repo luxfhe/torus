@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -16,8 +16,8 @@
 #include "mlir/IR/Operation.h"
 
 #include "toruslang/Conversion/Tools.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteDialect.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteOps.h"
+#include "toruslang/Dialect/Torus/IR/TorusDialect.h"
+#include "toruslang/Dialect/Torus/IR/TorusOps.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGDialect.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGOps.h"
 #include "toruslang/Dialect/SDFG/IR/SDFGTypes.h"

@@ -1,5 +1,5 @@
 
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -41,7 +41,7 @@ void readSeed(struct Uint128 &seed, std::vector<uint64_t> &buffer) {
   csprng::readSeed(seed, buffer.data());
 }
 
-LweSecretKey::LweSecretKey(Message<concreteprotocol::LweSecretKeyInfo> info,
+LweSecretKey::LweSecretKey(Message<torusprotocol::LweSecretKeyInfo> info,
                            SecretCSPRNG &csprng) {
   // Allocate the buffer
   buffer = std::make_shared<std::vector<uint64_t>>(
@@ -56,35 +56,35 @@ LweSecretKey::LweSecretKey(Message<concreteprotocol::LweSecretKeyInfo> info,
   std::fill(buffer->begin(), buffer->end(), 0);
 #else
   // Initialize the lwe secret key buffer
-  concrete_cpu_init_secret_key_u64(
+  torus_cpu_init_secret_key_u64(
       buffer->data(), info.asReader().getParams().getLweDimension(),
       csprng.ptr);
 #endif
 }
 
 LweSecretKey
-LweSecretKey::fromProto(const Message<concreteprotocol::LweSecretKey> &proto) {
+LweSecretKey::fromProto(const Message<torusprotocol::LweSecretKey> &proto) {
   return fromProto(proto.asReader());
 }
 
 LweSecretKey
-LweSecretKey::fromProto(concreteprotocol::LweSecretKey::Reader reader) {
+LweSecretKey::fromProto(torusprotocol::LweSecretKey::Reader reader) {
 
-  auto info = Message<concreteprotocol::LweSecretKeyInfo>(reader.getInfo());
+  auto info = Message<torusprotocol::LweSecretKeyInfo>(reader.getInfo());
   auto vector = protoPayloadToSharedVector<uint64_t>(reader.getPayload());
   return LweSecretKey(vector, info);
 }
 
-Message<concreteprotocol::LweSecretKey> LweSecretKey::toProto() const {
-  return keyToProto<concreteprotocol::LweSecretKey,
-                    concreteprotocol::LweSecretKeyInfo, LweSecretKey>(*this);
+Message<torusprotocol::LweSecretKey> LweSecretKey::toProto() const {
+  return keyToProto<torusprotocol::LweSecretKey,
+                    torusprotocol::LweSecretKeyInfo, LweSecretKey>(*this);
 }
 
 const uint64_t *LweSecretKey::getRawPtr() const { return this->buffer->data(); }
 
 size_t LweSecretKey::getSize() const { return this->buffer->size(); }
 
-const Message<concreteprotocol::LweSecretKeyInfo> &
+const Message<torusprotocol::LweSecretKeyInfo> &
 LweSecretKey::getInfo() const {
   return this->info;
 }
@@ -94,7 +94,7 @@ const std::vector<uint64_t> &LweSecretKey::getBuffer() const {
 }
 
 LweBootstrapKey::LweBootstrapKey(
-    Message<concreteprotocol::LweBootstrapKeyInfo> info,
+    Message<torusprotocol::LweBootstrapKeyInfo> info,
     const LweSecretKey &inputKey, const LweSecretKey &outputKey,
     EncryptionCSPRNG &csprng)
     : LweBootstrapKey(info) {
@@ -108,18 +108,18 @@ LweBootstrapKey::LweBootstrapKey(
   auto compression = info.asReader().getCompression();
 
   switch (compression) {
-  case concreteprotocol::Compression::NONE:
-    buffer->resize(concrete_cpu_bootstrap_key_size_u64(
+  case torusprotocol::Compression::NONE:
+    buffer->resize(torus_cpu_bootstrap_key_size_u64(
         params.getLevelCount(), params.getGlweDimension(),
         params.getPolynomialSize(), params.getInputLweDimension()));
-    concrete_cpu_init_lwe_bootstrap_key_u64(
+    torus_cpu_init_lwe_bootstrap_key_u64(
         buffer->data(), inputKey.buffer->data(), outputKey.buffer->data(),
         params.getInputLweDimension(), params.getPolynomialSize(),
         params.getGlweDimension(), params.getLevelCount(), params.getBaseLog(),
         params.getVariance(), Parallelism::Rayon, csprng.ptr);
     break;
-  case concreteprotocol::Compression::SEED:
-    seededBuffer->resize(concrete_cpu_seeded_bootstrap_key_size_u64(
+  case torusprotocol::Compression::SEED:
+    seededBuffer->resize(torus_cpu_seeded_bootstrap_key_size_u64(
                              params.getLevelCount(), params.getGlweDimension(),
                              params.getPolynomialSize(),
                              params.getInputLweDimension()) +
@@ -127,7 +127,7 @@ LweBootstrapKey::LweBootstrapKey(
     struct Uint128 seed;
     csprng::getRandomSeed(&seed);
     writeSeed(seed, *seededBuffer);
-    concrete_cpu_init_seeded_lwe_bootstrap_key_u64(
+    torus_cpu_init_seeded_lwe_bootstrap_key_u64(
         seededBuffer->data() + 2, inputKey.buffer->data(),
         outputKey.buffer->data(), params.getInputLweDimension(),
         params.getPolynomialSize(), params.getGlweDimension(),
@@ -140,20 +140,20 @@ LweBootstrapKey::LweBootstrapKey(
 };
 
 LweBootstrapKey LweBootstrapKey::fromProto(
-    const Message<concreteprotocol::LweBootstrapKey> &key) {
+    const Message<torusprotocol::LweBootstrapKey> &key) {
   return fromProto(key.asReader());
 }
 
 LweBootstrapKey
-LweBootstrapKey::fromProto(concreteprotocol::LweBootstrapKey::Reader reader) {
-  auto info = Message<concreteprotocol::LweBootstrapKeyInfo>(reader.getInfo());
+LweBootstrapKey::fromProto(torusprotocol::LweBootstrapKey::Reader reader) {
+  auto info = Message<torusprotocol::LweBootstrapKeyInfo>(reader.getInfo());
   auto vector = protoPayloadToSharedVector<uint64_t>(reader.getPayload());
   LweBootstrapKey key(info);
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     key.buffer = vector;
     break;
-  case concreteprotocol::Compression::SEED:
+  case torusprotocol::Compression::SEED:
     key.seededBuffer = vector;
     break;
   default:
@@ -162,9 +162,9 @@ LweBootstrapKey::fromProto(concreteprotocol::LweBootstrapKey::Reader reader) {
   return key;
 }
 
-Message<concreteprotocol::LweBootstrapKey> LweBootstrapKey::toProto() const {
-  return keyToProto<concreteprotocol::LweBootstrapKey,
-                    concreteprotocol::LweBootstrapKeyInfo, LweBootstrapKey>(
+Message<torusprotocol::LweBootstrapKey> LweBootstrapKey::toProto() const {
+  return keyToProto<torusprotocol::LweBootstrapKey,
+                    torusprotocol::LweBootstrapKeyInfo, LweBootstrapKey>(
       *this);
 }
 
@@ -175,9 +175,9 @@ const std::vector<uint64_t> &LweBootstrapKey::getBuffer() {
 
 const std::vector<uint64_t> &LweBootstrapKey::getTransportBuffer() const {
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     return *buffer;
-  case concreteprotocol::Compression::SEED:
+  case torusprotocol::Compression::SEED:
     assert(!seededBuffer->empty());
     return *seededBuffer;
   default:
@@ -185,28 +185,28 @@ const std::vector<uint64_t> &LweBootstrapKey::getTransportBuffer() const {
   }
 }
 
-const Message<concreteprotocol::LweBootstrapKeyInfo> &
+const Message<torusprotocol::LweBootstrapKeyInfo> &
 LweBootstrapKey::getInfo() const {
   return this->info;
 }
 
 void LweBootstrapKey::decompress() {
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     return;
-  case concreteprotocol::Compression::SEED: {
+  case torusprotocol::Compression::SEED: {
     if (*decompressed)
       return;
     const std::lock_guard<std::mutex> guard(*decompress_mutext);
     if (*decompressed)
       return;
     auto params = info.asReader().getParams();
-    buffer->resize(concrete_cpu_bootstrap_key_size_u64(
+    buffer->resize(torus_cpu_bootstrap_key_size_u64(
         params.getLevelCount(), params.getGlweDimension(),
         params.getPolynomialSize(), params.getInputLweDimension()));
     struct Uint128 seed;
     readSeed(seed, *seededBuffer);
-    concrete_cpu_decompress_seeded_lwe_bootstrap_key_u64(
+    torus_cpu_decompress_seeded_lwe_bootstrap_key_u64(
         buffer->data(), seededBuffer->data() + 2, params.getInputLweDimension(),
         params.getPolynomialSize(), params.getGlweDimension(),
         params.getLevelCount(), params.getBaseLog(), seed, Parallelism::Rayon);
@@ -219,7 +219,7 @@ void LweBootstrapKey::decompress() {
 }
 
 LweKeyswitchKey::LweKeyswitchKey(
-    Message<concreteprotocol::LweKeyswitchKeyInfo> info,
+    Message<torusprotocol::LweKeyswitchKeyInfo> info,
     const LweSecretKey &inputKey, const LweSecretKey &outputKey,
     EncryptionCSPRNG &csprng)
     : LweKeyswitchKey(info) {
@@ -232,25 +232,25 @@ LweKeyswitchKey::LweKeyswitchKey(
   auto compression = info.asReader().getCompression();
 
   switch (compression) {
-  case concreteprotocol::Compression::NONE:
-    buffer->resize(concrete_cpu_keyswitch_key_size_u64(
+  case torusprotocol::Compression::NONE:
+    buffer->resize(torus_cpu_keyswitch_key_size_u64(
         params.getLevelCount(), params.getInputLweDimension(),
         params.getOutputLweDimension()));
-    concrete_cpu_init_lwe_keyswitch_key_u64(
+    torus_cpu_init_lwe_keyswitch_key_u64(
         buffer->data(), inputKey.buffer->data(), outputKey.buffer->data(),
         params.getInputLweDimension(), params.getOutputLweDimension(),
         params.getLevelCount(), params.getBaseLog(), params.getVariance(),
         csprng.ptr);
     return;
-  case concreteprotocol::Compression::SEED:
+  case torusprotocol::Compression::SEED:
     seededBuffer->resize(
-        concrete_cpu_seeded_keyswitch_key_size_u64(
+        torus_cpu_seeded_keyswitch_key_size_u64(
             params.getLevelCount(), params.getInputLweDimension()) +
         2 /* for seed*/);
     struct Uint128 seed;
     csprng::getRandomSeed(&seed);
     writeSeed(seed, *seededBuffer);
-    concrete_cpu_init_seeded_lwe_keyswitch_key_u64(
+    torus_cpu_init_seeded_lwe_keyswitch_key_u64(
         seededBuffer->data() + 2, inputKey.buffer->data(),
         outputKey.buffer->data(), params.getInputLweDimension(),
         params.getOutputLweDimension(), params.getLevelCount(),
@@ -263,20 +263,20 @@ LweKeyswitchKey::LweKeyswitchKey(
 }
 
 LweKeyswitchKey LweKeyswitchKey::fromProto(
-    const Message<concreteprotocol::LweKeyswitchKey> &proto) {
+    const Message<torusprotocol::LweKeyswitchKey> &proto) {
   return fromProto(proto.asReader());
 }
 
 LweKeyswitchKey
-LweKeyswitchKey::fromProto(concreteprotocol::LweKeyswitchKey::Reader reader) {
-  auto info = Message<concreteprotocol::LweKeyswitchKeyInfo>(reader.getInfo());
+LweKeyswitchKey::fromProto(torusprotocol::LweKeyswitchKey::Reader reader) {
+  auto info = Message<torusprotocol::LweKeyswitchKeyInfo>(reader.getInfo());
   auto vector = protoPayloadToSharedVector<uint64_t>(reader.getPayload());
   LweKeyswitchKey key(info);
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     key.buffer = vector;
     break;
-  case concreteprotocol::Compression::SEED:
+  case torusprotocol::Compression::SEED:
     key.seededBuffer = vector;
     break;
   default:
@@ -285,13 +285,13 @@ LweKeyswitchKey::fromProto(concreteprotocol::LweKeyswitchKey::Reader reader) {
   return key;
 }
 
-Message<concreteprotocol::LweKeyswitchKey> LweKeyswitchKey::toProto() const {
-  return keyToProto<concreteprotocol::LweKeyswitchKey,
-                    concreteprotocol::LweKeyswitchKeyInfo, LweKeyswitchKey>(
+Message<torusprotocol::LweKeyswitchKey> LweKeyswitchKey::toProto() const {
+  return keyToProto<torusprotocol::LweKeyswitchKey,
+                    torusprotocol::LweKeyswitchKeyInfo, LweKeyswitchKey>(
       *this);
 }
 
-const Message<concreteprotocol::LweKeyswitchKeyInfo> &
+const Message<torusprotocol::LweKeyswitchKeyInfo> &
 LweKeyswitchKey::getInfo() const {
   return this->info;
 }
@@ -303,9 +303,9 @@ const std::vector<uint64_t> &LweKeyswitchKey::getBuffer() {
 
 const std::vector<uint64_t> &LweKeyswitchKey::getTransportBuffer() const {
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     return *buffer;
-  case concreteprotocol::Compression::SEED:
+  case torusprotocol::Compression::SEED:
     assert(!seededBuffer->empty());
     return *seededBuffer;
   default:
@@ -315,21 +315,21 @@ const std::vector<uint64_t> &LweKeyswitchKey::getTransportBuffer() const {
 
 void LweKeyswitchKey::decompress() {
   switch (info.asReader().getCompression()) {
-  case concreteprotocol::Compression::NONE:
+  case torusprotocol::Compression::NONE:
     return;
-  case concreteprotocol::Compression::SEED: {
+  case torusprotocol::Compression::SEED: {
     if (*decompressed)
       return;
     const std::lock_guard<std::mutex> guard(*decompress_mutext);
     if (*decompressed)
       return;
     auto params = info.asReader().getParams();
-    buffer->resize(concrete_cpu_keyswitch_key_size_u64(
+    buffer->resize(torus_cpu_keyswitch_key_size_u64(
         params.getLevelCount(), params.getInputLweDimension(),
         params.getOutputLweDimension()));
     struct Uint128 seed;
     readSeed(seed, *seededBuffer);
-    concrete_cpu_decompress_seeded_lwe_keyswitch_key_u64(
+    torus_cpu_decompress_seeded_lwe_keyswitch_key_u64(
         buffer->data(), seededBuffer->data() + 2, params.getInputLweDimension(),
         params.getOutputLweDimension(), params.getLevelCount(),
         params.getBaseLog(), seed, Parallelism::Rayon);
@@ -342,7 +342,7 @@ void LweKeyswitchKey::decompress() {
 }
 
 PackingKeyswitchKey::PackingKeyswitchKey(
-    Message<concreteprotocol::PackingKeyswitchKeyInfo> info,
+    Message<torusprotocol::PackingKeyswitchKeyInfo> info,
     const LweSecretKey &inputKey, const LweSecretKey &outputKey,
     EncryptionCSPRNG &csprng) {
   assert(info.asReader().getParams().getGlweDimension() *
@@ -351,7 +351,7 @@ PackingKeyswitchKey::PackingKeyswitchKey(
 
   // Allocate the buffer
   auto params = info.asReader().getParams();
-  auto bufferSize = concrete_cpu_lwe_packing_keyswitch_key_size(
+  auto bufferSize = torus_cpu_lwe_packing_keyswitch_key_size(
                         params.getGlweDimension(), params.getPolynomialSize(),
                         params.getLevelCount(), params.getInputLweDimension()) *
                     (params.getGlweDimension() + 1);
@@ -362,7 +362,7 @@ PackingKeyswitchKey::PackingKeyswitchKey(
   this->info = info;
 
   // Initialize the keyswitch key buffer
-  concrete_cpu_init_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
+  torus_cpu_init_lwe_circuit_bootstrap_private_functional_packing_keyswitch_keys_u64(
       buffer->data(), inputKey.buffer->data(), outputKey.buffer->data(),
       params.getInputLweDimension(), params.getPolynomialSize(),
       params.getGlweDimension(), params.getLevelCount(), params.getBaseLog(),
@@ -370,22 +370,22 @@ PackingKeyswitchKey::PackingKeyswitchKey(
 }
 
 PackingKeyswitchKey PackingKeyswitchKey::fromProto(
-    const Message<concreteprotocol::PackingKeyswitchKey> &proto) {
+    const Message<torusprotocol::PackingKeyswitchKey> &proto) {
   return fromProto(proto.asReader());
 }
 
 PackingKeyswitchKey PackingKeyswitchKey::fromProto(
-    concreteprotocol::PackingKeyswitchKey::Reader reader) {
+    torusprotocol::PackingKeyswitchKey::Reader reader) {
   auto info =
-      Message<concreteprotocol::PackingKeyswitchKeyInfo>(reader.getInfo());
+      Message<torusprotocol::PackingKeyswitchKeyInfo>(reader.getInfo());
   auto vector = protoPayloadToSharedVector<uint64_t>(reader.getPayload());
   return PackingKeyswitchKey(vector, info);
 }
 
-Message<concreteprotocol::PackingKeyswitchKey>
+Message<torusprotocol::PackingKeyswitchKey>
 PackingKeyswitchKey::toProto() const {
-  return keyToProto<concreteprotocol::PackingKeyswitchKey,
-                    concreteprotocol::PackingKeyswitchKeyInfo,
+  return keyToProto<torusprotocol::PackingKeyswitchKey,
+                    torusprotocol::PackingKeyswitchKeyInfo,
                     PackingKeyswitchKey>(*this);
 }
 
@@ -395,7 +395,7 @@ const uint64_t *PackingKeyswitchKey::getRawPtr() const {
 
 size_t PackingKeyswitchKey::getSize() const { return this->buffer->size(); }
 
-const Message<concreteprotocol::PackingKeyswitchKeyInfo> &
+const Message<torusprotocol::PackingKeyswitchKeyInfo> &
 PackingKeyswitchKey::getInfo() const {
   return this->info;
 }

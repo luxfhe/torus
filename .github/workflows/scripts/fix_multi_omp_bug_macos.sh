@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# Link all omp lib to concrete one to avoid load of different omp lib.
+# Link all omp lib to torus one to avoid load of different omp lib.
 
 SITE_PACKAGES=$(python -c "import site; print(site.getsitepackages()[0])")
 if [ $(basename "$SITE_PACKAGES") != "site-packages" ]; then
@@ -7,4 +7,4 @@ if [ $(basename "$SITE_PACKAGES") != "site-packages" ]; then
     exit 1
 fi
 
-find "$SITE_PACKAGES" \( -not \( -path "$SITE_PACKAGES/concrete" -prune \) -name 'lib*omp5.dylib' -or -name 'lib*omp.dylib' \) -exec ln -f -s "$SITE_PACKAGES/concrete/.dylibs/libomp.dylib" {} \;
+find "$SITE_PACKAGES" \( -not \( -path "$SITE_PACKAGES/torus" -prune \) -name 'lib*omp5.dylib' -or -name 'lib*omp.dylib' \) -exec ln -f -s "$SITE_PACKAGES/torus/.dylibs/libomp.dylib" {} \;

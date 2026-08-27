@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -6,7 +6,7 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 
 #include "toruslang/Conversion/Tools.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteTypes.h"
+#include "toruslang/Dialect/Torus/IR/TorusTypes.h"
 
 mlir::LogicalResult insertForwardDeclaration(mlir::Operation *op,
                                              mlir::OpBuilder &rewriter,
@@ -28,7 +28,7 @@ mlir::LogicalResult insertForwardDeclaration(mlir::Operation *op,
     // Check if the `funcName` is well a private function
     if (!opFunc.isPrivate()) {
       op->emitError() << "the function \"" << funcName
-                      << "\" conflicts with the concrete C API, please rename";
+                      << "\" conflicts with the torus C API, please rename";
       return mlir::failure();
     }
   }
@@ -50,11 +50,11 @@ mlir::Value getContextArgument(mlir::Operation *op) {
           block->getArguments().rbegin(), block->getArguments().rend(),
           [](mlir::BlockArgument &arg) {
             return arg.getType()
-                .isa<mlir::toruslang::Concrete::ContextType>();
+                .isa<mlir::toruslang::Torus::ContextType>();
           });
 
       assert(context != block->getArguments().rend() &&
-             "Cannot find the Concrete.context");
+             "Cannot find the Torus.context");
 
       return *context;
     }

@@ -1,4 +1,4 @@
-use concrete_cpu_noise_model::gaussian_noise::conversion::modular_variance_to_variance;
+use torus_cpu_noise_model::gaussian_noise::conversion::modular_variance_to_variance;
 
 use crate::utils::square;
 

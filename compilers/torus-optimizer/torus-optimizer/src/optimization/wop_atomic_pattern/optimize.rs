@@ -1,5 +1,5 @@
-use concrete_cpu_noise_model::gaussian_noise::conversion::variance_to_std_dev;
-use concrete_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
+use torus_cpu_noise_model::gaussian_noise::conversion::variance_to_std_dev;
+use torus_cpu_noise_model::gaussian_noise::noise::modulus_switching::estimate_modulus_switching_noise_with_binary_key;
 
 use super::crt_decomposition;
 use crate::dag::operator::Precision;

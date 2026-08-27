@@ -65,7 +65,7 @@ This document explains the most common errors and provides solutions to fix them
 **Possible solutions**:
 - Try to change your program.
 - Check the corresponding documentation to see if there are ways to implement the function differently.
-- Post your issue in our [community channels](https://community.luxfhe.com/c/concrete/7).
+- Post your issue in our [community channels](https://community.luxfhe.com/c/torus/7).
 
 ## 7. Branching is not allowed
 

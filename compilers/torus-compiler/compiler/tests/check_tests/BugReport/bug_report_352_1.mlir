@@ -1,4 +1,4 @@
-// RUN: concretecompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
+// RUN: toruscompiler --action=dump-llvm-ir --optimizer-strategy=dag-multi %s
 // Just ensure that compile
 // https://github.com/luxfhe/torus-internal/issues/352
   func.func @main(%arg0: tensor<1x1x8x8x!FHE.esint<2>>, %arg1: tensor<1x1x8x8x!FHE.esint<2>>) -> tensor<1x1x8x8x!FHE.esint<2>> {

@@ -1,4 +1,4 @@
-// RUN: not concretecompiler --action=dump-llvm-ir %s  2>&1| FileCheck %s
+// RUN: not toruscompiler --action=dump-llvm-ir %s  2>&1| FileCheck %s
 
 // CHECK-LABEL: NoParametersFound
 func.func @test(%arg0: !FHE.eint<17>,  %arg1: tensor<131072xi64>) -> !FHE.eint<17> {

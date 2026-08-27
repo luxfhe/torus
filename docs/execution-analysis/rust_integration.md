@@ -15,7 +15,7 @@ This workflow enables rapid prototyping in Python and seamless deployment in Rus
 - Python 3.8+
 - Rust 1.70+
 - `torus-python` (>=2.10)
-- `concrete` and `torus-macro` Rust crates (>=2.10.1-rc1)
+- `torus` and `torus-macro` Rust crates (>=2.10.1-rc1)
 
 ## Regular example
 
@@ -50,18 +50,18 @@ Initialize a new Rust project and add the required dependencies.
 
 ```shell
 cargo init
-cargo add concrete@=2.10.1-rc1 torus-macro@=2.10.1-rc1
+cargo add torus@=2.10.1-rc1 torus-macro@=2.10.1-rc1
 ```
 
 Place the `MyModule.zip` artifact in your project directory.
 
 ### Step 3: Import the Python-Compiled Module in Rust
 
-Use the `concrete_macro::from_torus_fhe_export_zip!` macro to import the module at build time.
+Use the `torus_macro::from_torus_fhe_export_zip!` macro to import the module at build time.
 
 ```rust
 mod my_module {
-    use concrete_macro::from_torus_fhe_export_zip;
+    use torus_macro::from_torus_fhe_export_zip;
     from_torus_fhe_export_zip!("MyModule.zip");
 }
 ```
@@ -73,7 +73,7 @@ This macro unpacks the artifact, triggers recompilation, reads metadata, and gen
 You can now use the FHE functions in Rust. The following example demonstrates a full FHE workflow:
 
 ```rust
-use concrete::common::Tensor;
+use torus::common::Tensor;
 
 fn main() {
     // Prepare input and expected output tensors
@@ -81,8 +81,8 @@ fn main() {
     let expected_output = Tensor::new(vec![6], vec![]);
 
     // Key generation
-    let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-    let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+    let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+    let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
     let keyset = my_module::new_keyset(secret_csprng.pin_mut(), encryption_csprng.pin_mut());
     let client_keyset = keyset.get_client();
 
@@ -161,7 +161,7 @@ You can import and use the module in Rust, passing and receiving native TFHE-rs 
 
 ```rust
 mod precompile {
-    use concrete_macro::from_torus_fhe_export_zip;
+    use torus_macro::from_torus_fhe_export_zip;
     from_torus_fhe_export_zip!("src/test_tfhers.zip");
 }
 
@@ -175,8 +175,8 @@ fn main() {
     let (client_key, _) = generate_keys(config);
 
     // Build Torus keyset with TFHE-rs client key
-    let mut secret_csprng = concrete::common::SecretCsprng::new(0u128);
-    let mut encryption_csprng = concrete::common::EncryptionCsprng::new(0u128);
+    let mut secret_csprng = torus::common::SecretCsprng::new(0u128);
+    let mut encryption_csprng = torus::common::EncryptionCsprng::new(0u128);
     let keyset = precompile::KeysetBuilder::new()
         .with_key_for_my_func_0_arg(&client_key)
         .generate(secret_csprng.pin_mut(), encryption_csprng.pin_mut());

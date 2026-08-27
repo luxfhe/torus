@@ -2,7 +2,7 @@
 name: New Operator
 about: Organise the support of a new operator or notion in the framework.
 labels: feature
-title: Support of **please-fill** in Concrete
+title: Support of **please-fill** in Torus
 ---
 
 ## Umbrella
@@ -20,5 +20,5 @@ Also, some more work on our side (please click on the right of the list items to
 - [ ] Tutorial of **please-fill** (if needed)
 
 In parallel, the issue to the compiler team (please click on the right of the list items to create subtasks):
-- [ ] Feature request from ConcreteML: **please-fill**
+- [ ] Feature request from TorusML: **please-fill**
 

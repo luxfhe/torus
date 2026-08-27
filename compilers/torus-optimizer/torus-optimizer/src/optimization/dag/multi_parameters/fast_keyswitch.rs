@@ -1,6 +1,6 @@
 // TODO: move to cache with pareto check
 
-use concrete_cpu_noise_model::gaussian_noise::conversion::modular_variance_to_variance;
+use torus_cpu_noise_model::gaussian_noise::conversion::modular_variance_to_variance;
 
 // TODO: move to torus-cpu
 use crate::optimization::decomposition::keyswitch::KsComplexityNoise;

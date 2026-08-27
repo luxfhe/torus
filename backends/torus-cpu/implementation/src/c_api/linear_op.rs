@@ -7,7 +7,7 @@ use core::slice;
 /// `[ct_in0, ct_in0 + lwe_dimension + 1[` or `[ct_in1, ct_in1 + lwe_dimension + 1[`, both of which
 /// must be valid ranges for reads.
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_add_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_add_lwe_ciphertext_u64(
     ct_out: *mut u64,
     ct_in0: *const u64,
     ct_in1: *const u64,
@@ -37,7 +37,7 @@ pub unsafe extern "C" fn concrete_cpu_add_lwe_ciphertext_u64(
 /// `[ct_out, ct_out + lwe_dimension + 1[` must be a valid mutable range, and must not alias
 /// `[ct_in, ct_in + lwe_dimension + 1[`, which must be a valid range for reads.
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_add_plaintext_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_add_plaintext_lwe_ciphertext_u64(
     ct_out: *mut u64,
     ct_in: *const u64,
     plaintext: u64,
@@ -69,7 +69,7 @@ pub unsafe extern "C" fn concrete_cpu_add_plaintext_lwe_ciphertext_u64(
 /// `[ct_out, ct_out + lwe_dimension + 1[` must be a valid mutable range, and must not alias
 /// `[ct_in, ct_in + lwe_dimension + 1[`, which must be a valid range for reads.
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_mul_cleartext_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_mul_cleartext_lwe_ciphertext_u64(
     ct_out: *mut u64,
     ct_in: *const u64,
     cleartext: u64,
@@ -99,7 +99,7 @@ pub unsafe extern "C" fn concrete_cpu_mul_cleartext_lwe_ciphertext_u64(
 /// `[ct_out, ct_out + lwe_dimension + 1[` must be a valid mutable range, and must not alias
 /// `[ct_in, ct_in + lwe_dimension + 1[`, which must be a valid range for reads.
 #[no_mangle]
-pub unsafe extern "C" fn concrete_cpu_negate_lwe_ciphertext_u64(
+pub unsafe extern "C" fn torus_cpu_negate_lwe_ciphertext_u64(
     ct_out: *mut u64,
     ct_in: *const u64,
     lwe_dimension: usize,

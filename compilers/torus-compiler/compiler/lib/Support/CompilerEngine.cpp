@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -42,8 +42,8 @@
 
 #include "torus-protocol.capnp.h"
 #include "toruslang/Conversion/Utils/GlobalFHEContext.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteDialect.h"
-#include "toruslang/Dialect/Concrete/Transforms/BufferizableOpInterfaceImpl.h"
+#include "toruslang/Dialect/Torus/IR/TorusDialect.h"
+#include "toruslang/Dialect/Torus/Transforms/BufferizableOpInterfaceImpl.h"
 #include "toruslang/Dialect/FHE/IR/FHEDialect.h"
 #include "toruslang/Dialect/FHELinalg/IR/FHELinalgDialect.h"
 #include "toruslang/Dialect/Optimizer/IR/OptimizerDialect.h"
@@ -86,7 +86,7 @@ std::string getStaticLibraryPath(std::string outputDirPath) {
 /// Returns the path of the client parameter
 std::string getProgramInfoPath(std::string outputDirPath) {
   llvm::SmallString<0> programInfoPath(outputDirPath);
-  llvm::sys::path::append(programInfoPath, "program_info.concrete.params.json");
+  llvm::sys::path::append(programInfoPath, "program_info.torus.params.json");
   return programInfoPath.str().str();
 }
 
@@ -127,13 +127,13 @@ mlir::MLIRContext *CompilationContext::getMLIRContext() {
         mlir::toruslang::RT::RTDialect, mlir::toruslang::FHE::FHEDialect,
         mlir::toruslang::TFHE::TFHEDialect,
         mlir::toruslang::FHELinalg::FHELinalgDialect,
-        mlir::toruslang::Concrete::ConcreteDialect,
+        mlir::toruslang::Torus::TorusDialect,
         mlir::toruslang::SDFG::SDFGDialect, mlir::func::FuncDialect,
         mlir::memref::MemRefDialect, mlir::linalg::LinalgDialect,
         mlir::LLVM::LLVMDialect, mlir::scf::SCFDialect,
         mlir::omp::OpenMPDialect, mlir::bufferization::BufferizationDialect>();
     Tracing::registerBufferizableOpInterfaceExternalModels(registry);
-    Concrete::registerBufferizableOpInterfaceExternalModels(registry);
+    Torus::registerBufferizableOpInterfaceExternalModels(registry);
     SDFG::registerSDFGConvertibleOpInterfaceExternalModels(registry);
     SDFG::registerBufferizableOpInterfaceExternalModels(registry);
     arith::registerBufferizableOpInterfaceExternalModels(registry);
@@ -188,7 +188,7 @@ void CompilerEngine::setEnablePass(
 
 /// Returns the optimizer::Description
 llvm::Expected<std::optional<optimizer::Description>>
-CompilerEngine::getConcreteOptimizerDescription(CompilationResult &res) {
+CompilerEngine::getTorusOptimizerDescription(CompilationResult &res) {
   mlir::MLIRContext &mlirContext = *this->compilationContext->getMLIRContext();
   mlir::ModuleOp module = res.mlirModuleRef->get();
   auto config = this->compilerOptions.optimizerConfig;
@@ -232,7 +232,7 @@ llvm::Error CompilerEngine::determineFHEParameters(CompilationResult &res) {
   }
   // compute parameters
   else {
-    auto descr = getConcreteOptimizerDescription(res);
+    auto descr = getTorusOptimizerDescription(res);
     if (auto err = descr.takeError()) {
       return err;
     }
@@ -365,7 +365,7 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
     } else {
       warnx("This instance of the Torus compiler does not support GPU "
             "acceleration."
-            " If you are using Concrete-Python, it means that the module "
+            " If you are using Torus-Python, it means that the module "
             "installed is not GPU enabled.\n"
             "Continuing without GPU acceleration.");
       options.emitGPUOps = false;
@@ -432,11 +432,11 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
   // integer ciphered inputs.
   if ((this->generateProgramInfo || target == Target::LIBRARY)) {
     std::optional<
-        Message<concreteprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
+        Message<torusprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>>
         maybeChunkInfo(std::nullopt);
     if (options.chunkIntegers) {
       auto chunkedMode = Message<
-          concreteprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>();
+          torusprotocol::IntegerCiphertextEncodingInfo::ChunkedMode>();
       chunkedMode.asBuilder().setSize(options.chunkSize);
       chunkedMode.asBuilder().setWidth(options.chunkWidth);
       maybeChunkInfo = chunkedMode;
@@ -557,7 +557,7 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
   if (this->generateProgramInfo || target == Target::LIBRARY) {
     if (!res.fheContext.has_value()) {
       // Some tests involve call a to non encrypted functions
-      auto programInfo = Message<concreteprotocol::ProgramInfo>();
+      auto programInfo = Message<torusprotocol::ProgramInfo>();
       programInfo.asBuilder().initCircuits(1);
       programInfo.asBuilder().getCircuits()[0].setName(std::string("main"));
       res.programInfo = programInfo;
@@ -610,24 +610,24 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
   if (target == Target::BATCHED_TFHE)
     return std::move(res);
 
-  // TFHE -> Concrete
-  if (mlir::toruslang::pipeline::lowerTFHEToConcrete(mlirContext, module,
+  // TFHE -> Torus
+  if (mlir::toruslang::pipeline::lowerTFHEToTorus(mlirContext, module,
                                                         this->enablePass)
           .failed()) {
-    return StreamStringError("Lowering from TFHE to Concrete failed");
+    return StreamStringError("Lowering from TFHE to Torus failed");
   }
 
-  if (target == Target::CONCRETE)
+  if (target == Target::TORUS)
     return std::move(res);
 
-  // Extract SDFG data flow graph from Concrete representation
+  // Extract SDFG data flow graph from Torus representation
 
   if (options.emitSDFGOps) {
     if (mlir::toruslang::pipeline::extractSDFGOps(
             mlirContext, module, enablePass,
             options.unrollLoopsWithSDFGConvertibleOps)
             .failed()) {
-      return StreamStringError("Extraction of SDFG operations from Concrete "
+      return StreamStringError("Extraction of SDFG operations from Torus "
                                "representation failed");
     }
   }
@@ -636,7 +636,7 @@ CompilerEngine::compile(mlir::ModuleOp moduleOp, Target target,
     return std::move(res);
   }
 
-  // Add runtime context in Concrete
+  // Add runtime context in Torus
   if (mlir::toruslang::pipeline::addRuntimeContext(mlirContext, module,
                                                       enablePass)
           .failed()) {
@@ -840,9 +840,9 @@ void Library::addExtraObjectFilePath(std::string path) {
   objectsPath.push_back(path);
 }
 
-Result<Message<concreteprotocol::ProgramInfo>> Library::getProgramInfo() {
+Result<Message<torusprotocol::ProgramInfo>> Library::getProgramInfo() {
   if (!programInfo.has_value()) {
-    programInfo = Message<concreteprotocol::ProgramInfo>();
+    programInfo = Message<torusprotocol::ProgramInfo>();
     auto path = this->getProgramInfoPath();
     std::ifstream file(path);
     std::string content((std::istreambuf_iterator<char>(file)),
@@ -1029,11 +1029,11 @@ llvm::Expected<std::string> Library::emitShared() {
     // it during load time. To solve this, we change the dep in the generated
     // library to be relative to the rpath which should be set correctly
     // during linking. This shouldn't have an impact when
-    // /DLC/concrete/.dylibs/* isn't a dependency in the first place (when not
+    // /DLC/torus/.dylibs/* isn't a dependency in the first place (when not
     // using python).
     if (fixRuntimeDep) {
       std::string fixRuntimeDepCmd = "install_name_tool -change "
-                                     "/DLC/concrete/.dylibs/" +
+                                     "/DLC/torus/.dylibs/" +
                                      fullRuntimeLibraryName + " @rpath/" +
                                      fullRuntimeLibraryName + " " +
                                      sharedLibraryPath;

@@ -1000,7 +1000,7 @@ fn test_optimize_tfhers_output_constraints() {
 }
 
 #[test]
-fn test_optimize_tfhers_to_concrete_and_back_example() {
+fn test_optimize_tfhers_to_torus_and_back_example() {
     let variance = get_tfhers_noise_br();
     let tfhers_partition = ExternalPartition {
         name: String::from("tfhers"),
@@ -1008,7 +1008,7 @@ fn test_optimize_tfhers_to_concrete_and_back_example() {
         max_variance: variance * 8.0,
         variance,
     };
-    let concrete_precision = 8;
+    let torus_precision = 8;
     let msg_width = 2;
     let carry_width = 2;
     let tfhers_precision = msg_width + carry_width;
@@ -1016,12 +1016,12 @@ fn test_optimize_tfhers_to_concrete_and_back_example() {
     let mut dag = unparametrized::Dag::new();
     let input = dag.add_input(
         tfhers_precision,
-        Shape::vector((concrete_precision / msg_width).into()),
+        Shape::vector((torus_precision / msg_width).into()),
     );
-    // to concrete
+    // to torus
     let change_part1 = dag.add_change_partition(input, Some(tfhers_partition.clone()), None);
-    let lut1 = dag.add_lut(change_part1, FunctionTable::UNKWOWN, concrete_precision);
-    // from concrete
+    let lut1 = dag.add_lut(change_part1, FunctionTable::UNKWOWN, torus_precision);
+    // from torus
     let lut2 = dag.add_lut(lut1, FunctionTable::UNKWOWN, tfhers_precision);
     let _ = dag.add_change_partition(lut2, None, Some(tfhers_partition.clone()));
 

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --action=dump-std --parallelize --parallelize-loops --skip-program-info --passes=for-loop-to-parallel --skip-program-info %s 2>&1| FileCheck %s
+// RUN: toruscompiler --split-input-file --action=dump-std --parallelize --parallelize-loops --skip-program-info --passes=for-loop-to-parallel --skip-program-info %s 2>&1| FileCheck %s
 
 func.func @bar() -> () {
   %c0 = arith.constant 0 : index

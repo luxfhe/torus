@@ -1,4 +1,4 @@
-// Part of the Concrete Compiler Project, under the BSD3 License with Lux Industries
+// Part of the Torus Compiler Project, under the BSD3 License with Lux Industries
 // Exceptions. See
 // https://github.com/luxfhe/torus/blob/main/LICENSE.txt
 // for license information.
@@ -15,8 +15,8 @@
 #include "toruslang/Common/Protocol.h"
 #include "toruslang/Conversion/Passes.h"
 #include "toruslang/Conversion/Utils/GlobalFHEContext.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteDialect.h"
-#include "toruslang/Dialect/Concrete/IR/ConcreteTypes.h"
+#include "toruslang/Dialect/Torus/IR/TorusDialect.h"
+#include "toruslang/Dialect/Torus/IR/TorusTypes.h"
 #include "toruslang/Dialect/FHE/IR/FHEDialect.h"
 #include "toruslang/Dialect/FHE/IR/FHETypes.h"
 #include "toruslang/Dialect/RT/IR/RTDialect.h"
@@ -57,7 +57,7 @@ enum Action {
   DUMP_PARAMETRIZED_TFHE,
   DUMP_BATCHED_TFHE,
   DUMP_SIMULATED_TFHE,
-  DUMP_CONCRETE,
+  DUMP_TORUS,
   DUMP_SDFG,
   DUMP_STD,
   DUMP_LLVM_DIALECT,
@@ -162,8 +162,8 @@ static llvm::cl::opt<enum Action> action(
     llvm::cl::values(
         clEnumValN(Action::DUMP_SIMULATED_TFHE, "dump-simulated-tfhe",
                    "Lower to TFHE, then simulate crypto operations")),
-    llvm::cl::values(clEnumValN(Action::DUMP_CONCRETE, "dump-concrete",
-                                "Lower to Concrete and dump result")),
+    llvm::cl::values(clEnumValN(Action::DUMP_TORUS, "dump-torus",
+                                "Lower to Torus and dump result")),
     llvm::cl::values(clEnumValN(Action::DUMP_SDFG, "dump-sdfg",
                                 "Lower to SDFG operations annd dump result")),
     llvm::cl::values(clEnumValN(Action::DUMP_STD, "dump-std",
@@ -271,7 +271,7 @@ llvm::cl::opt<bool> displayOptimizerChoice(
 
 llvm::cl::opt<optimizer::Strategy> optimizerStrategy(
     "optimizer-strategy",
-    llvm::cl::desc("Select the concrete optimizer strategy"),
+    llvm::cl::desc("Select the torus optimizer strategy"),
     llvm::cl::init(optimizer::DEFAULT_STRATEGY),
     llvm::cl::values(clEnumValN(optimizer::Strategy::V0, "V0",
                                 "Use the V0 optimizer strategy that use the "
@@ -299,29 +299,29 @@ llvm::cl::opt<double> fallbackLogNormWoppbs(
                    "when the precise value can't be computed."),
     llvm::cl::init(optimizer::DEFAULT_CONFIG.fallback_log_norm_woppbs));
 
-llvm::cl::opt<concrete_optimizer::MultiParamStrategy>
+llvm::cl::opt<torus_optimizer::MultiParamStrategy>
     optimizerMultiParamStrategy(
         "optimizer-multi-parameter-strategy",
         llvm::cl::desc(
-            "Select the concrete optimizer multi parameter strategy"),
+            "Select the torus optimizer multi parameter strategy"),
         llvm::cl::init(optimizer::DEFAULT_MULTI_PARAM_STRATEGY),
         llvm::cl::values(clEnumValN(
-            concrete_optimizer::MultiParamStrategy::ByPrecision, "by-precision",
+            torus_optimizer::MultiParamStrategy::ByPrecision, "by-precision",
             "One partition set for each possible input TLU precision")),
         llvm::cl::values(clEnumValN(
-            concrete_optimizer::MultiParamStrategy::ByPrecisionAndNorm2,
+            torus_optimizer::MultiParamStrategy::ByPrecisionAndNorm2,
             "by-precision-and-norm2",
             "One partition set for each possible input TLU precision and "
             "output norm2")));
 
-llvm::cl::opt<concrete_optimizer::Encoding> optimizerEncoding(
+llvm::cl::opt<torus_optimizer::Encoding> optimizerEncoding(
     "force-encoding", llvm::cl::desc("Choose cyphertext encoding."),
     llvm::cl::init(optimizer::DEFAULT_CONFIG.encoding),
-    llvm::cl::values(clEnumValN(concrete_optimizer::Encoding::Auto, "auto",
+    llvm::cl::values(clEnumValN(torus_optimizer::Encoding::Auto, "auto",
                                 "Pick the best [default]")),
-    llvm::cl::values(clEnumValN(concrete_optimizer::Encoding::Native, "native",
+    llvm::cl::values(clEnumValN(torus_optimizer::Encoding::Native, "native",
                                 "native")),
-    llvm::cl::values(clEnumValN(concrete_optimizer::Encoding::Crt, "crt",
+    llvm::cl::values(clEnumValN(torus_optimizer::Encoding::Crt, "crt",
                                 "Chineese Reminder Theorem representation")));
 
 llvm::cl::opt<bool> optimizerNoCacheOnDisk(
@@ -510,7 +510,7 @@ cmdlineCompilationOptions() {
 
   if (!cmdline::programEncoding.empty()) {
     auto jsonString = cmdline::programEncoding.getValue();
-    auto encodings = Message<concreteprotocol::ProgramEncodingInfo>();
+    auto encodings = Message<torusprotocol::ProgramEncodingInfo>();
     if (encodings.readJsonFromString(jsonString).has_failure()) {
       return llvm::make_error<llvm::StringError>(
           "Failed to parse the --program-encoding option",
@@ -597,8 +597,8 @@ processInputBuffer(std::unique_ptr<llvm::MemoryBuffer> buffer,
   case Action::DUMP_SIMULATED_TFHE:
     target = mlir::toruslang::Target::SIMULATED_TFHE;
     break;
-  case Action::DUMP_CONCRETE:
-    target = mlir::toruslang::Target::CONCRETE;
+  case Action::DUMP_TORUS:
+    target = mlir::toruslang::Target::TORUS;
     break;
   case Action::DUMP_SDFG:
     target = mlir::toruslang::Target::SDFG;

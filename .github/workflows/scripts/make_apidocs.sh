@@ -9,18 +9,18 @@ VENV_DIR=${PWD}/.venv-docs
 # Remove old documentation
 rm -rf docs/dev/api/*
 
-# Create virtual env and install concrete and docs tools
+# Create virtual env and install torus and docs tools
 ${PYTHON} -m venv "${VENV_DIR}"
 source "${VENV_DIR}"/bin/activate
-if [ -z "${CONCRETE_WHEEL}" ]; then 
-    echo "You must specify the CONCRETE_WHEEL environment variable"
+if [ -z "${TORUS_WHEEL}" ]; then 
+    echo "You must specify the TORUS_WHEEL environment variable"
     exit 1
 fi
-${PIP} install ${CONCRETE_WHEEL}
+${PIP} install ${TORUS_WHEEL}
 ${PIP} install lazydocs
 
 # Generate the API doc
-lazydocs --output-path="./docs/dev/api" --overview-file="README.md" --src-base-url="../../" --no-watermark concrete
+lazydocs --output-path="./docs/dev/api" --overview-file="README.md" --src-base-url="../../" --no-watermark torus
 
 
 # Update documentation paths

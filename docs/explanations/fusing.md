@@ -4,7 +4,7 @@ This document describes the concept of fusing, which is the act of combining mul
 
 ## How is it done?
 
-Code related to fusing is in the `frontends/torus-python/concrete/fhe/compilation/utils.py` file. Fusing can be performed using the `fuse` function.
+Code related to fusing is in the `frontends/torus-python/torus/fhe/compilation/utils.py` file. Fusing can be performed using the `fuse` function.
 
 Within `fuse`:
 

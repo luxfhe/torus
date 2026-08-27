@@ -8,7 +8,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 add_mlir_library(
-  ConcretelangServerLib
+  ToruslangServerLib
   ServerLib.cpp
   ADDITIONAL_HEADER_DIRS
   ${PROJECT_SOURCE_DIR}/include/toruslang/ServerLib
@@ -17,4 +17,4 @@ add_mlir_library(
   mlir-headers
   LINK_LIBS
   PUBLIC
-  ConcretelangCommon)
+  ToruslangCommon)

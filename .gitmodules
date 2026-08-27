@@ -1,7 +1,7 @@
 [submodule "llvm-project"]
 	path = third_party/llvm-project
 	# .. refers to ssh|https://github.com/luxfhe
-	url = ../concrete-compiler-internal-llvm-project.git
+	url = ../torus-compiler-internal-llvm-project.git
 	shallow = true
 [submodule "lattice-estimator"]
 	path = third_party/lattice-estimator

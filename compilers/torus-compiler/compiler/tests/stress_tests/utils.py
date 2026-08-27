@@ -1,6 +1,6 @@
 import subprocess
 
-CONCRETECOMPILER = 'concretecompiler'
+TORUSCOMPILER = 'toruscompiler'
 
 def ceil_log2(v, exact=False):
     import math

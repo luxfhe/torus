@@ -46,7 +46,7 @@ Refer to the API, review product architecture, and access additional resources f
 
 Ask technical questions and discuss with the community. Our team of experts usually answers within 24 hours in working days.
 
-* [Community forum](https://community.luxfhe.com/c/concrete/)
+* [Community forum](https://community.luxfhe.com/c/torus/)
 * [Discord channel](https://discord.com/invite/lux)
 
 ### Developers

@@ -1,4 +1,4 @@
-// RUN: not concretecompiler --split-input-file --action=roundtrip  %s 2>&1| FileCheck %s
+// RUN: not toruscompiler --split-input-file --action=roundtrip  %s 2>&1| FileCheck %s
 
 // CHECK-LABEL: error: 'FHE.sub_int_eint' op should have the width of encrypted inputs and result equal
 func.func @bad_result_width(%arg0: !FHE.eint<2>) -> !FHE.eint<3> {

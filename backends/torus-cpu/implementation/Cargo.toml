@@ -5,12 +5,12 @@ edition = "2021"
 license = "BSD-3-Clause-Clear"
 
 [lib]
-name = "concrete_cpu"
+name = "torus_cpu"
 crate-type = ["lib", "staticlib"]
 
 
 [dependencies]
-concrete-csprng = { version = "0.4.1", optional = true, features = ["generator_fallback"] }
+torus-csprng = { version = "0.4.1", optional = true, features = ["generator_fallback"] }
 torus-cpu-noise-model = { path = "../noise-model/" }
 torus-security-curves = { path = "../../../tools/parameter-curves/torus-security-curves-rust" }
 libc = { version = "0.2", default-features = false }
@@ -18,7 +18,7 @@ pulp = { version = "0.18.8", default-features = false }
 dyn-stack = { version = "0.10", default-features = false }
 readonly = "0.2"
 aligned-vec = { version = "0.5", default-features = false }
-concrete-fft = { version = "0.4.1", default-features = false }
+torus-fft = { version = "0.4.1", default-features = false }
 bytemuck = "1.14.3"
 num-complex = { version = "0.4", default-features = false, features = [
   "bytemuck",
@@ -43,15 +43,15 @@ tfhe = { version = "0.10.0", features = ["integer", "x86_64"] }
 [features]
 default = ["parallel", "std", "csprng"]
 std = [
-  "concrete-fft/std",
+  "torus-fft/std",
   "aligned-vec/std",
   "dyn-stack/std",
   "pulp/std",
   "once_cell",
 ]
-csprng = ["concrete-csprng"]
+csprng = ["torus-csprng"]
 parallel = ["rayon"]
-nightly = ["pulp/nightly", "concrete-fft/nightly", "tfhe/nightly-avx512"]
+nightly = ["pulp/nightly", "torus-fft/nightly", "tfhe/nightly-avx512"]
 
 [build-dependencies]
 cbindgen = "0.24"

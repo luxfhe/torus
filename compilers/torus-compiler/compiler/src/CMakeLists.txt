@@ -1,28 +1,28 @@
-add_llvm_tool(concretecompiler main.cpp)
-target_compile_options(concretecompiler PRIVATE -fexceptions)
-llvm_update_compile_flags(concretecompiler)
+add_llvm_tool(toruscompiler main.cpp)
+target_compile_options(toruscompiler PRIVATE -fexceptions)
+llvm_update_compile_flags(toruscompiler)
 
 get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
 get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
 
-add_dependencies(concretecompiler mlir-headers)
+add_dependencies(toruscompiler mlir-headers)
 
 target_link_libraries(
-  concretecompiler
+  toruscompiler
   PRIVATE ${dialect_libs}
           ${conversion_libs}
           MLIRTransforms
-          ConcreteDialect
+          TorusDialect
           TFHEDialect
           FHEDialect
           SDFGDialect
           OptimizerDialect
-          ConcretelangTransforms
+          ToruslangTransforms
           MLIRIR
           MLIRLLVMIRTransforms
           MLIRLLVMToLLVMIRTranslation
           RTDialect
-          ConcretelangSupport
-          ConcretelangCommon)
+          ToruslangSupport
+          ToruslangCommon)
 
-mlir_check_all_link_libraries(concretecompiler)
+mlir_check_all_link_libraries(toruscompiler)

@@ -27,7 +27,7 @@ def FHEToTFHECrt : Pass<"fhe-to-tfhe-crt", "mlir::ModuleOp"> {
 
 def TFHEGlobalParametrization : Pass<"tfhe-global-parametrization", "mlir::ModuleOp"> {
   let summary = "Inject global fhe parameters to the TFHE dialect";
-  let constructor = "mlir::toruslang::createConvertTFHEToConcretePass()";
+  let constructor = "mlir::toruslang::createConvertTFHEToTorusPass()";
   let options = [];
   let dependentDialects = ["mlir::toruslang::TFHE::TFHEDialect"];
 }
@@ -39,10 +39,10 @@ def TFHEKeyNormalization : Pass<"tfhe-key-normalization", "mlir::ModuleOp"> {
   let dependentDialects = ["mlir::toruslang::TFHE::TFHEDialect"];
 }
 
-def TFHEToConcrete : Pass<"tfhe-to-concrete", "mlir::ModuleOp"> {
-  let summary = "Lowers operations from the TFHE dialect to Concrete";
-  let description = [{ Lowers operations from the TFHE dialect to Concrete }];
-  let constructor = "mlir::toruslang::createConvertTFHEToConcretePass()";
+def TFHEToTorus : Pass<"tfhe-to-torus", "mlir::ModuleOp"> {
+  let summary = "Lowers operations from the TFHE dialect to Torus";
+  let description = [{ Lowers operations from the TFHE dialect to Torus }];
+  let constructor = "mlir::toruslang::createConvertTFHEToTorusPass()";
   let options = [];
   let dependentDialects = ["mlir::linalg::LinalgDialect", "mlir::toruslang::TFHE::TFHEDialect"];
 }
@@ -70,11 +70,11 @@ def ExtractSDFGOps : Pass<"extract-sdfg-ops", "::mlir::func::FuncOp"> {
   let dependentDialects = ["mlir::toruslang::SDFG::SDFGDialect"];
 }
 
-def ConcreteToCAPI : Pass<"concrete-to-capi", "mlir::ModuleOp"> {
-  let summary = "Lowers operations from the Concrete dialect to CAPI calls";
-  let description = [{ Lowers operations from the Concrete dialect to CAPI calls }];
-  let constructor = "mlir::toruslang::createConvertConcreteToCAPIPass()";
-  let dependentDialects = ["mlir::toruslang::Concrete::ConcreteDialect"];
+def TorusToCAPI : Pass<"torus-to-capi", "mlir::ModuleOp"> {
+  let summary = "Lowers operations from the Torus dialect to CAPI calls";
+  let description = [{ Lowers operations from the Torus dialect to CAPI calls }];
+  let constructor = "mlir::toruslang::createConvertTorusToCAPIPass()";
+  let dependentDialects = ["mlir::toruslang::Torus::TorusDialect"];
 }
 
 def TracingToCAPI : Pass<"tracing-to-capi", "mlir::ModuleOp"> {

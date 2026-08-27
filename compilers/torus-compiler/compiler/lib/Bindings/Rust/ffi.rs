@@ -11,7 +11,7 @@ use crate::protocol::{
 use crate::utils::into_value::IntoValue;
 use cxx::{CxxVector, SharedPtr, UniquePtr};
 
-#[cxx::bridge(namespace = "concrete_rust")]
+#[cxx::bridge(namespace = "torus_rust")]
 mod ffi {
 
     unsafe extern "C++" {
@@ -1156,7 +1156,7 @@ impl std::fmt::Debug for TransportValue {
 mod test {
     use super::*;
 
-    const TEST_FOLDER: &str = "/tmp/test_concrete";
+    const TEST_FOLDER: &str = "/tmp/test_torus";
 
     #[test]
     fn test_compile() {
@@ -1179,8 +1179,8 @@ mod test {
             .map(|a| String::from_utf8_lossy(a).to_string())
             .collect::<Vec<_>>();
         #[cfg(target_os = "macos")]
-        assert!(symbols.contains(&"_concrete_dec".to_string()));
+        assert!(symbols.contains(&"_torus_dec".to_string()));
         #[cfg(target_os = "linux")]
-        assert!(symbols.contains(&"concrete_dec".to_string()));
+        assert!(symbols.contains(&"torus_dec".to_string()));
     }
 }

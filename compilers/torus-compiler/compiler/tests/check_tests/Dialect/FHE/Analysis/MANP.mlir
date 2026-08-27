@@ -1,4 +1,4 @@
-// RUN: concretecompiler --passes MANP --passes ConcreteOptimizer --optimizer-strategy=dag-mono --action=dump-fhe-no-linalg --split-input-file %s 2>&1 | FileCheck %s
+// RUN: toruscompiler --passes MANP --passes TorusOptimizer --optimizer-strategy=dag-mono --action=dump-fhe-no-linalg --split-input-file %s 2>&1 | FileCheck %s
 
 func.func @single_zero() -> !FHE.eint<2>
 {

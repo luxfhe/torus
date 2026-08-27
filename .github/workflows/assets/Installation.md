@@ -6,6 +6,6 @@ You can either install the compiler in user space or globally (you need root/sud
 
 2. Global install: extract the tarball to a temporary path , and copy
 
-- temporary/path/concretecompiler/bin/* inside /usr/local/bin/ (or a directory in $PATH)
-- temporary/path/concretecompiler/lib/* inside /usr/local/lib/ (or another lib folder)
-- temporary/path/concretecompiler/include/* inside /usr/local/include/ (or another include folder)
+- temporary/path/toruscompiler/bin/* inside /usr/local/bin/ (or a directory in $PATH)
+- temporary/path/toruscompiler/lib/* inside /usr/local/lib/ (or another lib folder)
+- temporary/path/toruscompiler/include/* inside /usr/local/include/ (or another include folder)

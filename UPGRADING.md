@@ -64,9 +64,9 @@ server.run(encrypted_args, evaluation_keys)
 
 ## From `Torus Numpy v0.x` To `Torus v1`
 
-### The PyPI package `concrete-numpy` is now called `torus-python`.
+### The PyPI package `torus-numpy` is now called `torus-python`.
 
-### The module `concrete.numpy` is now called `torus.fhe` and we advise you to use:
+### The module `torus.numpy` is now called `torus.fhe` and we advise you to use:
 
 ```python
 from torus import fhe
@@ -78,7 +78,7 @@ instead of the previous:
 import torus.numpy as cnp
 ```
 
-### The module `concrete.onnx` is merged into `torus.fhe` so we advise you to use:
+### The module `torus.onnx` is merged into `torus.fhe` so we advise you to use:
 
 ```python
 from torus import fhe

@@ -1,4 +1,4 @@
-// RUN: concretecompiler --split-input-file --action=dump-parametrized-tfhe --skip-program-info --passes=tfhe-circuit-solution-parametrization %s 2>&1| FileCheck %s
+// RUN: toruscompiler --split-input-file --action=dump-parametrized-tfhe --skip-program-info --passes=tfhe-circuit-solution-parametrization %s 2>&1| FileCheck %s
 
 // CHECK:      module {
 // CHECK-NEXT:   func.func @main(%arg0: !TFHE.glwe<sk[1]<12,1024>>, %arg1: !TFHE.glwe<sk[1]<12,1024>>) -> !TFHE.glwe<sk[1]<12,1024>> {
