@@ -1,6 +1,6 @@
 # What is Torus?
 
-<figure><img src="../.gitbook/assets/torus_doc_header.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/torus_doc_header.svg" alt=""><figcaption></figcaption></figure>
 
 **Torus** is an open source framework that simplifies the use of Fully Homomorphic Encryption (FHE).
 
