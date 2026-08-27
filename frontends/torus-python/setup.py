@@ -39,53 +39,36 @@ def read_requirements(*filenames):
         if dependency.strip() != ""
     ]
 
+# The distribution's identity — name, description, licence, authors, keywords,
+# classifiers, readme, requires-python — is declared once, in pyproject.toml.
+# It named this "torus-python" here while pyproject named it "torus-fhe", which
+# is two names for one distribution and, with PEP 621 metadata present, a build
+# error rather than a preference.
+#
+# What is left is what pyproject marks dynamic and cannot compute: the version,
+# the requirement files, and the packages, which depend on where the native
+# bindings were built.
 setuptools.setup(
 
-    name="torus-python",
-    description="A state-of-the-art homomorphic encryption framework",
-
     version=version(),
-    license="BSD-3-Clause",
 
-    author="Lux Industries",
-    author_email="hello@luxfhe.com",
-
-    url="https://github.com/luxfhe/torus/tree/main/frontends/torus-python",
-    keywords=[
-        "fhe",
-        "homomorphic",
-        "encryption",
-        "tfhe",
-        "privacy",
-        "security",
-    ],
-    classifiers=[
-        "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
-        "Topic :: Security :: Cryptography",
-        "Topic :: Software Development :: Compilers",
-    ],
-
-    long_description=read("../../README.md"),
-    long_description_content_type="text/markdown",
-
-    python_requires=">=3.9",
     setup_requires=["wheel"],
     install_requires=read_requirements("requirements.txt"),
     extras_require={
         "dev": read_requirements("requirements.dev.txt", "requirements.extra-full.txt"),
         "full": read_requirements("requirements.extra-full.txt"),
     },
+    # The sources moved to torus/ with the rebrand; this still addressed the
+    # directory they were moved out of, so the frontend built without the very
+    # package it exists to ship. torus.fhe needs its own entry: the root maps to
+    # the bindings tree, and this package is not in it.
     package_dir={
-        "torus.fhe": "./concrete/fhe",
+        "torus.fhe": "./torus/fhe",
         "": bindings_directory(),
     },
     packages=setuptools.find_namespace_packages(
         where=".",
-        include=["concrete", "concrete.*"]
-    ) + setuptools.find_namespace_packages(
-        where=".",
-        include=["torus.fhe", "torus.fhe.*"],
+        include=["torus", "torus.fhe", "torus.fhe.*"],
     ) + setuptools.find_namespace_packages(
         where=bindings_directory(),
         include=["torus.compiler", "torus.compiler.*"],

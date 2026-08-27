@@ -17,7 +17,7 @@ authors = [
     {name = "Lux Industries Inc.", email = "engineering@lux.network"},
 ]
 readme = "../../README.md"
-license = {text = "BSD-3-Clause"}
+license = {text = "BSD-3-Clause-Clear"}
 requires-python = ">=3.9"
 keywords = ["fhe", "homomorphic", "encryption", "tfhe", "privacy", "security"]
 classifiers = [
