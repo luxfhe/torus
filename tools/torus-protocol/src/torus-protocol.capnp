@@ -435,13 +435,13 @@ struct LweCiphertextTypeInfo {
   # needed to verify and pre-or-post process this value.
   #
   # Note:
-  #   Two shape information are carried in this type. The abstract shape is the shape the tensor
+  #   Two shape information are carried in this type. The plain shape is the shape the tensor
   #   would have if the values were cleartext. That is, it does not take into account the encryption
-  #   process. The concrete shape is the final shape of the object accounting for the encryption,
+  #   process. The cipher shape is the final shape of the object accounting for the encryption,
   #   that usually add one or more dimension to the object.
 
-  abstractShape @0 :Shape; # The abstract shape of the value.
-  concreteShape @1 :Shape; # The concrete shape of the value.
+  plainShape @0 :Shape; # The plain shape of the value.
+  cipherShape @1 :Shape; # The cipher shape of the value.
   integerPrecision @2 :UInt32; # The precision of the integers used for storage.
   encryption @3 :LweCiphertextEncryptionInfo; # The informations relative to the encryption.
   compression @4 :Compression; # The compression used for this value.

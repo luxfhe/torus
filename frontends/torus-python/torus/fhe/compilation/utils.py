@@ -155,7 +155,7 @@ def validate_input_args(
         if "lweCiphertext" in spec["typeInfo"].keys():
             type_info = spec["typeInfo"]["lweCiphertext"]
             is_encrypted = True
-            shape = tuple(type_info["abstractShape"]["dimensions"])
+            shape = tuple(type_info["plainShape"]["dimensions"])
             assert "integer" in type_info["encoding"].keys()
             width = type_info["encoding"]["integer"]["width"]
             is_signed = type_info["encoding"]["integer"]["isSigned"]

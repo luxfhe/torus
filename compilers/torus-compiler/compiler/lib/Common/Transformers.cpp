@@ -231,7 +231,7 @@ updateGateInfoAccordingValue(Message<torusprotocol::GateInfo> &gate,
   auto valueCompression = valueCiphertext.getCompression();
   auto gateBuilder = gate.asBuilder();
   auto gateDimensions = gateBuilder.getRawInfo().getShape().getDimensions();
-  auto concreteShapeDimensions = gateBuilder.getTypeInfo()
+  auto cipherShapeDimensions = gateBuilder.getTypeInfo()
                                      .getLweCiphertext()
                                      .getTorusShape()
                                      .getDimensions();
@@ -245,7 +245,7 @@ updateGateInfoAccordingValue(Message<torusprotocol::GateInfo> &gate,
         torusprotocol::Compression::NONE);
     auto lweSize = gateCiphertext.getEncryption().getLweDimension() + 1;
     gateDimensions.set(gateDimensions.size() - 1, lweSize);
-    concreteShapeDimensions.set(concreteShapeDimensions.size() - 1, lweSize);
+    cipherShapeDimensions.set(cipherShapeDimensions.size() - 1, lweSize);
     return (Message<torusprotocol::GateInfo>)gateBuilder.asReader();
   }
   if (gateCompression == torusprotocol::Compression::NONE &&
@@ -257,7 +257,7 @@ updateGateInfoAccordingValue(Message<torusprotocol::GateInfo> &gate,
     gateBuilder.getTypeInfo().getLweCiphertext().setCompression(
         torusprotocol::Compression::SEED);
     gateDimensions.set(gateDimensions.size() - 1, 3);
-    concreteShapeDimensions.set(concreteShapeDimensions.size() - 1, 3);
+    cipherShapeDimensions.set(cipherShapeDimensions.size() - 1, 3);
     return (Message<torusprotocol::GateInfo>)gateBuilder.asReader();
   }
   return gate;

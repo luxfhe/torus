@@ -381,10 +381,10 @@ exportTfhersInteger(TransportValue value, TfhersFheIntDescription integerDesc) {
   if (!tensorOrError.has_value()) {
     return StringError("couldn't get tensor from value");
   }
-  auto concreteShape = tensorOrError.value().dimensions;
-  assert(concreteShape.size() >= 2);
-  std::vector<size_t> tensorShape(concreteShape.begin(),
-                                  concreteShape.end() -
+  auto cipherShape = tensorOrError.value().dimensions;
+  assert(cipherShape.size() >= 2);
+  std::vector<size_t> tensorShape(cipherShape.begin(),
+                                  cipherShape.end() -
                                       2 /* remove radix and lwe dims */);
   size_t tensorFlatSize = std::accumulate(
       tensorShape.begin(), tensorShape.end(), 1, std::multiplies<size_t>());

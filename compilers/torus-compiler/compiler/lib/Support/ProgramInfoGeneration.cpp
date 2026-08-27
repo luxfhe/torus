@@ -84,7 +84,7 @@ generateGate(mlir::Type inputType,
                        .value();
     auto lweCiphertextGateInfo =
         output.asBuilder().initTypeInfo().initLweCiphertext();
-    auto concreteShape = lweCiphertextGateInfo.initTorusShape();
+    auto cipherShape = lweCiphertextGateInfo.initTorusShape();
     lweCiphertextGateInfo.setAbstractShape(inputShape);
     auto encodingDimensions = inputShape.getDimensions();
     size_t gateDimensionsSize = inputShape.getDimensions().size() + 1;
@@ -92,7 +92,7 @@ generateGate(mlir::Type inputType,
         inputEncoding.getIntegerCiphertext().getMode().hasCrt()) {
       gateDimensionsSize++;
     }
-    auto gateDimensions = concreteShape.initDimensions(gateDimensionsSize);
+    auto gateDimensions = cipherShape.initDimensions(gateDimensionsSize);
     for (size_t i = 0; i < encodingDimensions.size(); i++) {
       gateDimensions.set(i, encodingDimensions[i]);
     }
