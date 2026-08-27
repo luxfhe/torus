@@ -97,8 +97,6 @@ class ValueDescription:
                 )
 
         # we don't use isinstance to avoid a cyclic import
-        if type(value).__name__ == "TFHERSInteger":
-            return ValueDescription(dtype=value.dtype, shape=value.shape, is_encrypted=True)
 
         message = f"Torus cannot represent {repr(value)}"
         raise ValueError(message)

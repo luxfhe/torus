@@ -102,8 +102,6 @@ set(TORUS_BACKENDS_DIR "${PROJECT_SOURCE_DIR}/../../../backends")
 # Torus CPU Configuration
 # -------------------------------------------------------------------------------
 
-set(TORUS_CPU_DIR "${TORUS_BACKENDS_DIR}/torus-cpu/implementation")
-set(TORUS_CPU_INCLUDE_DIR "${TORUS_CPU_DIR}/include")
 
 # -------------------------------------------------------------------------------
 # Torus CPU Noise Model Configuration

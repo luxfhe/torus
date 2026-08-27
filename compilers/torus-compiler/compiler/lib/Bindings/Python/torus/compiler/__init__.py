@@ -20,7 +20,6 @@ from mlir._mlir_libs._toruslang._compiler import (
     ServerKeyset,
     Keyset,
     Compiler,
-    TfhersFheIntDescription,
     TransportValue,
     Value,
     ServerProgram,
@@ -52,7 +51,6 @@ from .utils import lookup_runtime_lib
 from .compilation_feedback import MoreCircuitCompilationFeedback
 from .compilation_context import CompilationContext
 
-from .tfhers_int import TfhersExporter
 
 Parameter = Union[
     LweSecretKeyParam, BootstrapKeyParam, KeyswitchKeyParam, PackingKeyswitchKeyParam

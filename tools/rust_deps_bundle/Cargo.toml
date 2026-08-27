@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-torus-cpu = { path = "../../backends/torus-cpu/implementation", features = [
     "nightly",
 ] }
 torus-cpu-noise-model = { path = "../../backends/torus-cpu/noise-model" }

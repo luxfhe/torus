@@ -59,16 +59,3 @@ PROGRAM_INFO_NO_TFHERS_SPECS = (
 )
 
 
-def test_client_spec_without_tfhers_specs():
-    """
-    Test that a `ClientSpecs` instance can be created without `TFHERSClientSpecs`.
-
-    This is for backward compatibility (before we introduced TFHERSClientSpecs).
-    """
-    program_info = ProgramInfo.deserialize(PROGRAM_INFO_NO_TFHERS_SPECS)
-    client_specs = ClientSpecs(program_info=program_info)
-
-    assert client_specs.program_info == program_info
-    assert client_specs.tfhers_specs is None
-    assert json.loads(client_specs.serialize()) == json.loads(PROGRAM_INFO_NO_TFHERS_SPECS)
-    assert ClientSpecs.deserialize(PROGRAM_INFO_NO_TFHERS_SPECS) == client_specs

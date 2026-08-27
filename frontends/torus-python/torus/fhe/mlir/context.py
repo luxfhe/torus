@@ -30,7 +30,6 @@ from mlir.ir import NoneType
 from mlir.ir import OpResult as MlirOperation
 from mlir.ir import RankedTensorType
 
-from .. import tfhers
 from ..compilation.configuration import (
     BitwiseStrategy,
     ComparisonStrategy,
@@ -41,7 +40,6 @@ from ..compilation.configuration import (
 from ..dtypes import Integer
 from ..extensions.bits import MAX_EXTRACTABLE_BIT, MIN_EXTRACTABLE_BIT
 from ..representation import Graph, GraphProcessor, Node
-from ..tfhers.dtypes import TFHERSIntegerType
 from ..values import ValueDescription
 from .conversion import Conversion, ConversionType
 from .utils import MAXIMUM_TLU_BIT_WIDTH, Comparison, _FromElementsOp
@@ -83,7 +81,6 @@ class Context:
 
     configuration: Configuration
 
-    tfhers_partition: dict[tfhers.CryptoParams, str]
 
     def __init__(self, context: MlirContext, graph: Graph, configuration: Configuration):
         self.context = context
@@ -97,7 +94,6 @@ class Context:
 
         self.configuration = configuration
 
-        self.tfhers_partition = {}
 
     # types
 
@@ -155,20 +151,6 @@ class Context:
         assert isinstance(value.dtype, Integer)
         bit_width = value.dtype.bit_width
 
-        # TODO: what about the element type? only unsigned? or not eint at all?
-        if isinstance(value.dtype, TFHERSIntegerType):
-            msg_width = value.dtype.msg_width
-            # padding is not really considered as part of the message
-            # However it is part of the result type
-            carry_width = value.dtype.carry_width
-            assert bit_width % msg_width == 0
-            # we need ct_shape ct of msg_width (+ carry_width) bits to represent
-            # a single ct of bit_width bits
-            ct_shape = (bit_width // msg_width,)
-            # we add the dimension of ciphertexts at the end (old_dims..., ct_shape)
-            shape = value.shape + ct_shape
-            element_type = self.eint(msg_width + carry_width)
-            return self.tensor(element_type, shape)
 
         if value.is_clear:
             result = self.i(bit_width)
@@ -4016,46 +3998,3 @@ class Context:
             resulting_type,
             original_bit_width=1,
         )
-
-    def get_partition_name(self, partition: tfhers.CryptoParams) -> str:
-        if partition not in self.tfhers_partition.keys():
-            self.tfhers_partition[partition] = f"tfhers_{randint(0, 2 ** 32)}"  # noqa: S311
-        return self.tfhers_partition[partition]
-
-    def change_partition(
-        self,
-        x: Conversion,
-        src_partition: Optional[tfhers.CryptoParams] = None,
-        dest_partition: Optional[tfhers.CryptoParams] = None,
-    ) -> Conversion:
-        assert x.is_encrypted
-        # build src and dest attributes
-        src = None
-        dest = None
-        if isinstance(src_partition, tfhers.CryptoParams):
-            name = self.get_partition_name(src_partition)
-            src = PartitionAttr.get(
-                self.context,
-                name,
-                src_partition.lwe_dimension,
-                src_partition.glwe_dimension,
-                src_partition.polynomial_size,
-                src_partition.pbs_base_log,
-                src_partition.pbs_level,
-            )
-        if isinstance(dest_partition, tfhers.CryptoParams):
-            name = self.get_partition_name(dest_partition)
-            dest = PartitionAttr.get(
-                self.context,
-                name,
-                dest_partition.lwe_dimension,
-                dest_partition.glwe_dimension,
-                dest_partition.polynomial_size,
-                dest_partition.pbs_base_log,
-                dest_partition.pbs_level,
-            )
-
-        operation = fhe.ChangePartitionEintOp
-        return self.operation(operation, x.type, x.result, src=src, dest=dest)
-
-    # pylint: enable=missing-function-docstring

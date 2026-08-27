@@ -34,14 +34,7 @@ using toruslang::values::Value;
 namespace toruslang {
 namespace clientlib {
 
-Result<TransportValue> importTfhersInteger(llvm::ArrayRef<uint8_t> buffer,
-                                           TfhersFheIntDescription integerDesc,
-                                           uint32_t encryptionKeyId,
-                                           double encryptionVariance,
-                                           std::vector<size_t> shape = {});
 
-Result<std::vector<uint8_t>>
-exportTfhersInteger(TransportValue value, TfhersFheIntDescription integerDesc);
 
 class ClientCircuit {
 
