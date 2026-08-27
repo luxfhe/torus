@@ -19,7 +19,7 @@ authors = [
 readme = "../../README.md"
 license = {text = "BSD-3-Clause-Clear"}
 requires-python = ">=3.9"
-keywords = ["fhe", "homomorphic", "encryption", "tfhe", "privacy", "security"]
+keywords = ["fhe", "homomorphic", "encryption", "privacy", "security"]
 classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
