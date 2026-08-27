@@ -1,15 +1,10 @@
-Torus
-Copyright © 2026 Lux Industries Inc.
+torus
 
-This product includes software originally developed by ZAMA and licensed
-under the BSD 3-Clause Clear License (Copyright © 2024 ZAMA). The
-original source was published at https://github.com/zama-ai/concrete and
-the fork was taken at HEAD ref ecb729bb.
+Distributed under the BSD 3-Clause Clear License. See LICENSE for the terms.
 
-Per BSD-3-Clause-Clear §3, no name of ZAMA or its contributors is used
-to endorse or promote this derived product. Torus is a Lux Industries
-product, branded and marketed exclusively as such.
+Copyright (c) 2024 Zama SAS - original work.
+Copyright (c) 2026 Lux Industries Inc. - modifications.
 
-This NOTICE file exists for legal attribution compliance only and is
-required by the upstream license terms. It is not a marketing
-endorsement of the original licensor.
+The Clear BSD License grants no licence to any patent rights. That is a
+property of the licence, not an omission here; see the final paragraph of
+LICENSE.
