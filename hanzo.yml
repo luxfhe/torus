@@ -1,0 +1,12 @@
+# Native CI for the Torus compiler, on the git.hanzo.ai runner fleet.
+#
+# The optimizer is the part that builds from a bare toolchain; the compiler
+# itself needs an LLVM tree, which the fleet image does not carry yet, so it
+# is not claimed here rather than declared and skipped.
+test:
+  - name: optimizer
+    run: |
+      set -e
+      cd compilers/torus-optimizer
+      cargo build --locked
+      cargo test --locked
